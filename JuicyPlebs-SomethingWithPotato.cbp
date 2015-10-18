@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="JuicyPlebs-SomethingWithPotato" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/JuicyPlebs-SomethingWithPotato" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-std=c++11" />
+					<Add option="-pg" />
+					<Add option="-g" />
+					<Add directory="../JuicyPlebs-SomethingWithPotato" />
+					<Add directory="include/Screens" />
+				</Compiler>
+				<Linker>
+					<Add option="-pg" />
+					<Add directory="../JuicyPlebs-SomethingWithPotato" />
+					<Add directory="src/Screens" />
+					<Add directory="src/RGUIL" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/JuicyPlebs-SomethingWithPotato" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-std=c++11" />
+					<Add directory="../JuicyPlebs-SomethingWithPotato" />
+					<Add directory="include/Screens" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add directory="../JuicyPlebs-SomethingWithPotato" />
+					<Add directory="src/RGUIL" />
+					<Add directory="src/Screens" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="global.h" />
+		<Unit filename="include/Screens/ScreenAbout.h" />
+		<Unit filename="include/Screens/ScreenMain.h" />
+		<Unit filename="include/Screens/ScreenPlay.h" />
+		<Unit filename="main.cpp" />
+		<Unit filename="rGUIl.h" />
+		<Unit filename="src/RGUIL/BigBitmap.cpp" />
+		<Unit filename="src/RGUIL/Button.cpp" />
+		<Unit filename="src/RGUIL/ClickableText.cpp" />
+		<Unit filename="src/RGUIL/InputField.cpp" />
+		<Unit filename="src/RGUIL/ScrollableArea.cpp" />
+		<Unit filename="src/RGUIL/ScroolBar.cpp" />
+		<Unit filename="src/RGUIL/SingleKeyInputField.cpp" />
+		<Unit filename="src/RGUIL/rGUIl.cpp" />
+		<Unit filename="src/Screens/ScreenAbout.cpp" />
+		<Unit filename="src/Screens/ScreenMain.cpp" />
+		<Unit filename="src/Screens/ScreenPlay.cpp" />
+		<Extensions>
+			<envvars />
+			<code_completion />
+			<lib_finder disable_auto="1" />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

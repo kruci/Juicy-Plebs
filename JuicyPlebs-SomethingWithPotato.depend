@@ -1,0 +1,162 @@
+# depslib dependency file v1.0
+1445119586 source:/home/rasto/Documents/programing/Allegro5/JuicyPlebs-SomethingWithPotato/main.cpp
+	"global.h"
+	"include/Screens/ScreenMain.h"
+
+1445107469 /home/rasto/Documents/programing/Allegro5/JuicyPlebs-SomethingWithPotato/global.h
+	<iostream>
+	<vector>
+	<cmath>
+	<allegro5/allegro5.h>
+	<allegro5/allegro_primitives.h>
+	<allegro5/allegro_image.h>
+	<allegro5/allegro_font.h>
+	<allegro5/allegro_ttf.h>
+	<allegro5/allegro_audio.h>
+	<allegro5/allegro_acodec.h>
+	<allegro5/allegro_native_dialog.h>
+	<allegro5/allegro_memfile.h>
+	"rGUIl.h"
+
+1445107700 /home/rasto/Documents/programing/Allegro5/JuicyPlebs-SomethingWithPotato/include/Screens/ScreenMain.h
+	"global.h"
+	"include/Screens/ScreenAbout.h"
+
+1445120026 /home/rasto/Documents/programing/Allegro5/JuicyPlebs-SomethingWithPotato/rGUIl.h
+	<iostream>
+	<vector>
+	<cmath>
+	<string>
+	<allegro5/allegro5.h>
+	<allegro5/allegro_primitives.h>
+	<allegro5/allegro_image.h>
+	<allegro5/allegro_font.h>
+	<allegro5/allegro_ttf.h>
+	<allegro5/allegro_audio.h>
+	<allegro5/allegro_acodec.h>
+	<allegro5/allegro_native_dialog.h>
+	<allegro5/allegro_memfile.h>
+
+1445167664 source:/home/rasto/Documents/programing/Allegro5/JuicyPlebs-SomethingWithPotato/src/Screens/ScreenMain.cpp
+	"ScreenMain.h"
+
+1445104087 source:/home/rasto/Documents/programing/Allegro5/JuicyPlebs-SomethingWithPotato/src/RGUIL/BigBitmap.cpp
+	"global.h"
+
+1445104598 source:/home/rasto/Documents/programing/Allegro5/JuicyPlebs-SomethingWithPotato/src/RGUIL/Button.cpp
+	"global.h"
+
+1445104098 source:/home/rasto/Documents/programing/Allegro5/JuicyPlebs-SomethingWithPotato/src/RGUIL/ClickableText.cpp
+	"global.h"
+
+1445104165 source:/home/rasto/Documents/programing/Allegro5/JuicyPlebs-SomethingWithPotato/src/RGUIL/InputField.cpp
+	"global.h"
+
+1445104102 source:/home/rasto/Documents/programing/Allegro5/JuicyPlebs-SomethingWithPotato/src/RGUIL/ScrollableArea.cpp
+	"global.h"
+
+1445104108 source:/home/rasto/Documents/programing/Allegro5/JuicyPlebs-SomethingWithPotato/src/RGUIL/ScroolBar.cpp
+	"global.h"
+
+1445104111 source:/home/rasto/Documents/programing/Allegro5/JuicyPlebs-SomethingWithPotato/src/RGUIL/SingleKeyInputField.cpp
+	"global.h"
+
+1445104291 source:/home/rasto/Documents/programing/Allegro5/JuicyPlebs-SomethingWithPotato/src/RGUIL/rGUIl.cpp
+	"rGUIl.h"
+
+1445106737 /home/rasto/Documents/programing/Allegro5/JuicyPlebs-SomethingWithPotato/include/Screens/ScreenAbout.h
+	"global.h"
+
+1445108750 source:/home/rasto/Documents/programing/Allegro5/JuicyPlebs-SomethingWithPotato/src/Screens/ScreenAbout.cpp
+	"ScreenAbout.h"
+
+1445109172 source:/home/rasto/Documents/programing/Allegro5/JuicyPlebs-SomethingWithPotato/src/Screens/ScreenSettings.cpp
+	"ScreenSettings.h"
+
+1445164137 /home/rasto/Documents/programing/Allegro5/JuicyPlebs-SomethingWithPotato/include/Screens/ScreenSettings.h
+	"global.h"
+
+1445179949 source:d:\documents\programing\juicyplebs-somethingwithpotato\main.cpp
+	"global.h"
+	"include/Screens/ScreenMain.h"
+
+1445107469 d:\documents\programing\juicyplebs-somethingwithpotato\global.h
+	<iostream>
+	<vector>
+	<cmath>
+	<allegro5/allegro5.h>
+	<allegro5/allegro_primitives.h>
+	<allegro5/allegro_image.h>
+	<allegro5/allegro_font.h>
+	<allegro5/allegro_ttf.h>
+	<allegro5/allegro_audio.h>
+	<allegro5/allegro_acodec.h>
+	<allegro5/allegro_native_dialog.h>
+	<allegro5/allegro_memfile.h>
+	"rGUIl.h"
+
+1445181884 d:\documents\programing\juicyplebs-somethingwithpotato\rguil.h
+	<iostream>
+	<vector>
+	<cmath>
+	<string>
+	<allegro5/allegro5.h>
+	<allegro5/allegro_primitives.h>
+	<allegro5/allegro_image.h>
+	<allegro5/allegro_font.h>
+	<allegro5/allegro_ttf.h>
+	<allegro5/allegro_audio.h>
+	<allegro5/allegro_acodec.h>
+	<allegro5/allegro_native_dialog.h>
+	<allegro5/allegro_memfile.h>
+
+1445183221 d:\documents\programing\juicyplebs-somethingwithpotato\include\screens\screenmain.h
+	"global.h"
+	"include/Screens/ScreenAbout.h"
+	"include/Screens/ScreenPlay.h"
+
+1445106737 d:\documents\programing\juicyplebs-somethingwithpotato\include\screens\screenabout.h
+	"global.h"
+
+1445104087 source:d:\documents\programing\juicyplebs-somethingwithpotato\src\rguil\bigbitmap.cpp
+	"global.h"
+
+1445181706 source:d:\documents\programing\juicyplebs-somethingwithpotato\src\rguil\button.cpp
+	"global.h"
+
+1445104098 source:d:\documents\programing\juicyplebs-somethingwithpotato\src\rguil\clickabletext.cpp
+	"global.h"
+
+1445104165 source:d:\documents\programing\juicyplebs-somethingwithpotato\src\rguil\inputfield.cpp
+	"global.h"
+
+1445104291 source:d:\documents\programing\juicyplebs-somethingwithpotato\src\rguil\rguil.cpp
+	"rGUIl.h"
+
+1445104102 source:d:\documents\programing\juicyplebs-somethingwithpotato\src\rguil\scrollablearea.cpp
+	"global.h"
+
+1445104108 source:d:\documents\programing\juicyplebs-somethingwithpotato\src\rguil\scroolbar.cpp
+	"global.h"
+
+1445104111 source:d:\documents\programing\juicyplebs-somethingwithpotato\src\rguil\singlekeyinputfield.cpp
+	"global.h"
+
+1445179209 source:d:\documents\programing\juicyplebs-somethingwithpotato\src\screens\screenabout.cpp
+	"ScreenAbout.h"
+
+1445183625 source:d:\documents\programing\juicyplebs-somethingwithpotato\src\screens\screenmain.cpp
+	"ScreenMain.h"
+
+1445109172 source:d:\documents\programing\juicyplebs-somethingwithpotato\src\screens\screensettings.cpp
+	"ScreenSettings.h"
+
+1445164137 d:\documents\programing\juicyplebs-somethingwithpotato\include\screens\screensettings.h
+	"global.h"
+
+1445185778 d:\documents\programing\juicyplebs-somethingwithpotato\include\screens\screenplay.h
+	"global.h"
+
+1445186229 source:d:\documents\programing\juicyplebs-somethingwithpotato\src\screens\screenplay.cpp
+	"ScreenPlay.h"
+
