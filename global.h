@@ -1,4 +1,6 @@
+//R.K.
 #ifndef GLOBAL_H
+#define GLOBAL_H
 
 //Other includes
 #include <iostream>
@@ -49,5 +51,4 @@ namespace global
 
 extern inline int error_message(std::string error_string);
 
-#define GLOBAL_H
 #endif // GLOBAL_H

@@ -1,3 +1,4 @@
+//R.K.
 #include "global.h"
 #include "include/Screens/ScreenMain.h"
 
@@ -158,11 +159,10 @@ int main()
             redraw = false;
             al_clear_to_color(al_map_rgb(0,0,0));
 
-            TICK_CALC_START
+
             /**Draw and compute here*/
             SCMain->Print();
             /**---------------------*/
-            TICK_CALC_END
 
             #ifdef _FPS
             counter++;

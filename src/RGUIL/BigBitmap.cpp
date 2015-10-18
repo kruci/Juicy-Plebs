@@ -1,3 +1,4 @@
+//R.K.
 #include "global.h"
 
 BigBitmap::BigBitmap(std::string bitmap_to_load, float sector_width, float sector_height) : region_size_w(sector_width), region_size_h(sector_height)

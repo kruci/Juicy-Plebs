@@ -1,3 +1,4 @@
+//R.K.
 #include "global.h"
 
 ClickableText::ClickableText(std::string normal_font, std::string bold_font, int x, int y, int font_height, ALLEGRO_COLOR text_color, std::string text_string)

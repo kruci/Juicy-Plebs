@@ -1,3 +1,4 @@
+//R.K.
 #include "global.h"
 
 Button::Button()

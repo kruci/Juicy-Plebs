@@ -1,3 +1,4 @@
+//R.K.
 #include "global.h"
 
 ScroolBar::ScroolBar(int vissible_area_height, int full_area_height, int event_area_x, int even_area_y, int event_area_width, int event_area_height,

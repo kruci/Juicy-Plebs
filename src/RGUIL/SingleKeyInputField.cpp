@@ -1,3 +1,4 @@
+//R.K.
 #include "global.h"
 
 SingleKeyInputField::SingleKeyInputField(std::string font_path, int al_key_code, int x, int y, int width, int height,

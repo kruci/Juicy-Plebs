@@ -1,7 +1,9 @@
+//R.K.
 #ifndef SCREENPLAY_H
 #define SCREENPLAY_H
 
 #include "global.h"
+#include "include/Saves/GameSave.h"
 
 class ScreenPlay
 {
@@ -16,9 +18,13 @@ private:
 
     ScrollableArea *scba = nullptr;
     ALLEGRO_FONT * n_font = nullptr;
+    ALLEGRO_FONT * m_font = nullptr;
     InputField *inpf = nullptr;
 
+    GameSave *gms = nullptr;
+
     bool is_any_button_clicked();
+    bool scan_save_files();
 public:
     ScreenPlay(Button *ext_b);
     virtual ~ScreenPlay();

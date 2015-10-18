@@ -1,3 +1,4 @@
+//R.K.
 #include "ScreenAbout.h"
 
 ScreenAbout::ScreenAbout(Button *ext_b) : but(ext_b)

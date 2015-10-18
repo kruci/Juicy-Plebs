@@ -1,3 +1,4 @@
+//R.K.
 #ifndef SCREENABOUT_H
 #define SCREENABOUT_H
 
