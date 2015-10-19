@@ -17,12 +17,16 @@
 					<Add option="-g" />
 					<Add directory="../JuicyPlebs-SomethingWithPotato" />
 					<Add directory="include/Screens" />
+					<Add directory="../Juicy-Plebs" />
+					<Add directory="include/Saves" />
 				</Compiler>
 				<Linker>
 					<Add option="-pg" />
 					<Add directory="../JuicyPlebs-SomethingWithPotato" />
 					<Add directory="src/Screens" />
 					<Add directory="src/RGUIL" />
+					<Add directory="../Juicy-Plebs" />
+					<Add directory="src/Saves" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -48,6 +52,7 @@
 			<Add option="-Wall" />
 		</Compiler>
 		<Unit filename="global.h" />
+		<Unit filename="include/Saves/GameSave.h" />
 		<Unit filename="include/Screens/ScreenAbout.h" />
 		<Unit filename="include/Screens/ScreenMain.h" />
 		<Unit filename="include/Screens/ScreenPlay.h" />
@@ -61,6 +66,7 @@
 		<Unit filename="src/RGUIL/ScroolBar.cpp" />
 		<Unit filename="src/RGUIL/SingleKeyInputField.cpp" />
 		<Unit filename="src/RGUIL/rGUIl.cpp" />
+		<Unit filename="src/Saves/GameSave.cpp" />
 		<Unit filename="src/Screens/ScreenAbout.cpp" />
 		<Unit filename="src/Screens/ScreenMain.cpp" />
 		<Unit filename="src/Screens/ScreenPlay.cpp" />
