@@ -19,6 +19,9 @@ namespace global
 
     bool loop = true;
     bool audio = true;
+    bool play = false;
+
+    GameSave *save = nullptr;
 }
 
 inline int error_message(std::string error_string)
@@ -120,6 +123,7 @@ int main()
 
     rguil::mouse_state = &global::mouse_state;
 
+    global::save = new GameSave();
     ScreenMain *SCMain = new ScreenMain();
 
     /**Main loop*/
@@ -172,6 +176,8 @@ int main()
         }
     }
     delete SCMain;
+    delete global::save;
+
     al_destroy_timer(timer);
     al_destroy_display(display);
     al_destroy_event_queue(event_queue);

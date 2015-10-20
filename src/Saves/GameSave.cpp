@@ -21,7 +21,7 @@ bool GameSave::Create(std::string filename, std::string player_name)
     al_set_config_value(gamesave, "Player", "Mission", std::to_string(1).c_str());
 
     al_add_config_section(gamesave, "Items");
-    al_save_config_file(filename.c_str(), gamesave);
+    std::cout << al_save_config_file(filename.c_str(), gamesave) << std::endl;
 
     return true;
 }

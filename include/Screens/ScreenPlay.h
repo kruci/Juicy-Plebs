@@ -23,6 +23,8 @@ private:
 
     GameSave *gms = nullptr;
 
+    std::vector<std::string> savefiles;
+
     bool is_any_button_clicked();
     bool scan_save_files();
 public:

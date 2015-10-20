@@ -48,6 +48,11 @@ ScreenMain::~ScreenMain()
 
 void ScreenMain::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
 {
+    if(global::play == true)
+    {
+
+        return;
+    }
 
     if(is_any_button_clicked() == false)
     {
@@ -112,6 +117,12 @@ void ScreenMain::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
 
 void ScreenMain::Print()
 {
+    if(global::play == true)
+    {
+
+        return;
+    }
+
     if(buttons[PLAY]->is_button_clicked() == true)
     {
         SCPlay->Print();

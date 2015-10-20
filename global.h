@@ -30,6 +30,8 @@
 #define TICK_CALC_START clock_t __tick_calc_cl = clock();
 #define TICK_CALC_END std::cout << clock() - __tick_calc_cl << std::endl;
 
+class GameSave;
+
 namespace global
 {
     extern float FPS;
@@ -47,6 +49,9 @@ namespace global
 
     extern bool loop;
     extern bool audio;
+    extern bool play;
+
+    extern GameSave *save;
 }
 
 extern inline int error_message(std::string error_string);

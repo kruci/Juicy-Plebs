@@ -26,6 +26,12 @@ ScreenPlay::ScreenPlay(Button *ext_b) : but(ext_b)
     std::string dum;
     int a = 0;
     ALLEGRO_FS_ENTRY* dir = al_create_fs_entry("saves/");
+
+    if(al_open_directory(dir) == false)
+    {
+        al_make_directory("saves/");
+    }
+
     if(al_open_directory(dir))
     {
         ALLEGRO_FS_ENTRY* file;
@@ -37,6 +43,7 @@ ScreenPlay::ScreenPlay(Button *ext_b) : but(ext_b)
                 continue;
             }
             gms->Load(dum);
+            savefiles.push_back(dum);
 
             scba->AddText(5, a * 100 +10, gms->Get_player_name(), al_map_rgb(255,215,0), &n_font);
             scba->AddButton("resources/fonts/Calibri.ttf", 400, a * 100 + 60, 75, 30, "Load", al_map_rgb(0,0,139));
@@ -65,6 +72,8 @@ ScreenPlay::~ScreenPlay()
     }
     buttons.clear();
 
+    savefiles.clear();
+
     if(scba != nullptr)
         delete scba;
 
@@ -77,6 +86,8 @@ ScreenPlay::~ScreenPlay()
 
 void ScreenPlay::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
 {
+    int hlp = 0;
+
     if(is_any_button_clicked() == false)
     {
         scba->Input(event, xscale, yscale);
@@ -109,8 +120,17 @@ void ScreenPlay::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
         char bff2[20] = {0};
         strftime(bff2,20, "%D %X",timeseed);
         std::string s = bff2;
-        gms->Create( s2,"Save " + s );
-        gms->Save();
+
+        global::save->Create( s2,"Save " + s );
+        global::save->Save();
+        /*gms->Create( s2,"Save " + s );
+        gms->Save();*/
+        global::play = true;
+    }
+    else if( (hlp = scba->What_button_is_clicked()) != 999)
+    {
+        global::save->Load(savefiles[hlp]);
+        global::play = true;
     }
 
 
@@ -143,13 +163,21 @@ bool ScreenPlay::is_any_button_clicked()
 
 bool ScreenPlay::scan_save_files()
 {
-    //reduntant?
+    //reduntant finction?
     if(gms == nullptr)
         gms = new GameSave();
+
+    savefiles.clear();
 
     std::string dum;
     int a = 0;
     ALLEGRO_FS_ENTRY* dir = al_create_fs_entry("saves/");
+
+    if(al_open_directory(dir) == false)
+    {
+        al_make_directory("saves/");
+    }
+
     if(al_open_directory(dir))
     {
         ALLEGRO_FS_ENTRY* file;
@@ -161,6 +189,7 @@ bool ScreenPlay::scan_save_files()
                 continue;
             }
             gms->Load(dum);
+            savefiles.push_back(dum);
 
             scba->AddText(5, a * 100 +10, gms->Get_player_name(), al_map_rgb(255,215,0), &n_font);
             scba->AddButton("resources/fonts/Calibri.ttf", 400, a * 100 + 60, 75, 30, "Load", al_map_rgb(0,0,139));
