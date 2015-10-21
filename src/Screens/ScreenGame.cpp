@@ -34,8 +34,10 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
 
 void ScreenGame::Print()
 {
+    al_clear_to_color(al_map_rgb(0,0,35));
     if(cutscene_playing == true)
     {
+        al_clear_to_color(al_map_rgb(0,0,85));
         //cutsecene->Print();
         cutscene_button->Print();
         return;

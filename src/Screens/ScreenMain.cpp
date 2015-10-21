@@ -50,8 +50,21 @@ void ScreenMain::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
 {
     if(global::play == true)
     {
+        if(SCGame == nullptr)
+        {
+            SCGame = new ScreenGame();
+        }
+
+        SCGame->Input(event, xscale, yscale);
 
         return;
+    }
+    else
+    {
+        if(SCGame != nullptr)
+        {
+            delete SCGame;
+        }
     }
 
     if(is_any_button_clicked() == false)
@@ -119,16 +132,32 @@ void ScreenMain::Print()
 {
     if(global::play == true)
     {
+        if(SCGame == nullptr)
+        {
+            SCGame = new ScreenGame();
+        }
+
+        SCGame->Print();
 
         return;
     }
 
     if(buttons[PLAY]->is_button_clicked() == true)
     {
+        if(SCPlay == nullptr)
+        {
+            SCPlay = new ScreenPlay(buttons[PLAY]);
+        }
+
         SCPlay->Print();
     }
     else if(buttons[ABOUT]->is_button_clicked() == true)
     {
+        if(SCAbout == nullptr)
+        {
+            SCAbout = new ScreenAbout(buttons[ABOUT]);
+        }
+
         SCAbout->Print();
     }
     else
