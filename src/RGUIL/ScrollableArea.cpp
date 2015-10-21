@@ -201,14 +201,21 @@ bool ScrollableArea::AddRectangle_on_top(int x, int y, int width, int height, in
 
 bool ScrollableArea::Input(ALLEGRO_EVENT &ev, float &scalex, float &scaley)
 {
+    int scbch1 = scbar->change;
+    bool chancor = false;
     scbar->Input(ev, scalex, scaley);
+
+    if(scbch1 != scbar->change)
+        chancor = true;
 
     if(rguil::mouse_state->x >= x1*scalex && rguil::mouse_state->x <= x2*scalex &&
     rguil::mouse_state->y >= y1*scaley && rguil::mouse_state->y <= y2*scaley)
     {
         for(int a = 0; a < (int)buttons.size(); a++)
         {
-            buttons[a]->change_coords(buttons[a]->origin_x1, buttons[a]->origin_y1 - scbar->change, buttons[a]->origin_x2, buttons[a]->origin_y2 - scbar->change);
+            if(chancor == true)
+                buttons[a]->change_coords(buttons[a]->origin_x1, buttons[a]->origin_y1 - scbar->change, buttons[a]->origin_x2, buttons[a]->origin_y2 - scbar->change);
+
             buttons[a]->Input(ev, scalex, scaley);
         }
     }

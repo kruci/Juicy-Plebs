@@ -42,6 +42,8 @@ ScreenMain::~ScreenMain()
         delete SCAbout;
     if(SCPlay != nullptr)
         delete SCPlay;
+    if(SCGame != nullptr)
+        delete SCGame;
 
     delete Musicb;
 }

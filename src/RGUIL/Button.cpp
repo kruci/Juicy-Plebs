@@ -309,13 +309,10 @@ int Button::Get_height()
 
 bool Button::change_coords(int new_x1, int new_y1, int new_x2, int new_y2)
 {
-    x1 = new_x1;
-    y1 = new_y1;
+    x = x1 = new_x1;
+    y = y1 = new_y1;
     x2 = new_x2;
     y2 = new_y2;
-
-    x = x1;
-    y = y1;
 
     if(as_bitmap != nullptr)
     {

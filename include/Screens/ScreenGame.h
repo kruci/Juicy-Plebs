@@ -3,6 +3,7 @@
 #define SCREENGAME_H
 
 #include "global.h"
+#include "include/Screens/ScreenIntro.h"
 
 class ScreenGame
 {
@@ -12,6 +13,8 @@ private:
 
     bool paused = false;
 public:
+    ScreenIntro * SCIntro = nullptr;
+
     ScreenGame();
     virtual ~ScreenGame();
 

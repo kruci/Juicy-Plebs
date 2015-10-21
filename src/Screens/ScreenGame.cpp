@@ -4,12 +4,17 @@
 ScreenGame::ScreenGame()
 {
     cutscene_button = new Button("resources/fonts/Calibri.ttf", 1300, global::dHeight -70, 1300 + 120, global::dHeight -70 + 50, "Skip", al_map_rgb(0,0,128));
+
+    SCIntro = new ScreenIntro(&cutscene_playing);
 }
 
 ScreenGame::~ScreenGame()
 {
     if(cutscene_button != nullptr)
         delete cutscene_button;
+
+    if(SCIntro != nullptr)
+        delete SCIntro;
 }
 
 void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
@@ -37,8 +42,7 @@ void ScreenGame::Print()
     al_clear_to_color(al_map_rgb(0,0,35));
     if(cutscene_playing == true)
     {
-        al_clear_to_color(al_map_rgb(0,0,85));
-        //cutsecene->Print();
+        SCIntro->Print();
         cutscene_button->Print();
         return;
     }

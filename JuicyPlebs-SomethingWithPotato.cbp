@@ -61,6 +61,7 @@
 		<Unit filename="include/Saves/GameSave.h" />
 		<Unit filename="include/Screens/ScreenAbout.h" />
 		<Unit filename="include/Screens/ScreenGame.h" />
+		<Unit filename="include/Screens/ScreenIntro.h" />
 		<Unit filename="include/Screens/ScreenMain.h" />
 		<Unit filename="include/Screens/ScreenPlay.h" />
 		<Unit filename="main.cpp" />
@@ -76,6 +77,7 @@
 		<Unit filename="src/Saves/GameSave.cpp" />
 		<Unit filename="src/Screens/ScreenAbout.cpp" />
 		<Unit filename="src/Screens/ScreenGame.cpp" />
+		<Unit filename="src/Screens/ScreenIntro.cpp" />
 		<Unit filename="src/Screens/ScreenMain.cpp" />
 		<Unit filename="src/Screens/ScreenPlay.cpp" />
 		<Extensions>
