@@ -1,6 +1,9 @@
 //R.K.
 #include "global.h"
 #include "include/Screens/ScreenMain.h"
+#include "include/Audio/AudioHandler.h"
+
+#define _SOUND_TEST
 
 namespace global
 {
@@ -22,6 +25,7 @@ namespace global
     bool play = false;
 
     GameSave *save = nullptr;
+    AudioHandler *audio_player = nullptr;
 }
 
 inline int error_message(std::string error_string)
@@ -130,6 +134,15 @@ int main()
 
     rguil::mouse_state = &global::mouse_state;
 
+    global::audio_player = new AudioHandler(10);
+
+    #ifdef _SOUND_TEST
+    ALLEGRO_SAMPLE *s = al_load_sample("resources/music/Fuck_This_Shit_Im_Out.wav");
+    ALLEGRO_SAMPLE_INSTANCE *si = al_create_sample_instance(s);
+    global::audio_player->Play_sample_instance(&si, ALLEGRO_PLAYMODE_LOOP);
+    #endif // _SOUND_TEST
+
+
     global::save = new GameSave();
     ScreenMain *SCMain = new ScreenMain();
 
@@ -153,6 +166,15 @@ int main()
         /**Take event input here*/
         SCMain->Input(ev, global::xscale, global::yscale);
         /**---------------------*/
+
+        if(global::audio == false)
+        {
+            global::audio_player->Mute_sample_instances(true);
+        }
+        else if(al_get_mixer_playing(al_get_default_mixer()) == false)
+        {
+            global::audio_player->Mute_sample_instances(false);
+        }
 
         #ifdef _FPS
         tsttme2 = time(&tsttme2);
@@ -182,8 +204,15 @@ int main()
             al_flip_display();
         }
     }
+    #ifdef _SOUND_TEST
+    global::audio_player->Stop_sample_instances();
+    al_destroy_sample_instance(si);
+    al_destroy_sample(s);
+    #endif // _SOUND_TEST
+
     delete SCMain;
     delete global::save;
+    delete global::audio_player;
 
     al_destroy_timer(timer);
     al_destroy_display(display);
