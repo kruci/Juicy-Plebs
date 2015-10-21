@@ -10,7 +10,7 @@ class ScreenPlay
 private:
     ALLEGRO_BITMAP *background = nullptr;
 
-    enum SPbutton_names{BACK = 0, NEWGAME, OK, BACK2};
+    enum SPbutton_names{BACK = 0, NEWGAME, OK};
 
     std::vector<Button *> buttons;
 
@@ -24,6 +24,7 @@ private:
     GameSave *gms = nullptr;
 
     std::vector<std::string> savefiles;
+    bool couldnot_load_savefile = false;
 
     bool is_any_button_clicked();
     bool scan_save_files();

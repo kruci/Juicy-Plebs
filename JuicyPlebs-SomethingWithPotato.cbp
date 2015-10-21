@@ -16,9 +16,10 @@
 					<Add option="-pg" />
 					<Add option="-g" />
 					<Add directory="../JuicyPlebs-SomethingWithPotato" />
-					<Add directory="include/Screens" />
 					<Add directory="../Juicy-Plebs" />
+					<Add directory="include/Screens" />
 					<Add directory="include/Saves" />
+					<Add directory="../Juicy-Plebs-master" />
 				</Compiler>
 				<Linker>
 					<Add option="-pg" />
@@ -41,6 +42,7 @@
 					<Add directory="../Juicy-Plebs" />
 					<Add directory="include/Screens" />
 					<Add directory="include/Saves" />
+					<Add directory="../Juicy-Plebs-master" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -58,6 +60,7 @@
 		<Unit filename="global.h" />
 		<Unit filename="include/Saves/GameSave.h" />
 		<Unit filename="include/Screens/ScreenAbout.h" />
+		<Unit filename="include/Screens/ScreenGame.h" />
 		<Unit filename="include/Screens/ScreenMain.h" />
 		<Unit filename="include/Screens/ScreenPlay.h" />
 		<Unit filename="main.cpp" />
@@ -72,6 +75,7 @@
 		<Unit filename="src/RGUIL/rGUIl.cpp" />
 		<Unit filename="src/Saves/GameSave.cpp" />
 		<Unit filename="src/Screens/ScreenAbout.cpp" />
+		<Unit filename="src/Screens/ScreenGame.cpp" />
 		<Unit filename="src/Screens/ScreenMain.cpp" />
 		<Unit filename="src/Screens/ScreenPlay.cpp" />
 		<Extensions>

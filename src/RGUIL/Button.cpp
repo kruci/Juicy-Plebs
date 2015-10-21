@@ -99,6 +99,11 @@ Button::~Button()
 
 bool Button::Print()
 {
+    if(print_active == false)
+    {
+        return true;
+    }
+
     if(clicking == true)
     {
         al_draw_filled_rounded_rectangle(x1, y1, x2, y2, 5.0f, 5.0f, color);
@@ -324,4 +329,9 @@ bool Button::change_coords(int new_x1, int new_y1, int new_x2, int new_y2)
 bool Button::Active(bool true_or_false)
 {
     return active = true_or_false;
+}
+
+bool Button::Print_active(bool true_or_false)
+{
+    return print_active = true_or_false;
 }

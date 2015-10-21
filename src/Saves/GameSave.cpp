@@ -14,6 +14,16 @@ GameSave::~GameSave()
 
 bool GameSave::Create(std::string filename, std::string player_name)
 {
+    /**check if save dir is still here*/
+    ALLEGRO_FS_ENTRY* dir = al_create_fs_entry(SAVE_PATH);
+
+    if(al_open_directory(dir) == false)
+    {
+        al_make_directory(SAVE_PATH);
+    }
+    al_destroy_fs_entry(dir);
+    //---------------------------------
+
     file_name = filename;
     gamesave = al_create_config();
     al_add_config_section(gamesave, "Player");
@@ -21,7 +31,7 @@ bool GameSave::Create(std::string filename, std::string player_name)
     al_set_config_value(gamesave, "Player", "Mission", std::to_string(1).c_str());
 
     al_add_config_section(gamesave, "Items");
-    std::cout << al_save_config_file(filename.c_str(), gamesave) << std::endl;
+    al_save_config_file(filename.c_str(), gamesave);
 
     return true;
 }
@@ -31,21 +41,33 @@ bool GameSave::Load(std::string filename)
     file_name = filename;
 
     if(gamesave != nullptr)
-        al_destroy_config(gamesave);
-
-    gamesave = al_load_config_file(filename.c_str());
-
-    if(gamesave == nullptr)
     {
-        //Create(filename, "Whyyy?!");
+        al_destroy_config(gamesave);
+        gamesave = nullptr;
+    }
+
+    if( (gamesave = al_load_config_file(filename.c_str())) == nullptr)
+    {
         return false;
     }
+
+    //std::cout << al_get_config_value(gamesave, "Player", "Name") << std::endl;
 
     return true;
 }
 
 bool GameSave::Save()
 {
+    /**check if save dir is still here*/
+    ALLEGRO_FS_ENTRY* dir = al_create_fs_entry(SAVE_PATH);
+
+    if(al_open_directory(dir) == false)
+    {
+        al_make_directory(SAVE_PATH);
+    }
+    al_destroy_fs_entry(dir);
+    //---------------------------------
+
     if(gamesave != nullptr)
         al_save_config_file(file_name.c_str(), gamesave);
 

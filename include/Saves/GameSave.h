@@ -4,6 +4,8 @@
 
 #include "global.h"
 
+#define SAVE_PATH "saves/"
+
 class GameSave
 {
     private:

@@ -29,6 +29,13 @@ inline int error_message(std::string error_string)
     return al_show_native_message_box(al_get_current_display(), "ERROR", "", error_string.c_str(), nullptr, ALLEGRO_MESSAGEBOX_ERROR);
 }
 
+inline int fatal_error_message(std::string error_string)
+{
+    int a = al_show_native_message_box(al_get_current_display(), "ERROR", "", error_string.c_str(), nullptr, ALLEGRO_MESSAGEBOX_ERROR);
+    global::loop = false;
+    return a;
+}
+
 // error codes: 33 - initialization of Allegro failed
 //              44 - allegro is loaded, something fucked up while using Allegro
 

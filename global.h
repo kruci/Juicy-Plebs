@@ -55,5 +55,6 @@ namespace global
 }
 
 extern inline int error_message(std::string error_string);
+extern inline int fatal_error_message(std::string error_string);
 
 #endif // GLOBAL_H

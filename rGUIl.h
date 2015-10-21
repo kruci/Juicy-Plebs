@@ -58,6 +58,7 @@ protected:
     int image_width;
     int image_height;
     bool active = true;
+    bool print_active = true;
 
 public:
     ALLEGRO_BITMAP *bmp = nullptr;
@@ -85,6 +86,7 @@ public:
     int Get_width();
     int Get_height();
     bool Active(bool true_or_false);
+    bool Print_active(bool true_or_false);
 
     bool change_coords(int new_x1, int new_y1, int new_x2, int new_y2);
 };

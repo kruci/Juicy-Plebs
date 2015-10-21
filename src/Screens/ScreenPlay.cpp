@@ -3,20 +3,25 @@
 #include <chrono>
 #include <random>
 
+#define SCREENPLAY_NMB 3  //number of buttons
+
 ScreenPlay::ScreenPlay(Button *ext_b) : but(ext_b)
 {
     n_font = al_load_font("resources/fonts/Asimov.otf",40,0);
     m_font = al_load_font("resources/fonts/Calibri.ttf",30,0);
 
-    std::string bnames[4] = {"Back", "New game"};
+    std::string bnames[SCREENPLAY_NMB] = {"Back", "New game", "OK"};
 
-    int bpoz[4][4] = {  {1300, global::dHeight -70, 120, 50},
-                        { (global::dWidth-120)/2, global::dHeight -70, 120, 50},    };
+    int bpoz[SCREENPLAY_NMB][4] = {  {1300, global::dHeight -70, 120, 50},
+                                     {(global::dWidth-120)/2, global::dHeight -70, 120, 50},
+                                     {(global::dWidth-120)/2, (global::dHeight-50)/2 +45, 120, 50}  };
 
-    for(int a = 0;a < 2;a++)
+    for(int a = 0;a < SCREENPLAY_NMB;a++)
     {
         buttons.push_back(new Button("resources/fonts/Calibri.ttf", bpoz[a][0], bpoz[a][1], bpoz[a][0] + bpoz[a][2],bpoz[a][1] + bpoz[a][3], bnames[a], al_map_rgb(0,0,128)));
     }
+    buttons[OK]->Active(false);
+    buttons[OK]->Print_active(false);
 
     scba = new ScrollableArea(((float)global::dWidth - 500.0f)/2.0f ,100, 500 ,global::dHeight-200);
     scba->background_col = al_map_rgba(0,0,0,128);
@@ -88,6 +93,19 @@ void ScreenPlay::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
 {
     int hlp = 0;
 
+    if(couldnot_load_savefile == true)
+    {
+        if(buttons[OK]->Input(event, xscale, yscale) == 2)
+        {
+            buttons[OK]->unclick();
+            buttons[OK]->Active(false);
+            buttons[OK]->Print_active(false);
+            couldnot_load_savefile = false;
+            scan_save_files();
+        }
+        return;
+    }
+
     if(is_any_button_clicked() == false)
     {
         scba->Input(event, xscale, yscale);
@@ -123,13 +141,18 @@ void ScreenPlay::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
 
         global::save->Create( s2,"Save " + s );
         global::save->Save();
-        /*gms->Create( s2,"Save " + s );
-        gms->Save();*/
         global::play = true;
     }
     else if( (hlp = scba->What_button_is_clicked()) != 999)
     {
-        global::save->Load(savefiles[hlp]);
+        if(global::save->Load(savefiles[hlp]) == false)
+        {
+            scba->buttons[hlp]->unclick();
+            couldnot_load_savefile = true;
+            buttons[OK]->Active(true);
+            buttons[OK]->Print_active(true);
+            return;
+        }
         global::play = true;
     }
 
@@ -146,6 +169,19 @@ void ScreenPlay::Print()
     {
             buttons[a]->Print();
     }
+
+    if(couldnot_load_savefile == true)
+    {
+        al_draw_filled_rectangle(0,0,global::dWidth, global::dHeight, al_map_rgba(0,0,0,150));
+        al_draw_filled_rectangle(400, global::dHeight/2 - 100, global::dWidth - 400, global::dHeight/2 + 100, al_map_rgba(100, 100, 100, 230));
+        al_draw_rectangle(400, global::dHeight/2 - 100, global::dWidth - 400, global::dHeight/2 + 100, al_map_rgb(0,0,150), 2);
+
+        al_draw_text(n_font, al_map_rgb(255,255,255), 400 + (global::dWidth- 800 - al_get_text_width(n_font, "Could not load safe file"))/2 ,
+                     global::dHeight/2 - 80, 0, "Could not load safe file");
+        buttons[OK]->Print();
+    }
+
+    return;
 }
 
 bool ScreenPlay::is_any_button_clicked()
