@@ -38,13 +38,17 @@
 					<Add option="-O2" />
 					<Add option="-std=c++11" />
 					<Add directory="../JuicyPlebs-SomethingWithPotato" />
+					<Add directory="../Juicy-Plebs" />
 					<Add directory="include/Screens" />
+					<Add directory="include/Saves" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
 					<Add directory="../JuicyPlebs-SomethingWithPotato" />
+					<Add directory="../Juicy-Plebs" />
 					<Add directory="src/RGUIL" />
 					<Add directory="src/Screens" />
+					<Add directory="src/Saves" />
 				</Linker>
 			</Target>
 		</Build>
