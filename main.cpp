@@ -22,6 +22,7 @@ namespace global
 
     bool loop = true;
     bool audio = true;
+    bool sound_card = true;
     bool play = false;
 
     GameSave *save = nullptr;
@@ -61,12 +62,14 @@ int main()
         {
             error_message("al_init_acodec_addon() - cant initialize audio codec");
             global::audio = false;
+            global::sound_card == false;
         }
     }
     else
     {
         error_message("al_install_audio() - cant found sound device");
         global::audio = false;
+        global::sound_card == false;
     }
 
     /**Some allegro variables*/
@@ -81,7 +84,7 @@ int main()
     al_get_monitor_info(0, &mon_info);
     global::sHeight = mon_info.y2 - mon_info.y1; //gets monitor size in pixels
     global::sWidth = mon_info.x2 - mon_info.x1;
-    global::aspectratio = round( ((float)global::sWidth / (float)global::sHeight) * 100) / 100; //gets aspectratio
+    global::aspectratio = round( ((float)global::sWidth / (float)global::sHeight) * 100.0f) / 100.0f; //gets aspectratio
     if(global::aspectratio == 1.78f){global::xratio = 16; global::yratio = 9;}      // 16:9 screen ration
     else if(global::aspectratio == 1.6f){global::xratio = 16; global::yratio = 10;} // 16:10
     else if(global::aspectratio == 1.33f){global::xratio = 4; global::yratio = 3;}  // 4:3
@@ -112,6 +115,8 @@ int main()
     else
     {
         float scale_backup_plan = (global::xscale > global::yscale ? global::yscale : global::xscale);
+        global::xscale = scale_backup_plan;
+        global::yscale = scale_backup_plan;
         al_scale_transform(&global::trans, scale_backup_plan, scale_backup_plan);
     }
     al_use_transform(&global::trans);
