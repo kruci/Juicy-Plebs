@@ -22,6 +22,7 @@
 #include "rGUIl.h"
 
 //this project
+#include "include/Audio/AudioHandler.h"
 
 //defines
 #define DEGTORAD(deg) ((float)deg * ALLEGRO_PI)/180.0f
@@ -31,6 +32,7 @@
 #define TICK_CALC_END std::cout << clock() - __tick_calc_cl << std::endl;
 
 class GameSave;
+class AudioHandler;
 
 namespace global
 {
@@ -49,9 +51,11 @@ namespace global
 
     extern bool loop;
     extern bool audio;
+    extern bool sound_card;
     extern bool play;
 
     extern GameSave *save;
+    extern AudioHandler *audio_player;
 }
 
 extern inline int error_message(std::string error_string);

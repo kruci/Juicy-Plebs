@@ -71,7 +71,7 @@ ScreenPlay::~ScreenPlay()
     if(m_font != nullptr)
         al_destroy_font(m_font);
 
-    for(int a = 0;a < buttons.size();a++)
+    for(int a = 0;a < (int)buttons.size();a++)
     {
         delete buttons[a];
     }
@@ -110,7 +110,7 @@ void ScreenPlay::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
     {
         scba->Input(event, xscale, yscale);
 
-        for(int a = 0;a < buttons.size();a++)
+        for(int a = 0;a < (int)buttons.size();a++)
         {
             buttons[a]->Input(event, xscale, yscale);
         }
@@ -165,7 +165,7 @@ void ScreenPlay::Print()
     al_clear_to_color(al_map_rgb(0,125,0));
     scba->Print();
 
-    for(int a = 0;a < buttons.size();a++)
+    for(int a = 0;a < (int)buttons.size();a++)
     {
             buttons[a]->Print();
     }
@@ -186,7 +186,7 @@ void ScreenPlay::Print()
 
 bool ScreenPlay::is_any_button_clicked()
 {
-    for(int a = 0;a < buttons.size();a++)
+    for(int a = 0;a < (int)buttons.size();a++)
     {
         if(buttons[a]->is_button_clicked() == true)
         {

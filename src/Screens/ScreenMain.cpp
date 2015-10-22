@@ -32,7 +32,7 @@ ScreenMain::~ScreenMain()
     if(background != nullptr)
         al_destroy_bitmap(background);
 
-    for(int a = 0;a < buttons.size();a++)
+    for(int a = 0;a < (int)buttons.size();a++)
     {
         delete buttons[a];
     }
@@ -100,7 +100,7 @@ void ScreenMain::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
             }
         }
 
-        for(int a = 0;a < buttons.size();a++)
+        for(int a = 0;a < (int)buttons.size();a++)
         {
             buttons[a]->Input(event, xscale, yscale);
         }
@@ -167,7 +167,7 @@ void ScreenMain::Print()
         //al_draw_bitmap(background,0,0,0);
         Musicb->Print();
 
-        for(int a = 0;a < buttons.size();a++)
+        for(int a = 0;a < (int)buttons.size();a++)
         {
             buttons[a]->Print();
         }
@@ -178,7 +178,7 @@ void ScreenMain::Print()
 
 bool ScreenMain::is_any_button_clicked()
 {
-    for(int a = 0;a < buttons.size();a++)
+    for(int a = 0;a < (int)buttons.size();a++)
     {
         if(buttons[a]->is_button_clicked() == true)
         {
