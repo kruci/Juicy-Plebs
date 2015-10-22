@@ -131,8 +131,9 @@ void ScreenPlay::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
         timeseed = localtime(&tt);
         char bff[20] = {0};
 
-        strftime(bff,20, "saves/%S%M%H%e%m%Y",timeseed);
-        std::string s2 = bff;
+        strftime(bff,20, "%S%M%H%e%m%Y",timeseed);
+        std::string s2 = "saves/";
+        s2 += bff;
         s2 += std::to_string(distribution(generator)) + ".sav";
 
         char bff2[20] = {0};
