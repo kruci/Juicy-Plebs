@@ -3,7 +3,7 @@
 #include "include/Screens/ScreenMain.h"
 #include "include/Audio/AudioHandler.h"
 
-#define _SOUND_TEST
+//#define _SOUND_TEST
 
 namespace global
 {
@@ -62,14 +62,14 @@ int main()
         {
             error_message("al_init_acodec_addon() - cant initialize audio codec");
             global::audio = false;
-            global::sound_card == false;
+            global::sound_card = false;
         }
     }
     else
     {
         error_message("al_install_audio() - cant found sound device");
         global::audio = false;
-        global::sound_card == false;
+        global::sound_card = false;
     }
 
     /**Some allegro variables*/

@@ -55,6 +55,7 @@ void ScreenMain::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
         if(SCGame == nullptr)
         {
             SCGame = new ScreenGame();
+            SCGame->Set_mission(global::save->Get_mission_number());
         }
 
         SCGame->Input(event, xscale, yscale);
@@ -137,6 +138,7 @@ void ScreenMain::Print()
         if(SCGame == nullptr)
         {
             SCGame = new ScreenGame();
+            SCGame->Set_mission(global::save->Get_mission_number());
         }
 
         SCGame->Print();

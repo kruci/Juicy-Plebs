@@ -55,3 +55,19 @@ void ScreenGame::Print()
 
     return;
 }
+
+bool ScreenGame::Set_mission(int mission)
+{
+    if(mission == 1)
+    {
+        SCIntro->Reset();
+
+        SCIntro->Add_image("resources/test/zemiak.jpeg",  0.0f,  3.2f, 100, 100);
+        SCIntro->Add_sound("resources/test/naobrazkumozmevidietzemiak.wav",  0.0f,  3.2f);
+
+        SCIntro->Add_image("resources/test/badass_zemiak.jpg",  3.4f,  3.2f, 100, 100);
+        SCIntro->Add_sound("resources/test/naobrazkumozmevidietzemiak_hlboke.wav",  3.4f,  3.2f);
+    }
+
+    return true;
+}
