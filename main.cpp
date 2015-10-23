@@ -107,6 +107,7 @@ int main()
 
 
     /**Transformation*/
+    float bckup_x_trans = 0,bckup_y_trans = 0;
     al_identity_transform(&global::trans);
     if(supported_ratio == true)
     {
@@ -117,7 +118,13 @@ int main()
         float scale_backup_plan = (global::xscale > global::yscale ? global::yscale : global::xscale);
         global::xscale = scale_backup_plan;
         global::yscale = scale_backup_plan;
+        ALLEGRO_TRANSFORM bckup_transofrm;
+        bckup_x_trans = (global::sWidth - global::dWidth*global::xscale)/2;
+        bckup_y_trans = (global::sHeight - global::dHeight*global::yscale)/2;
+        al_translate_transform(&bckup_transofrm, bckup_x_trans, bckup_y_trans);
         al_scale_transform(&global::trans, scale_backup_plan, scale_backup_plan);
+
+        al_compose_transform(&global::trans, &bckup_transofrm);
     }
     al_use_transform(&global::trans);
 
@@ -201,6 +208,14 @@ int main()
             /**Draw and compute here*/
             SCMain->Print();
             /**---------------------*/
+
+            if(supported_ratio == false)
+            {
+                al_draw_filled_rectangle(0,0, global::dWidth, bckup_y_trans, al_map_rgb(0,0,0));//top
+                al_draw_filled_rectangle(0,0, bckup_x_trans, global::dHeight, al_map_rgb(0,0,0));//left
+                al_draw_filled_rectangle(0,global::dHeight, global::dWidth, global::dHeight - bckup_y_trans, al_map_rgb(0,0,0));//botom
+                al_draw_filled_rectangle(global::dWidth,0, global::dWidth - bckup_x_trans, global::dHeight, al_map_rgb(0,0,0));//right
+            }
 
             #ifdef _FPS
             counter++;

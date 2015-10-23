@@ -137,3 +137,13 @@ void ScreenIntro::Reset()
 
     return;
 }
+
+void ScreenIntro::Stop()
+{
+     for(int a = 0;a < (int)sounds.size();a++)
+    {
+        global::audio_player->Stop_sample_instance(&sounds[a]->smplinst);
+    }
+
+    return;
+}

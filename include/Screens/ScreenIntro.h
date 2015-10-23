@@ -46,6 +46,7 @@ public:
 
     void Print();
     void Reset();
+    void Stop();
 
     /** push them in order they will be played */
 

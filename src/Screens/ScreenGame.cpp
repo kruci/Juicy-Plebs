@@ -26,6 +26,7 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
         {
             cutscene_playing = false;
             cutscene_button->unclick();
+            SCIntro->Stop();
         }
         return;
     }
@@ -47,11 +48,18 @@ void ScreenGame::Print()
         return;
     }
 
-    //check if paused, and if not, compute
+    if(paused == false)
+    {
+        //compute
+    }
 
     //print map and entities
     //print GUI
-    //check if print pause
+
+    if(paused == true)
+    {
+        al_draw_filled_rectangle(0,0,global::dHeight, global::dWidth, al_map_rgba(0,0,0,128));
+    }
 
     return;
 }
