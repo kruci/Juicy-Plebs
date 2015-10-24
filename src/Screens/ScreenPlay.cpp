@@ -142,6 +142,7 @@ void ScreenPlay::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
 
         global::save->Create( s2,"Save " + s );
         global::save->Save();
+        but->unclick();
         global::play = true;
     }
     else if( (hlp = scba->What_button_is_clicked()) != 999)
@@ -152,8 +153,10 @@ void ScreenPlay::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
             couldnot_load_savefile = true;
             buttons[OK]->Active(true);
             buttons[OK]->Print_active(true);
+
             return;
         }
+        but->unclick();
         global::play = true;
     }
 

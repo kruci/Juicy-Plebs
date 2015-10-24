@@ -60,13 +60,17 @@ void ScreenMain::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
 
         SCGame->Input(event, xscale, yscale);
 
-        return;
-    }
-    else
-    {
-        if(SCGame != nullptr)
+        if(global::play == false)
         {
-            delete SCGame;
+            if(SCGame != nullptr)
+            {
+                delete SCGame;
+                SCGame = nullptr;
+            }
+        }
+        else
+        {
+            return;
         }
     }
 

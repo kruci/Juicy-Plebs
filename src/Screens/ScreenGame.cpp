@@ -12,6 +12,13 @@ ScreenGame::ScreenGame()
     {
         gui_height = 100;
     }
+
+    player_bmp = al_load_bitmap("resources/graphics/Character.png");
+    if(player_bmp == nullptr)
+        error_message("Could not load image: resources/graphics/Character.png");
+
+    pause_button = new Button("resources/fonts/Calibri.ttf", 1300, global::dHeight -70, 1300 + 120, global::dHeight -70 + 50, "Pause", al_map_rgb(0,0,128));
+    main_menu_button = new Button("resources/fonts/Calibri.ttf", 1300, global::dHeight -70, 1300 + 120, global::dHeight -70 + 50, "Main menu", al_map_rgb(0,0,128));
 }
 
 ScreenGame::~ScreenGame()
@@ -30,6 +37,15 @@ ScreenGame::~ScreenGame()
 
     if(mapdat != nullptr)
         delete mapdat;
+
+    if(pause_button != nullptr)
+        delete pause_button;
+
+    if(main_menu_button != nullptr)
+        delete main_menu_button;
+
+    if(player_bmp != nullptr)
+        al_destroy_bitmap(player_bmp);
 }
 
 void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
@@ -45,6 +61,24 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
         }
         return;
     }
+    else if(paused == true)
+    {
+        if(main_menu_button->Input(event, xscale, yscale) == 2)
+        {
+            global::play = false;
+            return;
+        }
+        if(event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP)
+        {
+            paused = false;
+            pause_button->unclick();
+        }
+    }
+    else if(pause_button->Input(event, xscale, yscale) == 2)
+    {
+        paused = true;
+        return;
+    }
 
     //mapinput
     //gui input
@@ -55,6 +89,11 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
 
 void ScreenGame::Print()
 {
+    if(global::play == false)
+    {
+        return;
+    }
+
     al_clear_to_color(al_map_rgb(0,0,35));
     if(cutscene_playing == true)
     {
@@ -62,8 +101,7 @@ void ScreenGame::Print()
         cutscene_button->Print();
         return;
     }
-
-    if(paused == false)
+    else if(paused == false)
     {
         if(map_draw_x < global::dWidth/2)
         {
@@ -88,10 +126,12 @@ void ScreenGame::Print()
     //print map and entities
     //print GUI
     al_draw_filled_rectangle(0, global::dHeight - gui_height, global::dWidth, global::dHeight, al_map_rgb(88,88,88));
+    pause_button->Print();
 
     if(paused == true)
     {
-        al_draw_filled_rectangle(0,0,global::dHeight, global::dWidth, al_map_rgba(0,0,0,128));
+        al_draw_filled_rectangle(0,0, global::dWidth, global::dHeight, al_map_rgba(0,0,0,185));
+        main_menu_button->Print();
     }
 
     return;
@@ -124,11 +164,22 @@ bool ScreenGame::Set_mission(int mission)
     //add more mission intro code or do universal cfg loader
 
     if(map_bitmap != nullptr)
+    {
         delete map_bitmap;
+        map_bitmap = nullptr;
+    }
+
     if(world != nullptr)
+    {
         delete world;
+        world = nullptr;
+    }
+
     if(mapdat != nullptr)
+    {
         delete mapdat;
+        mapdat = nullptr;
+    }
 
     map_bitmap = new BigBitmap("resources/maps/map" + std::to_string(mission) + ".jpg", 512, 512);
     mapdat = new MapData("resources/maps/map" + std::to_string(mission) + ".map");

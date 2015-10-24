@@ -11,6 +11,8 @@ class ScreenGame
 private:
     bool cutscene_playing = true;
     Button *cutscene_button = nullptr;
+    Button *pause_button = nullptr;
+    Button *main_menu_button = nullptr;
 
     bool paused = false;
 
@@ -19,6 +21,8 @@ private:
 
     signed int gui_height;
     float map_draw_x, map_draw_y;
+
+    ALLEGRO_BITMAP *player_bmp = nullptr;
 public:
     ScreenIntro * SCIntro = nullptr;
     BigBitmap *map_bitmap = nullptr;
