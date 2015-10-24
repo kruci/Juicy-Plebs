@@ -19,6 +19,12 @@ ScreenGame::ScreenGame()
 
     pause_button = new Button("resources/fonts/Calibri.ttf", 1300, global::dHeight -70, 1300 + 120, global::dHeight -70 + 50, "Pause", al_map_rgb(0,0,128));
     main_menu_button = new Button("resources/fonts/Calibri.ttf", 1300, global::dHeight -70, 1300 + 120, global::dHeight -70 + 50, "Main menu", al_map_rgb(0,0,128));
+
+    pause_f = al_load_ttf_font("resources/fonts/Calibri.ttf", 50, 0);
+    if(pause_f != nullptr)
+    {
+
+    }
 }
 
 ScreenGame::~ScreenGame()
@@ -46,6 +52,9 @@ ScreenGame::~ScreenGame()
 
     if(player_bmp != nullptr)
         al_destroy_bitmap(player_bmp);
+
+    if(pause_f != nullptr)
+        al_destroy_font(pause_f);
 }
 
 void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
@@ -131,7 +140,10 @@ void ScreenGame::Print()
     if(paused == true)
     {
         al_draw_filled_rectangle(0,0, global::dWidth, global::dHeight, al_map_rgba(0,0,0,185));
+        al_draw_text(pause_f, al_map_rgb(200,200,200), (global::dWidth - al_get_text_width( pause_f, "Click to unpause"))/2,
+                     (global::dHeight - al_get_font_ascent(pause_f))/2, 0, "Click to unpause");
         main_menu_button->Print();
+
     }
 
     return;

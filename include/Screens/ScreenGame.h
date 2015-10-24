@@ -23,6 +23,7 @@ private:
     float map_draw_x, map_draw_y;
 
     ALLEGRO_BITMAP *player_bmp = nullptr;
+    ALLEGRO_FONT *pause_f = nullptr;
 public:
     ScreenIntro * SCIntro = nullptr;
     BigBitmap *map_bitmap = nullptr;
