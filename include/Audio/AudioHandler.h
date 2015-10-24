@@ -9,6 +9,8 @@ private:
 public:
     ALLEGRO_MIXER *mixer = nullptr;
 
+    std::vector<ALLEGRO_SAMPLE_INSTANCE*> global_sounds;
+
     AudioHandler(int max_souds_at_same_time);
     virtual ~AudioHandler();
 

@@ -17,6 +17,13 @@ AudioHandler::~AudioHandler()
         al_detach_mixer(mixer);
         al_destroy_mixer(mixer);
    }*/
+
+   for(int a = 0; a < global_sounds.size();a++)
+   {
+        al_stop_sample_instance( global_sounds[a]);
+        al_detach_sample_instance( global_sounds[a]);
+   }
+   global_sounds.clear();
 }
 void AudioHandler::Stop_all_samples()
 {

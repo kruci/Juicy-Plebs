@@ -277,6 +277,8 @@ public:
 
 class BigBitmap
 {
+#define _BBDEBUG_FONT "resources/fonts/Calibri.ttf"
+#define _BBDEBUG
 private:
     std::string bitmap_name;
     ALLEGRO_BITMAP *big_bitmap = nullptr;

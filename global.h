@@ -18,6 +18,9 @@
 #include <allegro5/allegro_native_dialog.h>
 #include <allegro5/allegro_memfile.h>
 
+//Box2D
+#include <Box2D.h>
+
 //my fabulous GUI
 #include "rGUIl.h"
 

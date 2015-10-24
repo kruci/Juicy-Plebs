@@ -1,0 +1,17 @@
+[Map]
+map=1
+map_objects=2
+
+[Object_1]
+type=wall
+x1=0
+y1=0
+x2=10
+y2=10
+
+[Object_2]
+type=p_spawn
+x1=2048
+y1=2048
+x2=10
+y2=10

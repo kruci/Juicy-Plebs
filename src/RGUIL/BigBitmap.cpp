@@ -35,7 +35,7 @@ BigBitmap::BigBitmap(std::string bitmap_to_load, float sector_width, float secto
             #ifdef _BBDEBUG
             std::string cont = "["+ std::to_string(h) +","+ std::to_string(w) +"]";
             al_draw_text(dgbf, al_map_rgb(255,0,0),region_size_w/2,region_size_h/2,ALLEGRO_ALIGN_CENTRE,cont.c_str());
-            al_draw_rectangle(0,0,region_size_w, region_size_h, al_map_rgb(255,0,0),0);
+            al_draw_rectangle(0,0,region_size_w, region_size_h, al_map_rgb(255,0,0),2);
             #endif // _BBDEBUG
         }
     }

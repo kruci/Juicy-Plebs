@@ -21,6 +21,8 @@
 					<Add directory="include/Saves" />
 					<Add directory="../Juicy-Plebs-master" />
 					<Add directory="include/Audio" />
+					<Add directory="include" />
+					<Add directory="include/Game" />
 				</Compiler>
 				<Linker>
 					<Add option="-pg" />
@@ -45,6 +47,8 @@
 					<Add directory="include/Saves" />
 					<Add directory="../Juicy-Plebs-master" />
 					<Add directory="include/Audio" />
+					<Add directory="include" />
+					<Add directory="include/Game" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -53,6 +57,7 @@
 					<Add directory="src/RGUIL" />
 					<Add directory="src/Screens" />
 					<Add directory="src/Saves" />
+					<Add directory="src/Game" />
 				</Linker>
 			</Target>
 		</Build>
@@ -61,6 +66,7 @@
 		</Compiler>
 		<Unit filename="global.h" />
 		<Unit filename="include/Audio/AudioHandler.h" />
+		<Unit filename="include/Game/MapData.h" />
 		<Unit filename="include/Saves/GameSave.h" />
 		<Unit filename="include/Screens/ScreenAbout.h" />
 		<Unit filename="include/Screens/ScreenGame.h" />
@@ -70,6 +76,7 @@
 		<Unit filename="main.cpp" />
 		<Unit filename="rGUIl.h" />
 		<Unit filename="src/Audio/AudioHandler.cpp" />
+		<Unit filename="src/Game/MapData.cpp" />
 		<Unit filename="src/RGUIL/BigBitmap.cpp" />
 		<Unit filename="src/RGUIL/Button.cpp" />
 		<Unit filename="src/RGUIL/ClickableText.cpp" />
