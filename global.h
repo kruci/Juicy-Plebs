@@ -28,6 +28,10 @@
 #include "include/Audio/AudioHandler.h"
 
 //defines
+#define PIXELS_METER 100.0f
+#define PIXELS_TO_METERS(p) (float)p/PIXELS_METER
+#define METERS_TO_PIXELS(m) (float)m*PIXELS_METER
+
 #define DEGTORAD(deg) ((float)deg * ALLEGRO_PI)/180.0f
 #define RADTODEG(rad) ((float)rad * 180.0f)/ALLEGRO_PI
 

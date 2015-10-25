@@ -19,6 +19,7 @@ private:
         float t_duration = 0;
         ALLEGRO_SAMPLE *sound = nullptr;
         ALLEGRO_SAMPLE_INSTANCE *smplinst = nullptr;
+        int global_vectro_poz = 0;
         bool play_till_song_end = true;
 
     };

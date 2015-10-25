@@ -24,6 +24,17 @@ private:
 
     ALLEGRO_BITMAP *player_bmp = nullptr;
     ALLEGRO_FONT *pause_f = nullptr;
+
+    struct entity{
+        b2Body *body = nullptr;
+        int type;
+        float hp;
+        float shield;
+        float speed;
+    };
+
+    std::vector<entity*> entities;
+
 public:
     ScreenIntro * SCIntro = nullptr;
     BigBitmap *map_bitmap = nullptr;

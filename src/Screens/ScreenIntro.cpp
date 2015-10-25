@@ -93,6 +93,9 @@ bool ScreenIntro::Add_sound(std::string soundfile, float start_play_at, float pl
 
     max_duration = ( (start_play_at + play_for) > max_duration ? (start_play_at + play_for) : max_duration);
 
+    global::audio_player->global_sounds.push_back(sounds[sounds.size()-1]->smplinst);
+    sounds[sounds.size()-1]->global_vectro_poz = global::audio_player->global_sounds.size()-1;
+
     return true;
 }
 
@@ -122,12 +125,15 @@ void ScreenIntro::Reset()
         global::audio_player->Stop_sample_instance(&sounds[a]->smplinst);
         al_destroy_sample_instance(sounds[a]->smplinst);
         al_destroy_sample(sounds[a]->sound);
+        global::audio_player->global_sounds.erase(global::audio_player->global_sounds.begin() + sounds[a]->global_vectro_poz);
+        delete sounds[a];
     }
     sounds.clear();
 
     for(int a = 0;a < (int)images.size();a++)
     {
         al_destroy_bitmap(images[a]->bitmap);
+        delete images[a];
     }
     images.clear();
 

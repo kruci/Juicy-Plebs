@@ -21,9 +21,9 @@ ScreenGame::ScreenGame()
     main_menu_button = new Button("resources/fonts/Calibri.ttf", 1300, global::dHeight -70, 1300 + 120, global::dHeight -70 + 50, "Main menu", al_map_rgb(0,0,128));
 
     pause_f = al_load_ttf_font("resources/fonts/Calibri.ttf", 50, 0);
-    if(pause_f != nullptr)
+    if(pause_f == nullptr)
     {
-
+        error_message("Could not load font: resources/fonts/Calibri.ttf");
     }
 }
 
@@ -37,9 +37,6 @@ ScreenGame::~ScreenGame()
 
     if(map_bitmap != nullptr)
         delete map_bitmap;
-
-    if(world != nullptr)
-        delete world;
 
     if(mapdat != nullptr)
         delete mapdat;
@@ -55,6 +52,15 @@ ScreenGame::~ScreenGame()
 
     if(pause_f != nullptr)
         al_destroy_font(pause_f);
+
+    for(int a = 0;a < (int)entities.size();a++)
+    {
+        world->DestroyBody(entities[a]->body);
+    }
+    entities.clear();
+
+    if(world != nullptr)
+        delete world;
 }
 
 void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
@@ -112,6 +118,10 @@ void ScreenGame::Print()
     }
     else if(paused == false)
     {
+        world->Step(1.0f/global::FPS, 5, 2); // collisison
+
+
+
         if(map_draw_x < global::dWidth/2)
         {
             map_draw_x = 0;
@@ -162,6 +172,10 @@ bool ScreenGame::Set_mission(int mission)
         al_destroy_font(loading_f);
     }
 
+    for(int a = 0;a < global::audio_player->global_sounds.size();a++)
+    {
+        al_set_sample_instance_gain(global::audio_player->global_sounds[a],0);
+    }
 
     if(mission == 1)
     {
@@ -181,6 +195,12 @@ bool ScreenGame::Set_mission(int mission)
         map_bitmap = nullptr;
     }
 
+    for(int a = 0;a < (int)entities.size();a++)
+    {
+        world->DestroyBody(entities[a]->body);
+    }
+    entities.clear();
+
     if(world != nullptr)
     {
         delete world;
@@ -198,6 +218,8 @@ bool ScreenGame::Set_mission(int mission)
     map_draw_x = mapdat->player_spawm_x - global::dWidth/2;
     map_draw_y = mapdat->player_spawm_y - (global::dHeight - gui_height)/2;
     world = new b2World(b2Vec2(0,0));
+
+    //player
 
 
     return true;

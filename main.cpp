@@ -146,6 +146,7 @@ int main()
     #ifdef _SOUND_TEST
     ALLEGRO_SAMPLE *s = al_load_sample("resources/music/Fuck_This_Shit_Im_Out.wav");
     ALLEGRO_SAMPLE_INSTANCE *si = al_create_sample_instance(s);
+    global::audio_player->global_sounds.push_back(si);
     global::audio_player->Play_sample_instance(&si, ALLEGRO_PLAYMODE_LOOP);
     #endif // _SOUND_TEST
 
@@ -220,6 +221,7 @@ int main()
     }
     #ifdef _SOUND_TEST
     global::audio_player->Stop_sample_instances();
+    global::audio_player->global_sounds.erase(global::audio_player->global_sounds.begin());
     al_destroy_sample_instance(si);
     al_destroy_sample(s);
     #endif // _SOUND_TEST
