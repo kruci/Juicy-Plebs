@@ -71,6 +71,16 @@ void AudioHandler::Stop_sample_instance(ALLEGRO_SAMPLE_INSTANCE **smlpinst)
     return;
 }
 
+void AudioHandler::Mute_sample_instance(ALLEGRO_SAMPLE_INSTANCE **smlpinst)
+{
+     if(global::sound_card == false)
+        return;
+
+    al_set_sample_instance_gain(*smlpinst, 0.0f);
+
+    return;
+}
+
 void AudioHandler::Play_sample_instance(ALLEGRO_SAMPLE_INSTANCE **smlpinst, ALLEGRO_PLAYMODE aplmod = ALLEGRO_PLAYMODE_ONCE)
 {
      if(global::sound_card == false)
@@ -88,7 +98,8 @@ void AudioHandler::Mute_sample_instances(bool true_or_false)
      if(global::sound_card == false)
         return;
 
-    al_set_mixer_playing(al_get_default_mixer(), 1 - true_or_false);
+    //al_set_mixer_playing(al_get_default_mixer(), 1 - true_or_false);
+    al_set_mixer_gain(al_get_default_mixer(), 1 - true_or_false);
 
     return;
 }

@@ -23,8 +23,6 @@ ScreenMain::ScreenMain()
     {
         buttons.push_back(new Button("resources/fonts/Calibri.ttf", bpoz[a][0], bpoz[a][1], bpoz[a][0] + bpoz[a][2],bpoz[a][1] + bpoz[a][3], bnames[a], al_map_rgb(0,0,128)));
     }
-
-    Musicb = new Button("resources/fonts/Calibri.ttf", global::dWidth -60, 20, global::dWidth -60 + 40,20 +40, "", al_map_rgba(0,0,0,0), ( global::audio == true ? MusicON : MusicOFF));
 }
 
 ScreenMain::~ScreenMain()
@@ -44,8 +42,6 @@ ScreenMain::~ScreenMain()
         delete SCPlay;
     if(SCGame != nullptr)
         delete SCGame;
-
-    delete Musicb;
 }
 
 void ScreenMain::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
@@ -85,24 +81,6 @@ void ScreenMain::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
         {
             delete SCPlay;
             SCPlay = nullptr;
-        }
-
-        Musicb->Input(event, xscale, yscale);
-        if(Musicb->is_button_clicked() == true)
-        {
-            Musicb->unclick();
-            global::audio = (global::audio == true ? global::audio = false : global::audio = true);
-
-            if(global::audio == true)
-            {
-                al_destroy_bitmap(Musicb->bmp);
-                Musicb->bmp = al_load_bitmap(MusicON);
-            }
-            else
-            {
-                al_destroy_bitmap(Musicb->bmp);
-                Musicb->bmp = al_load_bitmap(MusicOFF);
-            }
         }
 
         for(int a = 0;a < (int)buttons.size();a++)
@@ -171,7 +149,6 @@ void ScreenMain::Print()
     else
     {
         //al_draw_bitmap(background,0,0,0);
-        Musicb->Print();
 
         for(int a = 0;a < (int)buttons.size();a++)
         {

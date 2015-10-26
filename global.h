@@ -40,6 +40,7 @@
 
 class GameSave;
 class AudioHandler;
+class Button;
 
 namespace global
 {
@@ -63,6 +64,7 @@ namespace global
 
     extern GameSave *save;
     extern AudioHandler *audio_player;
+    extern Button *audio_b;
 }
 
 extern inline int error_message(std::string error_string);

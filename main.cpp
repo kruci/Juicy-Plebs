@@ -6,6 +6,9 @@
 //#define _SOUND_TEST
 #define _FPS
 
+#define MusicON "resources/graphics/m_on.png"
+#define MusicOFF "resources/graphics/m_off.png"
+
 namespace global
 {
     float FPS = 30.0f;
@@ -28,6 +31,7 @@ namespace global
 
     GameSave *save = nullptr;
     AudioHandler *audio_player = nullptr;
+    Button *audio_b = nullptr;
 }
 
 inline int error_message(std::string error_string)
@@ -160,6 +164,9 @@ int main()
 
     global::save = new GameSave();
     ScreenMain *SCMain = new ScreenMain();
+    global::audio_b = new Button("resources/fonts/Calibri.ttf", 1240, global::dHeight -65, 1240 + 40, global::dHeight - 25,
+                                 "", al_map_rgba(0,0,0,0),
+                                 ( global::audio == true ? MusicON : MusicOFF));
 
     /**Main loop*/
     while(global::loop == true)
@@ -179,6 +186,25 @@ int main()
         }
 
         /**Take event input here*/
+        if(global::audio_b->Input(ev, global::xscale, global::yscale) == 2)
+        {
+            global::audio_b->unclick();
+            global::audio = (global::audio == true ? global::audio = false : global::audio = true);
+
+            if(global::audio == true)
+            {
+                al_destroy_bitmap(global::audio_b->bmp);
+                global::audio_b->bmp = al_load_bitmap(MusicON);
+                global::audio_player->Mute_sample_instances(false);
+            }
+            else
+            {
+                al_destroy_bitmap(global::audio_b->bmp);
+                global::audio_b->bmp = al_load_bitmap(MusicOFF);
+                global::audio_player->Mute_sample_instances(true);
+            }
+        }
+
         SCMain->Input(ev, global::xscale, global::yscale);
         /**---------------------*/
 
@@ -210,6 +236,7 @@ int main()
 
             /**Draw and compute here*/
             SCMain->Print();
+            global::audio_b->Print();
             /**---------------------*/
 
             #ifdef _FPS
@@ -226,6 +253,7 @@ int main()
     al_destroy_sample(s);
     #endif // _SOUND_TEST
 
+    delete global::audio_b;
     delete SCMain;
     delete global::save;
     delete global::audio_player;

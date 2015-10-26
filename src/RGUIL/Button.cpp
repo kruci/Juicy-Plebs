@@ -186,6 +186,7 @@ int  Button::Input(ALLEGRO_EVENT &event, float &scalex, float &scaley)
     {
         return 9;
     }
+    jst_clicked = false;
     /**return 0  if mouse is on button but mouse button isnt down
        return 1  if mouse is on button and mouse button is down
        return 2  if mouse clicked this button
@@ -202,6 +203,7 @@ int  Button::Input(ALLEGRO_EVENT &event, float &scalex, float &scaley)
             }
             clicking = false;
             clicked = true;
+            jst_clicked = true;
             return 2;
         }
         else if(event.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN || clicking == true)

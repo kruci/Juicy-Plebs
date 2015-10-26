@@ -18,7 +18,6 @@ private:
     enum SMbutton_names{EXIT = 0, PLAY, ABOUT, SETTINGS};
 
     std::vector<Button *> buttons;
-    Button *Musicb = nullptr;
 
     ScreenAbout *SCAbout = nullptr;
     ScreenPlay *SCPlay = nullptr;

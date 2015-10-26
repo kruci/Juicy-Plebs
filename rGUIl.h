@@ -65,6 +65,7 @@ public:
     ALLEGRO_COLOR color;
     signed int x,y;
     signed int origin_x1, origin_y1, origin_x2, origin_y2;
+    bool jst_clicked = false;
 
     ALLEGRO_BITMAP *as_bitmap = nullptr;
 

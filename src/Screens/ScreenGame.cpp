@@ -83,7 +83,8 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
             global::play = false;
             return;
         }
-        if(event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP)
+        if(event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP && global::audio_b->is_button_clicking() == false
+            && global::audio_b->jst_clicked == false)
         {
             paused = false;
             pause_button->unclick();
