@@ -6,6 +6,8 @@
 #include "include/Screens/ScreenIntro.h"
 #include "include/Game/MapData.h"
 
+#define GAME_SUND_FILE "resources/music/gamesong.wav"
+
 class ScreenGame
 {
 private:
@@ -24,6 +26,9 @@ private:
 
     ALLEGRO_BITMAP *player_bmp = nullptr;
     ALLEGRO_FONT *pause_f = nullptr;
+
+    ALLEGRO_SAMPLE *game_music = nullptr;
+    ALLEGRO_SAMPLE_INSTANCE *game_music_instance = nullptr;
 
     struct entity{
         b2Body *body = nullptr;

@@ -7,8 +7,7 @@
 #include "include/Screens/ScreenPlay.h"
 #include "include/Screens/ScreenGame.h"
 
-#define MusicON "resources/graphics/m_on.png"
-#define MusicOFF "resources/graphics/m_off.png"
+#define INTRO_SUND_FILE "resources/music/intro.wav"
 
 class ScreenMain
 {
@@ -22,6 +21,9 @@ private:
     ScreenAbout *SCAbout = nullptr;
     ScreenPlay *SCPlay = nullptr;
     ScreenGame *SCGame = nullptr;
+
+    ALLEGRO_SAMPLE *intro_music = nullptr;
+    ALLEGRO_SAMPLE_INSTANCE *intro_music_instance = nullptr;
 
     bool is_any_button_clicked();
 public:

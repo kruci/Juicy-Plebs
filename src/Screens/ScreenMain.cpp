@@ -23,6 +23,20 @@ ScreenMain::ScreenMain()
     {
         buttons.push_back(new Button("resources/fonts/Calibri.ttf", bpoz[a][0], bpoz[a][1], bpoz[a][0] + bpoz[a][2],bpoz[a][1] + bpoz[a][3], bnames[a], al_map_rgb(0,0,128)));
     }
+
+    intro_music = al_load_sample(INTRO_SUND_FILE);
+    if(intro_music == nullptr)
+    {
+        std::string dum = INTRO_SUND_FILE;
+        error_message("Could not load file: " + dum);
+    }
+    intro_music_instance = al_create_sample_instance(intro_music);
+    if(intro_music_instance == nullptr)
+    {
+        std::string dum = INTRO_SUND_FILE;
+        error_message("Could not create sample instance: " + dum);
+    }
+    global::audio_player->Play_sample_instance(&intro_music_instance,ALLEGRO_PLAYMODE_LOOP);
 }
 
 ScreenMain::~ScreenMain()
@@ -42,6 +56,13 @@ ScreenMain::~ScreenMain()
         delete SCPlay;
     if(SCGame != nullptr)
         delete SCGame;
+
+    al_stop_sample_instance(intro_music_instance);
+    al_detach_sample_instance(intro_music_instance);
+    if(intro_music_instance != nullptr)
+        al_destroy_sample_instance(intro_music_instance);
+     if(intro_music != nullptr)
+        al_destroy_sample(intro_music);
 }
 
 void ScreenMain::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
@@ -52,6 +73,7 @@ void ScreenMain::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
         {
             SCGame = new ScreenGame();
             SCGame->Set_mission(global::save->Get_mission_number());
+            global::audio_player->Stop_sample_instance(&intro_music_instance);
         }
 
         SCGame->Input(event, xscale, yscale);
@@ -62,6 +84,7 @@ void ScreenMain::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
             {
                 delete SCGame;
                 SCGame = nullptr;
+                global::audio_player->Play_sample_instance(&intro_music_instance,ALLEGRO_PLAYMODE_LOOP);
             }
         }
         else

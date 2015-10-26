@@ -208,15 +208,6 @@ int main()
         SCMain->Input(ev, global::xscale, global::yscale);
         /**---------------------*/
 
-        if(global::audio == false)
-        {
-            global::audio_player->Mute_sample_instances(true);
-        }
-        else if(al_get_mixer_playing(al_get_default_mixer()) == false)
-        {
-            global::audio_player->Mute_sample_instances(false);
-        }
-
         #ifdef _FPS
         tsttme2 = time(&tsttme2);
         if(difftime(tsttme2,tsttme) >= 1.0f)

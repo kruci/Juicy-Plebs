@@ -25,10 +25,30 @@ ScreenGame::ScreenGame()
     {
         error_message("Could not load font: resources/fonts/Calibri.ttf");
     }
+
+    game_music = al_load_sample(GAME_SUND_FILE);
+    if(game_music == nullptr)
+    {
+        std::string dum = GAME_SUND_FILE;
+        error_message("Could not load file: " + dum);
+    }
+    game_music_instance = al_create_sample_instance(game_music);
+    if(game_music_instance == nullptr)
+    {
+        std::string dum = GAME_SUND_FILE;
+        error_message("Could not create sample instance: " + dum);
+    }
 }
 
 ScreenGame::~ScreenGame()
 {
+    al_stop_sample_instance(game_music_instance);
+    al_detach_sample_instance(game_music_instance);
+    if(game_music_instance != nullptr)
+        al_destroy_sample_instance(game_music_instance);
+     if(game_music != nullptr)
+        al_destroy_sample(game_music);
+
     if(cutscene_button != nullptr)
         delete cutscene_button;
 
@@ -73,6 +93,7 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
             cutscene_playing = false;
             cutscene_button->unclick();
             SCIntro->Stop();
+            global::audio_player->Play_sample_instance(&game_music_instance, ALLEGRO_PLAYMODE_LOOP);
         }
         return;
     }
@@ -115,6 +136,9 @@ void ScreenGame::Print()
     {
         SCIntro->Print();
         cutscene_button->Print();
+        if(cutscene_playing == false)
+            global::audio_player->Play_sample_instance(&game_music_instance, ALLEGRO_PLAYMODE_LOOP);
+
         return;
     }
     else if(paused == false)
@@ -173,10 +197,12 @@ bool ScreenGame::Set_mission(int mission)
         al_destroy_font(loading_f);
     }
 
-    for(int a = 0;a < global::audio_player->global_sounds.size();a++)
+    global::audio_player->Stop_sample_instance(&game_music_instance);
+
+    /*for(int a = 0;a < global::audio_player->global_sounds.size();a++)
     {
         al_set_sample_instance_gain(global::audio_player->global_sounds[a],0);
-    }
+    }*/
 
     if(mission == 1)
     {

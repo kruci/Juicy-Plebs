@@ -99,7 +99,7 @@ void AudioHandler::Mute_sample_instances(bool true_or_false)
         return;
 
     //al_set_mixer_playing(al_get_default_mixer(), 1 - true_or_false);
-    al_set_mixer_gain(al_get_default_mixer(), 1 - true_or_false);
+    al_set_mixer_gain(al_get_default_mixer(), 1 - (int)true_or_false);
 
     return;
 }
