@@ -421,7 +421,7 @@ bool ScreenGame::Set_mission(int mission)
             mItems[mItems.size()-1]->body = world->CreateBody(&body_def);
             shape.SetAsBox(PIXELS_TO_METERS(30), PIXELS_TO_METERS(30));
             fixture.filter.categoryBits = c_ENEMY;
-            fixture.filter.maskBits = c_PLAYER | c_PLYER_PROJECTILE | c_WALL;
+            fixture.filter.maskBits = c_PLAYER | c_WALL;
             fixture.shape = &shape;
             mItems[mItems.size()-1]->body->CreateFixture(&fixture);
             mItems[mItems.size()-1]->type = mapdat->objects[a]->item;

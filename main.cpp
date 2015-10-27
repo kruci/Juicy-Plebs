@@ -49,8 +49,32 @@ inline int fatal_error_message(std::string error_string)
 // error codes: 33 - initialization of Allegro failed
 //              44 - allegro is loaded, something fucked up while using Allegro
 
-int main()
+int main(int argc, char *argv[])
 {
+    bool windowed = false;
+    float rescale = 1.0f;
+    std::string arg;
+    if(argc > 1)
+    {
+        arg = argv[1];
+        std::cout << arg;
+        if(arg == "--help")
+        {
+            std::cout << "-s {scale} for running in windowed mode and scaled (standart size is 1440*810)" << std::endl;
+            return 0;
+        }
+        else if(arg == "-s")
+        {
+            if( argc > 2)
+            {
+                arg = argv[2];
+                rescale = atof(argv[2]);
+            }
+            windowed = true;
+        }
+    }
+
+
     /**initialize allegro*/
     if(!al_init()){error_message("al_init()");return 33;}
     if(!al_init_primitives_addon()){error_message("al_init_primitives_addon()");return 33;}
@@ -100,8 +124,21 @@ int main()
 
     /**display creation*/
     al_set_new_bitmap_flags(ALLEGRO_MAG_LINEAR | ALLEGRO_MIN_LINEAR); // Thanks to this, magnified fonts dont look retarted, and game is fast (hopefully) :D
-    al_set_new_display_flags(ALLEGRO_FULLSCREEN_WINDOW | ALLEGRO_OPENGL);
-    display = al_create_display(global::dWidth, global::dHeight);
+    if(windowed == true)
+    {
+        supported_ratio = true;
+        al_set_new_display_flags(ALLEGRO_WINDOWED | ALLEGRO_OPENGL);
+        global::xscale = rescale;
+        global::yscale = rescale;
+        global::dWidth = 1440;
+        global::dHeight = 810;
+        display = al_create_display(global::dWidth*rescale, global::dHeight*rescale);
+    }
+    else
+    {
+        al_set_new_display_flags(ALLEGRO_FULLSCREEN_WINDOW | ALLEGRO_OPENGL);
+        display = al_create_display(global::dWidth, global::dHeight);
+    }
     if(display == nullptr){error_message("al_create_display()"); return 1;}
     al_set_window_title(display, "Este neviem meno, ale asi neco so zemiakom");
 
