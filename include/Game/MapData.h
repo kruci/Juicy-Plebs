@@ -13,6 +13,8 @@ private:
         float x1, y1, x2, y2;
         int type;
         int item;
+        int enemy;
+        float hp, shield, speed;
     };
 
 public:
