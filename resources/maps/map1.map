@@ -1,41 +1,99 @@
+#nutne upravovat hodnotu map_objects, podla toho kolko tu je objektov
+#kazdy objekt saa vola "objekt_" a k tomu jeho poradove cislo, ktore je <= map_objects, nesmu sa vynechavat cisla
+#objekty mozu byt typu : 
+# wall    - stena, potrebuje 4 suradnice
+# p_spawn - kde s spawne hrac - su to x1, a y1, ale x2 i y2 musia mat nejaku ciselnu hodnotu, bo osm bol liny pridat dalsi if xD
+# e_spawn - task isto ako p_spawn akurat pre enemy, musi obsahovat premennu "enemy" s hodnotou ktora urci ci je to kacka s mecom abo vybusninou
+# i_spawn - tak ako predtym, akurat pre itemy, polozka "item" urcuje o aky item ide
+
 [Map]
 map=1
-map_objects=5
+map_objects=12
 
 [Object_1]
-type=wall
-x1=2000
-x2=2100
-y1=2000
-y2=2100
+type=p_spawn
+x1=720
+y1=1600
+x2=0
+y2=0
 
 [Object_2]
-type=p_spawn
-x1=2048
-y1=2048
-y2=0
-x2=0
+type=wall
+x1=0
+y1=1722
+x2=3000
+y2=2000
 
 [Object_3]
-type=e_spawn
-enemy=3333
-x1=2070
-y1=2070
-y2=0
-x2=0
+type=wall
+x1=248
+y1=1151
+x2=430
+y2=1193
 
 [Object_4]
-type=i_spawn
-item=999
-x1=2070
-y1=2000
-y2=0
-x2=0
+type=wall
+x1=278
+y1=354
+x2=1347
+y2=596
 
 [Object_5]
-type=e_spawn
-enemy=0
-x1=2048
-y1=2048
-y2=0
+type=wall
+x1=1348
+y1=360
+x2=2496
+y2=1530
+
+[Object_6]
+type=wall
+x1=512
+y1=1344
+x2=647
+y2=1505
+
+[Object_7]
+type=wall
+x1=785
+y1=1348
+x2=952
+y2=1508
+
+[Object_8]
+type=wall
+x1=646
+y1=922
+x2=784
+y2=1457
+
+[Object_9]
+type=i_spawn
+x1=610
+y1=1591
 x2=0
+y2=0
+item=999
+
+[Object_10]
+type=e_spawn
+x1=800
+y1=800
+x2=0
+y2=0
+enemy=0
+
+[Object_11]
+type=e_spawn
+x1=600
+y1=800
+x2=0
+y2=0
+enemy=666
+
+[Object_12]
+type=e_spawn
+x1=900
+y1=800
+x2=0
+y2=0
+enemy=1

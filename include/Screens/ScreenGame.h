@@ -16,6 +16,8 @@ class CollisionHandler;
 #define MELE_KACBAR "resources/graphics/Kacbar2.png"
 #define OTHER_KACBAR "resources/graphics/ot.png"
 
+#define _MAP_WALLS
+
 class ScreenGame
 {
 private:
@@ -58,6 +60,11 @@ private:
         int which_vector;
     };
 
+     #ifdef _MAP_WALLS
+    b2Body *walltester = nullptr;
+    universal_data walltesterdat;
+    #endif
+
     //1. entity is player
     struct entity{
         b2Body *body = nullptr;
@@ -83,8 +90,9 @@ private:
 
     //mess
     int dead_fade_counter = 0;
-
 public:
+    float p_angle = 0;
+
     CollisionHandler *colider = nullptr;
     enum enttype{C4KACK = 0, MELEKACK, DICK_BUTT, PLAYER = 99};
     enum vectors{ENTITY_VECTOR, WALLS_VECTOR, ITEMS_VECTOR};
