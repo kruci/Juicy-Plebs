@@ -57,7 +57,7 @@ ScreenGame::ScreenGame()
     }
 
     //std::string ab_images[NUMBER_OF_AB] = {};
-    float ab_button_coord_x = 20, ab_button_coord_y = global::dHeight - (gui_height - AB_IMAGE_SIZE)/2;
+    float ab_button_coord_x = 20, ab_button_coord_y = global::dHeight -(AB_IMAGE_SIZE+20);
     bool ab_active[NUMBER_OF_AB] = {true, true, true, false, false};
     float ab_cd[NUMBER_OF_AB] = {1.5, 0.2, 3, 0.8, -1};
     float ab_ct[NUMBER_OF_AB] = {0.1,   0, 0,   0,  0};
@@ -72,11 +72,11 @@ ScreenGame::ScreenGame()
         abilities[a]->usable = ab_active[a];
         abilities[a]->unlocked = global::save->Get_item(a);
 
-        abilities[a]->cool_down = global::save->Get_ab_cd(a);
+        abilities[a]->cool_down = global::save->Get_ab_cd(a) ;
         if(abilities[a]->cool_down == -1)
             abilities[a]->cool_down = ab_cd[a];
 
-        abilities[a]->cast_time = global::save->Get_ab_cast_t(a);
+        abilities[a]->cast_time = global::save->Get_ab_cast_t(a) ;
         if(abilities[a]->cast_time == -1)
             abilities[a]->cast_time = ab_ct[a];
 
@@ -96,10 +96,12 @@ ScreenGame::ScreenGame()
             else if(a == 0)
             {
                 abilities[a]->ab_but = new Button(dum_x1, ab_button_coord_y, dum_x1 + AB_IMAGE_SIZE, ab_button_coord_y + AB_IMAGE_SIZE);
+                abilities[a]->unlocked = 1;
             }
             else if(a == 1)
             {
                 abilities[a]->ab_but = new Button(dum_x2, ab_button_coord_y, dum_x2 + AB_IMAGE_SIZE, ab_button_coord_y + AB_IMAGE_SIZE);
+                abilities[a]->unlocked = 1;
             }
         }
     }
@@ -246,10 +248,19 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
     walltester->SetLinearVelocity(b2Vec2(PIXELS_TO_METERS(m_vec_x) , -PIXELS_TO_METERS(m_vec_y) ));
     #endif // _MAP_WALLS
 
+    for(int a = 0;a < abilities.size();a++)
+    {
+        if(abilities[a]->usable == true && abilities[a]->unlocked == true)
+        {
+            abilities[a]->ab_but->Input(event, xscale, yscale);
+        }
+    }
+
     if(global::mouse_state.y/yscale < global::dHeight - gui_height)
     {
-        if(event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP && event.mouse.button == 2)
+        if(abilities[ab_TELEPORT]->remaining_cd <= 0 && event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP && event.mouse.button == 2)
         {
+            abilities[ab_TELEPORT]->remaining_cd = abilities[ab_TELEPORT]->cool_down;
             //pre_tp = entities[0]->body->GetPosition();
             entities[0]->body->SetTransform(b2Vec2( PIXELS_TO_METERS( ( (float)global::mouse_state.x/xscale +  (float)map_draw_x) ) ,
                                                 -PIXELS_TO_METERS( (  (float)global::mouse_state.y/yscale +  (float)map_draw_y) )), 0);
@@ -294,6 +305,17 @@ void ScreenGame::Print()
             tp_fail = false;
             entities[0]->body->SetTransform(pre_tp, 0);
         }*/
+
+        for(int a = 0;a < abilities.size();a++)
+        {
+            if(abilities[a]->remaining_cd > 0)
+            {
+                abilities[a]->remaining_cd -= 1.0/global::FPS;
+
+                if(abilities[a]->remaining_cd < 0)
+                    abilities[a]->remaining_cd = 0;
+            }
+        }
 
         //cammera
         map_draw_x = METERS_TO_PIXELS(entities[0]->body->GetPosition().x) - global::dWidth/2;
@@ -341,6 +363,7 @@ void ScreenGame::Print()
     }
     //merge these 2 fors ?
     //npc
+
     for(int a = 1;a < (int)entities.size();a++)
     {
         if(METERS_TO_PIXELS(entities[a]->body->GetPosition().x) +40 >= map_draw_x &&
@@ -354,6 +377,7 @@ void ScreenGame::Print()
                                    -METERS_TO_PIXELS(entities[a]->body->GetPosition().y) - map_draw_y, 0, 0);
         }
     }
+
     //player
     al_draw_rotated_bitmap(entities[0]->bitmap, 50.0f, 50.0f, METERS_TO_PIXELS(entities[0]->body->GetPosition().x) - map_draw_x,
                            -METERS_TO_PIXELS(entities[0]->body->GetPosition().y) - map_draw_y, entities[0]->body->GetAngle(), 0);
@@ -380,6 +404,19 @@ void ScreenGame::Print()
     al_draw_filled_rectangle(0, global::dHeight - gui_height, global::dWidth, global::dHeight, al_map_rgb(88,88,88));
     al_draw_filled_rectangle(0, global::dHeight - gui_height, global::dWidth, global::dHeight - gui_height +3, al_map_rgb(230,228,216));
     pause_button->Print();
+
+    for(int a = 0;a < abilities.size();a++)
+    {
+        if(abilities[a]->usable == true && abilities[a]->unlocked == true)
+        {
+            al_draw_bitmap(abilities[a]->bitmap ,abilities[a]->ab_but->origin_x1, abilities[a]->ab_but->origin_y1, 0);
+            al_draw_filled_rectangle(abilities[a]->ab_but->origin_x1,
+                                     abilities[a]->ab_but->origin_y1 + AB_IMAGE_SIZE - ( (abilities[a]->remaining_cd/abilities[a]->cool_down) * AB_IMAGE_SIZE),
+                                     abilities[a]->ab_but->origin_x2,
+                                     abilities[a]->ab_but->origin_y2,
+                                     al_map_rgba(0,0,0,128));
+        }
+    }
 
     if(paused == true)
     {
