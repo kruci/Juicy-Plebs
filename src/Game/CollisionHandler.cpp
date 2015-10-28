@@ -18,11 +18,20 @@ void CollisionHandler::BeginContact(b2Contact* contact)
         }
     }
     /*else if( (dat1->which_vector == ScreenGame::ENTITY_VECTOR  &&
-              dat2->which_vector == ScreenGame::ENTITY_VECTOR) ||
-             (dat2->which_vector == ScreenGame::ENTITY_VECTOR  &&
-              dat1->which_vector == ScreenGame::ENTITY_VECTOR)  )
+              dat2->which_vector == ScreenGame::WALLS_VECTOR) && refscreen->just_tp == true)
     {
-
+        if(refscreen->entities[dat1->vectro_poz]->type == ScreenGame::PLAYER)
+        {
+            refscreen->tp_fail = true;
+        }
+    }
+    else if( (dat2->which_vector == ScreenGame::ENTITY_VECTOR  &&
+             dat1->which_vector == ScreenGame::WALLS_VECTOR) && refscreen->just_tp == true)
+    {
+        if(refscreen->entities[dat2->vectro_poz]->type == ScreenGame::PLAYER)
+        {
+            refscreen->tp_fail = true;
+        }
     }*/
 
 }

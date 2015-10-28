@@ -107,3 +107,55 @@ int GameSave::Set_mission_number(int nmb)
 
     return nmb;
 }
+
+bool GameSave::Get_item(int nmb)
+{
+    if(al_get_config_value(gamesave, "Items", std::to_string(nmb).c_str()) != "1")
+    {
+        return false;
+    }
+
+    return true;
+}
+
+bool GameSave::Set_item(int nmb)
+{
+     al_set_config_value(gamesave, "Items", std::to_string(nmb).c_str(), "1");
+     return true;
+}
+
+float GameSave::Get_ab_cd(int ab_numeber)
+{
+    std::string s = "cd" + std::to_string(ab_numeber);
+    if(al_get_config_value(gamesave, "Items", s.c_str()) == nullptr)
+    {
+        return -1;
+    }
+    s = al_get_config_value(gamesave, "Items", s.c_str());
+    return stof(s);
+}
+
+bool GameSave::Set_ab_cd(int ab_numeber, float cd)
+{
+    std::string s = "cd" + std::to_string(ab_numeber);
+    al_set_config_value(gamesave, "Items",s.c_str(), std::to_string(cd).c_str());
+    return true;
+}
+
+float GameSave::Get_ab_cast_t(int ab_numeber)
+{
+    std::string s = "ct" + std::to_string(ab_numeber);
+    if(al_get_config_value(gamesave, "Items", s.c_str()) == nullptr)
+    {
+        return -1;
+    }
+    s = al_get_config_value(gamesave, "Items", s.c_str());
+    return stof(s);
+}
+
+bool GameSave::Set_ab_cast_t(int ab_numeber, float ct)
+{
+    std::string s = "ct" + std::to_string(ab_numeber);
+    al_set_config_value(gamesave, "Items",s.c_str(), std::to_string(ct).c_str());
+    return true;
+}

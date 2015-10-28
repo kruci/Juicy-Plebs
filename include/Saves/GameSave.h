@@ -25,6 +25,15 @@ class GameSave
         int Get_mission_number();
         int Set_mission_number(int nmb);
 
+        bool Get_item(int nmb);
+        bool Set_item(int nmb);
+
+        /**if cd or ct == -1 then it is not set*/
+        float Get_ab_cd(int ab_numeber);
+        bool Set_ab_cd(int ab_numeber, float cd);
+
+        float Get_ab_cast_t(int ab_numeber);
+        bool Set_ab_cast_t(int ab_numeber, float ct);
 };
 
 #endif // GAMESAVE_H

@@ -16,6 +16,8 @@ class CollisionHandler;
 #define MELE_KACBAR "resources/graphics/Kacbar2.png"
 #define OTHER_KACBAR "resources/graphics/ot.png"
 
+#define AB_IMAGE_SIZE 50
+
 #define _MAP_WALLS
 
 class ScreenGame
@@ -88,6 +90,18 @@ private:
         universal_data data;
     };
 
+    struct Ability{
+        ALLEGRO_BITMAP *bitmap = nullptr;
+        Button *ab_but = nullptr;
+        bool in_use = false;
+        bool usable = false;
+        bool L_click = false, R_click = false;
+        bool unlocked = false;
+        float cool_down = 0;
+        float remaining_cd = 0;
+        float cast_time = 0;
+    };
+
     //mess
     int dead_fade_counter = 0;
 public:
@@ -105,8 +119,14 @@ public:
     enum{sound_DEAD = 0};
     std::vector<sound_effect *> sounds;
 
+    #define NUMBER_OF_AB 5
+    enum{ab_TELEPORT, ab_ATTACK_PLUVANCE, ab_BRICK, ab_AUTO_SUPACKA, ab_TEST_JUP};
+    std::vector<Ability *> abilities;
+
     bool dead = false;
-    bool tp_to_wall = false;
+    bool tp_fail = false;
+    bool just_tp = false;
+    b2Vec2 pre_tp;
 
     ScreenIntro * SCIntro = nullptr;
     BigBitmap *map_bitmap = nullptr;

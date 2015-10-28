@@ -55,6 +55,54 @@ ScreenGame::ScreenGame()
             error_message("Could not create sample instance: " + soundfiles[a]);
         }
     }
+
+    //std::string ab_images[NUMBER_OF_AB] = {};
+    float ab_button_coord_x = 20, ab_button_coord_y = global::dHeight - (gui_height - AB_IMAGE_SIZE)/2;
+    bool ab_active[NUMBER_OF_AB] = {true, true, true, false, false};
+    float ab_cd[NUMBER_OF_AB] = {1.5, 0.2, 3, 0.8, -1};
+    float ab_ct[NUMBER_OF_AB] = {0.1,   0, 0,   0,  0};
+
+    std::string ddum = "resources/graphics/item_";
+    std::string ddum2;
+    float dum_x1 = 1150, dum_x2 = 1030;
+
+    for(int a = 0;a < NUMBER_OF_AB;a++)
+    {
+        abilities.push_back(new Ability);
+        abilities[a]->usable = ab_active[a];
+        abilities[a]->unlocked = global::save->Get_item(a);
+
+        abilities[a]->cool_down = global::save->Get_ab_cd(a);
+        if(abilities[a]->cool_down == -1)
+            abilities[a]->cool_down = ab_cd[a];
+
+        abilities[a]->cast_time = global::save->Get_ab_cast_t(a);
+        if(abilities[a]->cast_time == -1)
+            abilities[a]->cast_time = ab_ct[a];
+
+        if(ab_active[a] == true)
+        {
+            ddum2 = ddum + std::to_string(a) + ".png";
+            abilities[a]->bitmap = al_load_bitmap(ddum2.c_str());
+            if(abilities[a]->bitmap == nullptr)
+            {
+                error_message("Could not load iamge: " + ddum2);
+            }
+
+            if(a > 1)
+            {
+                abilities[a]->ab_but = new Button(ab_button_coord_x, ab_button_coord_y, ab_button_coord_x + AB_IMAGE_SIZE, ab_button_coord_y + AB_IMAGE_SIZE);
+            }
+            else if(a == 0)
+            {
+                abilities[a]->ab_but = new Button(dum_x1, ab_button_coord_y, dum_x1 + AB_IMAGE_SIZE, ab_button_coord_y + AB_IMAGE_SIZE);
+            }
+            else if(a == 1)
+            {
+                abilities[a]->ab_but = new Button(dum_x2, ab_button_coord_y, dum_x2 + AB_IMAGE_SIZE, ab_button_coord_y + AB_IMAGE_SIZE);
+            }
+        }
+    }
 }
 
 ScreenGame::~ScreenGame()
@@ -97,6 +145,17 @@ ScreenGame::~ScreenGame()
     }
     entities.clear();
 
+    for(int a = 0;a < (int)abilities.size();a++)
+    {
+        if(abilities[a]->bitmap != nullptr)
+            al_destroy_bitmap(abilities[a]->bitmap);
+
+        if(abilities[a]->ab_but != nullptr)
+            delete abilities[a]->ab_but;
+
+        delete abilities[a];
+    }
+    abilities.clear();
 
     for(int a = 0;a < (int)sounds.size();a++)
     {
@@ -187,12 +246,19 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
     walltester->SetLinearVelocity(b2Vec2(PIXELS_TO_METERS(m_vec_x) , -PIXELS_TO_METERS(m_vec_y) ));
     #endif // _MAP_WALLS
 
-    if(event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP && event.mouse.button == 2)
+    if(global::mouse_state.y/yscale < global::dHeight - gui_height)
     {
-        entities[0]->body->SetTransform(b2Vec2( PIXELS_TO_METERS( ( (float)global::mouse_state.x/xscale +  (float)map_draw_x) ) ,
+        if(event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP && event.mouse.button == 2)
+        {
+            //pre_tp = entities[0]->body->GetPosition();
+            entities[0]->body->SetTransform(b2Vec2( PIXELS_TO_METERS( ( (float)global::mouse_state.x/xscale +  (float)map_draw_x) ) ,
                                                 -PIXELS_TO_METERS( (  (float)global::mouse_state.y/yscale +  (float)map_draw_y) )), 0);
+            //just_tp = true;
         //entities[0]->body->SetTransform(entities[0]->body->GetPosition() + b2Vec2(PIXELS_TO_METERS(0), -PIXELS_TO_METERS(100) ), 0);
+        }
     }
+
+
 
     //mapinput
     //gui input
@@ -220,7 +286,15 @@ void ScreenGame::Print()
     }
     else if(paused == false && dead == false)
     {
-        world->Step(1.0f/global::FPS, 5, 2); // collisison
+        world->Step(1.0f/global::FPS, 8, 5); // collisison
+
+        /*just_tp = false;
+        if(tp_fail == true)
+        {
+            tp_fail = false;
+            entities[0]->body->SetTransform(pre_tp, 0);
+        }*/
+
         //cammera
         map_draw_x = METERS_TO_PIXELS(entities[0]->body->GetPosition().x) - global::dWidth/2;
         map_draw_y = -METERS_TO_PIXELS(entities[0]->body->GetPosition().y) - global::dHeight/2;
