@@ -5,6 +5,9 @@
 #include "global.h"
 #include "include/Screens/ScreenIntro.h"
 #include "include/Game/MapData.h"
+#include "include/Saves/GameSave.h"
+class CollisionHandler;
+#include "include/Game/CollisionHandler.h"
 
 #define GAME_SUND_FILE "resources/music/gamesong.wav"
 #define PLAYER_BITMAP_FILE "resources/graphics/Character.png"
@@ -20,6 +23,7 @@ private:
     Button *cutscene_button = nullptr;
     Button *pause_button = nullptr;
     Button *main_menu_button = nullptr;
+    Button *respawn_button = nullptr;
 
     bool paused = false;
 
@@ -35,15 +39,18 @@ private:
     ALLEGRO_SAMPLE *game_music = nullptr;
     ALLEGRO_SAMPLE_INSTANCE *game_music_instance = nullptr;
 
-    //enum enttype{PLAYER = 0, C4KACK, MELEKACK, BOSS};
-    enum vectors{ENTITY_VECTOR, WALLS_VECTOR, ITEMS_VECTOR};
+    struct sound_effect{
+        ALLEGRO_SAMPLE *sample = nullptr;
+        ALLEGRO_SAMPLE_INSTANCE *instance = nullptr;
+    };
 
     enum colision_filters{
         c_WALL = 0x0001,
         c_PLYER_PROJECTILE = 0x0002,
         c_ITEM = 0x0004,
         c_ENEMY = 0x0008,
-        c_PLAYER = 0x0010
+        c_PLAYER = 0x0010,
+        c_EVENT_LOCATION = 0x0020
     };
 
     struct universal_data{
@@ -74,11 +81,25 @@ private:
         universal_data data;
     };
 
+    //mess
+    int dead_fade_counter = 0;
+
+public:
+    CollisionHandler *colider = nullptr;
+    enum enttype{C4KACK = 0, MELEKACK, DICK_BUTT, PLAYER = 99};
+    enum vectors{ENTITY_VECTOR, WALLS_VECTOR, ITEMS_VECTOR};
     std::vector<entity*> entities;
     std::vector<Wall*> walls;
     std::vector<map_Item*> mItems;
 
-public:
+    #define NUMBER_OF_SOUNDEFECTS 1
+    std::string soundfiles[NUMBER_OF_SOUNDEFECTS] = { "resources/music/dead.wav" };
+    enum{sound_DEAD = 0};
+    std::vector<sound_effect *> sounds;
+
+    bool dead = false;
+    bool tp_to_wall = false;
+
     ScreenIntro * SCIntro = nullptr;
     BigBitmap *map_bitmap = nullptr;
     MapData *mapdat = nullptr;

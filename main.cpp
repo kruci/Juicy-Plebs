@@ -57,7 +57,6 @@ int main(int argc, char *argv[])
     if(argc > 1)
     {
         arg = argv[1];
-        std::cout << arg;
         if(arg == "--help")
         {
             std::cout << "-s {scale} for running in windowed mode and scaled (standart size is 1440*810)" << std::endl;
@@ -124,7 +123,7 @@ int main(int argc, char *argv[])
 
     /**display creation*/
     al_set_new_bitmap_flags(ALLEGRO_MAG_LINEAR | ALLEGRO_MIN_LINEAR); // Thanks to this, magnified fonts dont look retarted, and game is fast (hopefully) :D
-    if(windowed == true)
+    if(windowed == true || supported_ratio == false)
     {
         supported_ratio = true;
         al_set_new_display_flags(ALLEGRO_WINDOWED | ALLEGRO_OPENGL);
@@ -226,7 +225,7 @@ int main(int argc, char *argv[])
         if(global::audio_b->Input(ev, global::xscale, global::yscale) == 2)
         {
             global::audio_b->unclick();
-            global::audio = (global::audio == true ? global::audio = false : global::audio = true);
+            global::audio = (global::audio == true ? false : true);
 
             if(global::audio == true)
             {

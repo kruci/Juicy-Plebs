@@ -72,6 +72,9 @@ void ScreenMain::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
         if(SCGame == nullptr)
         {
             SCGame = new ScreenGame();
+            colider = new CollisionHandler();
+            SCGame->colider = colider;
+            colider->refscreen = SCGame;
             SCGame->Set_mission(global::save->Get_mission_number());
             global::audio_player->Stop_sample_instance(&intro_music_instance);
         }
@@ -83,7 +86,9 @@ void ScreenMain::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
             if(SCGame != nullptr)
             {
                 delete SCGame;
+                delete colider;
                 SCGame = nullptr;
+                colider = nullptr;
                 global::audio_player->Play_sample_instance(&intro_music_instance,ALLEGRO_PLAYMODE_LOOP);
             }
         }
@@ -143,6 +148,9 @@ void ScreenMain::Print()
         if(SCGame == nullptr)
         {
             SCGame = new ScreenGame();
+            colider = new CollisionHandler();
+            SCGame->colider = colider;
+            colider->refscreen = SCGame;
             SCGame->Set_mission(global::save->Get_mission_number());
         }
 

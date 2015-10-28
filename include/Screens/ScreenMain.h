@@ -7,7 +7,7 @@
 #include "include/Screens/ScreenPlay.h"
 #include "include/Screens/ScreenGame.h"
 
-#define INTRO_SUND_FILE "resources/music/intro.wav"
+#define INTRO_SUND_FILE "resources/music/menu.ogg"
 
 class ScreenMain
 {
@@ -21,6 +21,7 @@ private:
     ScreenAbout *SCAbout = nullptr;
     ScreenPlay *SCPlay = nullptr;
     ScreenGame *SCGame = nullptr;
+    CollisionHandler *colider = nullptr;
 
     ALLEGRO_SAMPLE *intro_music = nullptr;
     ALLEGRO_SAMPLE_INSTANCE *intro_music_instance = nullptr;

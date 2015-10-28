@@ -1,6 +1,6 @@
 [Map]
 map=1
-map_objects=4
+map_objects=5
 
 [Object_1]
 type=wall
@@ -29,5 +29,13 @@ type=i_spawn
 item=999
 x1=2070
 y1=2000
+y2=0
+x2=0
+
+[Object_5]
+type=e_spawn
+enemy=0
+x1=2048
+y1=2048
 y2=0
 x2=0

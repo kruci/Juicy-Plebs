@@ -66,6 +66,7 @@
 		</Compiler>
 		<Unit filename="global.h" />
 		<Unit filename="include/Audio/AudioHandler.h" />
+		<Unit filename="include/Game/CollisionHandler.h" />
 		<Unit filename="include/Game/MapData.h" />
 		<Unit filename="include/Saves/GameSave.h" />
 		<Unit filename="include/Screens/ScreenAbout.h" />
@@ -76,6 +77,7 @@
 		<Unit filename="main.cpp" />
 		<Unit filename="rGUIl.h" />
 		<Unit filename="src/Audio/AudioHandler.cpp" />
+		<Unit filename="src/Game/CollisionHandler.cpp" />
 		<Unit filename="src/Game/MapData.cpp" />
 		<Unit filename="src/RGUIL/BigBitmap.cpp" />
 		<Unit filename="src/RGUIL/Button.cpp" />

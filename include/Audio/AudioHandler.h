@@ -19,13 +19,14 @@ public:
 
     //function for samples
     void Stop_all_samples();
-    ALLEGRO_SAMPLE_ID Play_sample(ALLEGRO_SAMPLE **smlp, ALLEGRO_PLAYMODE aplmod);
+    ALLEGRO_SAMPLE_ID Play_sample(ALLEGRO_SAMPLE **smlp, ALLEGRO_PLAYMODE aplmod = ALLEGRO_PLAYMODE_ONCE);
     void Stop_sample(ALLEGRO_SAMPLE_ID smlp_id);
 
     //functions for sample_instances
     void Stop_sample_instance(ALLEGRO_SAMPLE_INSTANCE **smlpinst);
     void Mute_sample_instance(ALLEGRO_SAMPLE_INSTANCE **smlpinst);
-    void Play_sample_instance(ALLEGRO_SAMPLE_INSTANCE **smlpinst, ALLEGRO_PLAYMODE aplmod);
+    void Play_sample_instance(ALLEGRO_SAMPLE_INSTANCE **smlpinst, ALLEGRO_PLAYMODE aplmod = ALLEGRO_PLAYMODE_ONCE);
+    void Play_sample_instance(ALLEGRO_SAMPLE_INSTANCE **smlpinst, float gain = 1.0f, ALLEGRO_PLAYMODE aplmod = ALLEGRO_PLAYMODE_ONCE);
     void Mute_sample_instances(bool true_or_false);
     bool Stop_sample_instances();
 };

@@ -19,6 +19,8 @@ ScreenGame::ScreenGame()
 
     pause_button = new Button("resources/fonts/Calibri.ttf", 1300, global::dHeight -70, 1300 + 120, global::dHeight -70 + 50, "Pause", al_map_rgb(0,0,128));
     main_menu_button = new Button("resources/fonts/Calibri.ttf", 1300, global::dHeight -70, 1300 + 120, global::dHeight -70 + 50, "Main menu", al_map_rgb(0,0,128));
+    respawn_button = new Button("resources/fonts/Calibri.ttf", (global::dWidth - 120)/2, global::dHeight -70,
+                                (global::dWidth - 120)/2 + 120, global::dHeight -70 + 50, "Reload", al_map_rgb(0,0,128));
 
     pause_f = al_load_ttf_font("resources/fonts/Calibri.ttf", 50, 0);
     if(pause_f == nullptr)
@@ -37,6 +39,21 @@ ScreenGame::ScreenGame()
     {
         std::string dum = GAME_SUND_FILE;
         error_message("Could not create sample instance: " + dum);
+    }
+
+    for(int a = 0;a < NUMBER_OF_SOUNDEFECTS;a++)
+    {
+        sounds.push_back(new sound_effect);
+        sounds[a]->sample = al_load_sample(soundfiles[a].c_str());
+        if(sounds[a]->sample == nullptr)
+        {
+            error_message("Could not load file: " + soundfiles[a]);
+        }
+        sounds[a]->instance = al_create_sample_instance(sounds[a]->sample);
+        if(game_music_instance == nullptr)
+        {
+            error_message("Could not create sample instance: " + soundfiles[a]);
+        }
     }
 }
 
@@ -80,6 +97,15 @@ ScreenGame::~ScreenGame()
     }
     entities.clear();
 
+
+    for(int a = 0;a < sounds.size();a++)
+    {
+        global::audio_player->Stop_sample_instance(&sounds[a]->instance);
+        al_destroy_sample(sounds[a]->sample);
+        al_destroy_sample_instance(sounds[a]->instance);
+    }
+    sounds.clear();
+
     for(int a = 0;a < walls.size();a++)
     {
         world->DestroyBody(walls[a]->body);
@@ -92,6 +118,9 @@ ScreenGame::~ScreenGame()
         al_destroy_bitmap(mItems[a]->bitmap);
     }
     mItems.clear();
+
+    /*if(colider != nullptr)
+        delete colider;*/
 
     if(world != nullptr)
         delete world;
@@ -107,9 +136,23 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
             cutscene_playing = false;
             cutscene_button->unclick();
             SCIntro->Stop();
-            global::audio_player->Play_sample_instance(&game_music_instance, ALLEGRO_PLAYMODE_LOOP);
+            global::audio_player->Play_sample_instance(&game_music_instance, 0.8f,ALLEGRO_PLAYMODE_LOOP);
         }
         return;
+    }
+    else if(dead == true)
+    {
+        if(main_menu_button->Input(event, xscale, yscale) == 2)
+        {
+            global::play = false;
+            return;
+        }
+        else if(respawn_button->Input(event, xscale, yscale) == 2)
+        {
+            Set_mission(global::save->Get_mission_number());
+            respawn_button->unclick();
+            return;
+        }
     }
     else if(paused == true)
     {
@@ -118,7 +161,7 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
             global::play = false;
             return;
         }
-        if(event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP && global::audio_b->is_button_clicking() == false
+        else if(event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP && global::audio_b->is_button_clicking() == false
             && global::audio_b->jst_clicked == false)
         {
             paused = false;
@@ -151,11 +194,11 @@ void ScreenGame::Print()
         SCIntro->Print();
         cutscene_button->Print();
         if(cutscene_playing == false)
-            global::audio_player->Play_sample_instance(&game_music_instance, ALLEGRO_PLAYMODE_LOOP);
+            global::audio_player->Play_sample_instance(&game_music_instance, 0.8f,ALLEGRO_PLAYMODE_LOOP);
 
         return;
     }
-    else if(paused == false)
+    else if(paused == false && dead == false)
     {
         world->Step(1.0f/global::FPS, 5, 2); // collisison
         //cammera
@@ -233,6 +276,17 @@ void ScreenGame::Print()
         main_menu_button->Print();
 
     }
+    else if(dead == true)
+    {
+        if(dead_fade_counter < 40)
+            dead_fade_counter++;
+
+        al_draw_filled_rectangle(0,0, global::dWidth, global::dHeight, al_map_rgba(0,0,0,150 + dead_fade_counter*2));
+        al_draw_text(pause_f, al_map_rgb(200,200,200), (global::dWidth - al_get_text_width( pause_f, "Si mŕrtvy (nooob)"))/2,
+                     (global::dHeight - al_get_font_ascent(pause_f))/2, 0, "Si mŕrtvy (nooob)");
+        main_menu_button->Print();
+        respawn_button->Print();
+    }
 
     return;
 }
@@ -251,11 +305,14 @@ bool ScreenGame::Set_mission(int mission)
     }
 
     global::audio_player->Stop_sample_instance(&game_music_instance);
+    dead_fade_counter = 0;
+    dead = false;
+    paused = false;
 
-    /*for(int a = 0;a < global::audio_player->global_sounds.size();a++)
+    for(int a = 0;a < sounds.size();a++)
     {
-        al_set_sample_instance_gain(global::audio_player->global_sounds[a],0);
-    }*/
+        global::audio_player->Stop_sample_instance(&sounds[a]->instance);
+    }
 
     if(mission == 1)
     {
@@ -313,6 +370,8 @@ bool ScreenGame::Set_mission(int mission)
     map_draw_y = mapdat->player_spawm_y - (global::dHeight - gui_height)/2;
     world = new b2World(b2Vec2(0,0));
 
+    world->SetContactListener(colider);
+
     std::string dum;
     /**Player*/
     entities.push_back(new entity);
@@ -336,8 +395,12 @@ bool ScreenGame::Set_mission(int mission)
     b2FixtureDef Player_fixture_def;
     Player_fixture_def.shape = &Player_shape;
     Player_fixture_def.filter.categoryBits = c_PLAYER; //what this is
-    Player_fixture_def.filter.maskBits = c_WALL | c_ENEMY | c_ITEM;//what i collide with
+    Player_fixture_def.filter.maskBits = c_WALL | c_ENEMY | c_ITEM | c_EVENT_LOCATION;//what i collide with
     entities[entities.size()-1]->body->CreateFixture(&Player_fixture_def);
+    entities[entities.size()-1]->type = 99;
+    entities[entities.size()-1]->data.vectro_poz = entities.size()-1;
+    entities[entities.size()-1]->data.which_vector = ENTITY_VECTOR;
+    entities[entities.size()-1]->body->SetUserData( &entities[entities.size()-1]->data );
 
     entities[entities.size()-1]->bitmap = al_load_bitmap(PLAYER_BITMAP_FILE);
     if(entities[entities.size()-1]->bitmap == nullptr)
@@ -388,8 +451,9 @@ bool ScreenGame::Set_mission(int mission)
             fixture.filter.maskBits = c_PLAYER | c_PLYER_PROJECTILE | c_WALL;
             fixture.shape = &shape;
             entities[entities.size()-1]->body->CreateFixture(&fixture);
+            entities[entities.size()-1]->type = mapdat->objects[a]->enemy;
             entities[entities.size()-1]->data.vectro_poz = entities.size()-1;
-            entities[entities.size()-1]->data.which_vector = ITEMS_VECTOR;
+            entities[entities.size()-1]->data.which_vector = ENTITY_VECTOR;
             entities[entities.size()-1]->body->SetUserData( &entities[entities.size()-1]->data );
 
             std::string kackar_bitmap;
