@@ -245,6 +245,7 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
         else if(respawn_button->Input(event, xscale, yscale) == 2)
         {
             Set_mission(global::save->Get_mission_number());
+            cutscene_playing = false;
             respawn_button->unclick();
             return;
         }
@@ -294,12 +295,14 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
         if(abilities[ab_TELEPORT]->remaining_cd <= 0 && event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP && (event.mouse.button == 2 ||
            (abilities[ab_TELEPORT]->ab_but->is_button_clicked() == true && event.mouse.button == 1)))
         {
+
             abilities[ab_TELEPORT]->remaining_cd = abilities[ab_TELEPORT]->cool_down;
             abilities[ab_TELEPORT]->ab_but->unclick();
             entities[0]->body->SetTransform(b2Vec2( PIXELS_TO_METERS( ( (float)global::mouse_state.x/xscale +  (float)map_draw_x) ) ,
                                                 -PIXELS_TO_METERS( (  (float)global::mouse_state.y/yscale +  (float)map_draw_y) )), 0);
         }
-        else if(abilities[ab_ATTACK_PLUVANCE]->remaining_cd <= 0 && global::mouse_state.buttons == 1 && abilities[ab_ATTACK_PLUVANCE]->unlocked == true)
+        else if(abilities[ab_ATTACK_PLUVANCE]->remaining_cd <= 0 && global::mouse_state.buttons == 1 && abilities[ab_ATTACK_PLUVANCE]->unlocked == true &&
+                abilities[ab_TELEPORT]->ab_but->is_button_clicked() == false)
         {
             abilities[ab_ATTACK_PLUVANCE]->remaining_cd = abilities[ab_ATTACK_PLUVANCE]->cool_down;
             abilities[ab_ATTACK_PLUVANCE]->ab_but->unclick();
@@ -604,6 +607,13 @@ bool ScreenGame::Set_mission(int mission)
         delete mItems[a];
     }
     mItems.clear();
+
+    for(int a = 0;a < (int)projectiles.size();a++)
+    {
+        world->DestroyBody(projectiles[a]->body);
+        delete projectiles[a];
+    }
+    projectiles.clear();
 
     #ifdef _MAP_WALLS
     if(walltester != nullptr)

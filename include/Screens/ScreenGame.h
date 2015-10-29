@@ -94,6 +94,7 @@ private:
         universal_data data;
     };
 
+    enum{sl_NORMAL, sl_LB, sl_MB,  sl_RB};
     struct Ability{
         ALLEGRO_BITMAP *bitmap = nullptr;
         Button *ab_but = nullptr;
@@ -105,6 +106,7 @@ private:
         float remaining_cd = 0;
         float cast_time = 0;
         float remaining_time_to_cast = 0;
+        int special_slot = 0;
     };
 
 
