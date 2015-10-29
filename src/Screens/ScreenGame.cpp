@@ -28,6 +28,12 @@ ScreenGame::ScreenGame()
         error_message("Could not load font: resources/fonts/Calibri.ttf");
     }
 
+    mouse_b_f = al_load_ttf_font("resources/fonts/Calibri.ttf", 15, 0);
+    if(mouse_b_f == nullptr)
+    {
+        error_message("Could not load font: resources/fonts/Calibri.ttf");
+    }
+
     game_music = al_load_sample(GAME_SUND_FILE);
     if(game_music == nullptr)
     {
@@ -139,6 +145,9 @@ ScreenGame::~ScreenGame()
 
     if(pause_f != nullptr)
         al_destroy_font(pause_f);
+
+    if(mouse_b_f!= nullptr)
+        al_destroy_font(mouse_b_f);
 
     for(int a = 0;a < (int)entities.size();a++)
     {
@@ -258,9 +267,11 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
 
     if(global::mouse_state.y/yscale < global::dHeight - gui_height)
     {
-        if(abilities[ab_TELEPORT]->remaining_cd <= 0 && event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP && event.mouse.button == 2)
+        if(abilities[ab_TELEPORT]->remaining_cd <= 0 && event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP && (event.mouse.button == 2 ||
+           (abilities[ab_TELEPORT]->ab_but->is_button_clicked() == true && event.mouse.button == 1)))
         {
             abilities[ab_TELEPORT]->remaining_cd = abilities[ab_TELEPORT]->cool_down;
+            abilities[ab_TELEPORT]->ab_but->unclick();
             //pre_tp = entities[0]->body->GetPosition();
             entities[0]->body->SetTransform(b2Vec2( PIXELS_TO_METERS( ( (float)global::mouse_state.x/xscale +  (float)map_draw_x) ) ,
                                                 -PIXELS_TO_METERS( (  (float)global::mouse_state.y/yscale +  (float)map_draw_y) )), 0);
@@ -415,8 +426,20 @@ void ScreenGame::Print()
                                      abilities[a]->ab_but->origin_x2,
                                      abilities[a]->ab_but->origin_y2,
                                      al_map_rgba(0,0,0,128));
+            if(abilities[a]->ab_but->is_button_clicked() == true)
+            {
+                al_draw_rectangle(abilities[a]->ab_but->origin_x1, abilities[a]->ab_but->origin_y1, abilities[a]->ab_but->origin_x2,
+                                  abilities[a]->ab_but->origin_y2 ,al_map_rgb(255,255,255),2);
+            }
+        }
+
+        if(a < 3)
+        {
+            al_draw_text(mouse_b_f, al_map_rgb(255,255,255), 1030 + a*(60) + (50-al_get_text_width( mouse_b_f, mouse_but_text[a].c_str()))/2,
+                         global::dHeight -(AB_IMAGE_SIZE+37), 0, mouse_but_text[a].c_str());
         }
     }
+
 
     if(paused == true)
     {

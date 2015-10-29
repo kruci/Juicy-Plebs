@@ -39,6 +39,8 @@ private:
 
     ALLEGRO_BITMAP *player_bmp = nullptr;
     ALLEGRO_FONT *pause_f = nullptr;
+    ALLEGRO_FONT *mouse_b_f = nullptr;
+    std::string mouse_but_text[3] = {"LB" , "MB", "RB"};
 
     ALLEGRO_SAMPLE *game_music = nullptr;
     ALLEGRO_SAMPLE_INSTANCE *game_music_instance = nullptr;
