@@ -37,6 +37,34 @@ void CollisionHandler::BeginContact(b2Contact* contact)
             global::save->Set_item(refscreen->mItems[dat1->vectro_poz]->type);
         }
     }
+    else if( (dat1->which_vector == ScreenGame::ENTITY_VECTOR &&
+              dat2->which_vector == ScreenGame::PROJECTILES_VECTOR) )
+    {
+        if(refscreen->entities[dat1->vectro_poz]->type != ScreenGame::PLAYER)
+        {
+            refscreen->projectiles[dat2->vectro_poz]->to_delete = true;
+            refscreen->entities[dat1->vectro_poz]->hp -= refscreen->projectiles[dat2->vectro_poz]->damage;
+        }
+    }
+    else if( (dat2->which_vector == ScreenGame::ENTITY_VECTOR &&
+             dat1->which_vector == ScreenGame::PROJECTILES_VECTOR)  )
+    {
+        if(refscreen->entities[dat2->vectro_poz]->type != ScreenGame::PLAYER)
+        {
+            refscreen->projectiles[dat1->vectro_poz]->to_delete = true;
+            refscreen->entities[dat2->vectro_poz]->hp -= refscreen->projectiles[dat1->vectro_poz]->damage;
+        }
+    }
+    else if( (dat1->which_vector == ScreenGame::WALLS_VECTOR &&
+              dat2->which_vector == ScreenGame::PROJECTILES_VECTOR) )
+    {
+            refscreen->projectiles[dat2->vectro_poz]->to_delete = true;
+    }
+    else if( (dat2->which_vector == ScreenGame::WALLS_VECTOR &&
+             dat1->which_vector == ScreenGame::PROJECTILES_VECTOR)  )
+    {
+            refscreen->projectiles[dat1->vectro_poz]->to_delete = true;
+    }
     /*else if( (dat1->which_vector == ScreenGame::ENTITY_VECTOR  &&
               dat2->which_vector == ScreenGame::WALLS_VECTOR) && refscreen->just_tp == true)
     {

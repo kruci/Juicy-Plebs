@@ -111,6 +111,15 @@ ScreenGame::ScreenGame()
             }
         }
     }
+
+    for(int a = 0;a < NUMBER_OF_PROJECTILE_TYPES;a++)
+    {
+        projectiles_bitmaps.push_back(al_load_bitmap(projectiles_image_files[a].c_str()));
+        if(projectiles_bitmaps[a] == nullptr)
+        {
+            error_message("Could not load iamge: " + projectiles_image_files[a]);
+        }
+    }
 }
 
 ScreenGame::~ScreenGame()
@@ -193,6 +202,13 @@ ScreenGame::~ScreenGame()
     }
     mItems.clear();
 
+    for(int a = 0;a < (int)projectiles_bitmaps.size();a++)
+    {
+        if(projectiles_bitmaps[a] != nullptr)
+            al_destroy_bitmap(projectiles_bitmaps[a]);
+    }
+    projectiles_bitmaps.clear();
+
     #ifdef _MAP_WALLS
     if(walltester != nullptr)
     {
@@ -266,6 +282,10 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
         if(abilities[a]->usable == true && abilities[a]->unlocked == true)
         {
             abilities[a]->ab_but->Input(event, xscale, yscale);
+            if(abilities[a]->ab_but->jst_clicked == true)
+            {
+                unclick_other_ab_but(a);
+            }
         }
     }
 
@@ -276,11 +296,15 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
         {
             abilities[ab_TELEPORT]->remaining_cd = abilities[ab_TELEPORT]->cool_down;
             abilities[ab_TELEPORT]->ab_but->unclick();
-            //pre_tp = entities[0]->body->GetPosition();
             entities[0]->body->SetTransform(b2Vec2( PIXELS_TO_METERS( ( (float)global::mouse_state.x/xscale +  (float)map_draw_x) ) ,
                                                 -PIXELS_TO_METERS( (  (float)global::mouse_state.y/yscale +  (float)map_draw_y) )), 0);
-            //just_tp = true;
-        //entities[0]->body->SetTransform(entities[0]->body->GetPosition() + b2Vec2(PIXELS_TO_METERS(0), -PIXELS_TO_METERS(100) ), 0);
+        }
+        else if(abilities[ab_ATTACK_PLUVANCE]->remaining_cd <= 0 && global::mouse_state.buttons == 1 && abilities[ab_ATTACK_PLUVANCE]->unlocked == true)
+        {
+            abilities[ab_ATTACK_PLUVANCE]->remaining_cd = abilities[ab_ATTACK_PLUVANCE]->cool_down;
+            abilities[ab_ATTACK_PLUVANCE]->ab_but->unclick();
+
+            add_projectile(0.6f, &projectiles_bitmaps[0], 6, 6, 3);
         }
     }
 
@@ -365,7 +389,7 @@ void ScreenGame::Print()
     map_bitmap->Draw_bitmap_region(map_draw_x, map_draw_y, global::dWidth, global::dHeight - gui_height, 0, 0, 0);
 
     //items
-    for(int a = 0;a < (int)mItems.size();a++)
+    for(int a = 0;a < (int)mItems.size();)
     {
         if(mItems[a]->to_delete == true)
         {
@@ -384,12 +408,23 @@ void ScreenGame::Print()
             al_draw_bitmap(mItems[a]->bitmap, METERS_TO_PIXELS(mItems[a]->body->GetPosition().x) - map_draw_x - al_get_bitmap_width(mItems[a]->bitmap)/2,
                                    -METERS_TO_PIXELS(mItems[a]->body->GetPosition().y) - map_draw_y - al_get_bitmap_height(mItems[a]->bitmap)/2, 0);
         }
+        mItems[a]->data.vectro_poz = a;
+        a++;
     }
     //merge these 2 fors ?
     //npc
 
-    for(int a = 1;a < (int)entities.size();a++)
+    for(int a = 1;a < (int)entities.size();)
     {
+        if(entities[a]->hp <= 0)
+        {
+            world->DestroyBody(entities[a]->body);
+            al_destroy_bitmap(entities[a]->bitmap);
+            delete entities[a];
+            entities.erase(entities.begin()+a);
+            continue;
+        }
+
         if(METERS_TO_PIXELS(entities[a]->body->GetPosition().x) +40 >= map_draw_x &&
            METERS_TO_PIXELS(entities[a]->body->GetPosition().x) - 40 <= map_draw_x + global::dWidth &&
            METERS_TO_PIXELS(-entities[a]->body->GetPosition().y) +40 >= map_draw_y &&
@@ -400,6 +435,34 @@ void ScreenGame::Print()
             40, 40, METERS_TO_PIXELS(entities[a]->body->GetPosition().x) - map_draw_x,
                                    -METERS_TO_PIXELS(entities[a]->body->GetPosition().y) - map_draw_y, 0, 0);
         }
+        entities[a]->data.vectro_poz = a;
+        a++;
+    }
+
+    //projectiles
+    int reduced = 0;
+    for(int a = 0;a < (int)projectiles.size();)
+    {
+        if(projectiles[a]->to_delete == true)
+        {
+            world->DestroyBody(projectiles[a]->body);
+            delete projectiles[a];
+            projectiles.erase(projectiles.begin()+a);
+            continue;
+        }
+
+        if(METERS_TO_PIXELS(projectiles[a]->body->GetPosition().x) + projectiles[a]->width_pixel >= map_draw_x &&
+           METERS_TO_PIXELS(projectiles[a]->body->GetPosition().x) - projectiles[a]->width_pixel <= map_draw_x + global::dWidth &&
+           METERS_TO_PIXELS(-projectiles[a]->body->GetPosition().y) + projectiles[a]->height_pixel >= map_draw_y &&
+           METERS_TO_PIXELS(-projectiles[a]->body->GetPosition().y) - projectiles[a]->height_pixel <= map_draw_y + global::dHeight)
+        {
+
+            al_draw_rotated_bitmap(projectiles[a]->bitmap, projectiles[a]->width_pixel, projectiles[a]->height_pixel,
+                                   METERS_TO_PIXELS(projectiles[a]->body->GetPosition().x) - map_draw_x,
+                                   -METERS_TO_PIXELS(projectiles[a]->body->GetPosition().y) - map_draw_y, projectiles[a]->body->GetAngle(), 0);
+        }
+        projectiles[a]->data.vectro_poz = a;
+        a++;
     }
 
     //player
@@ -672,16 +735,20 @@ bool ScreenGame::Set_mission(int mission)
             body_def.position.Set(PIXELS_TO_METERS(mapdat->objects[a]->x1), -PIXELS_TO_METERS(mapdat->objects[a]->y1));
             body_def.allowSleep = false;
             body_def.awake = true;
+            //body_def.bullet = true;
             entities[entities.size()-1]->body = world->CreateBody(&body_def);
             shape.SetAsBox(PIXELS_TO_METERS(30), PIXELS_TO_METERS(30));
             fixture.filter.categoryBits = c_ENEMY;
-            fixture.filter.maskBits = c_PLAYER | c_PLYER_PROJECTILE | c_WALL;
+            fixture.filter.maskBits = c_WALL | c_PLYER_PROJECTILE | c_PLAYER;
             fixture.shape = &shape;
             entities[entities.size()-1]->body->CreateFixture(&fixture);
             entities[entities.size()-1]->type = mapdat->objects[a]->enemy;
             entities[entities.size()-1]->data.vectro_poz = entities.size()-1;
             entities[entities.size()-1]->data.which_vector = ENTITY_VECTOR;
             entities[entities.size()-1]->body->SetUserData( &entities[entities.size()-1]->data );
+
+            entities[entities.size()-1]->hp = mapdat->objects[a]->hp;
+            entities[entities.size()-1]->speed = mapdat->objects[a]->speed;
 
             std::string kackar_bitmap;
             if(mapdat->objects[a]->enemy == 0)
@@ -733,4 +800,53 @@ bool ScreenGame::Set_mission(int mission)
     }
 
     return true;
+}
+
+void ScreenGame::unclick_other_ab_but(int just_clicked)
+{
+    for(int a = 0;a < (int)abilities.size();a++)
+    {
+        if(abilities[a]->usable == true && a != just_clicked)
+           abilities[a]->ab_but->unclick();
+    }
+    return;
+}
+
+void ScreenGame::add_projectile(float damage, ALLEGRO_BITMAP **bmp, float width_pixel, float height_pixel, float speed_inmeters)
+{
+    /*g_pro_vel_x = (global::mouse_state.x/global::xscale - (METERS_TO_PIXELS(entities[0]->body->GetPosition().x) -map_draw_x));
+    g_pro_vel_y = (global::mouse_state.y/global::yscale - (-METERS_TO_PIXELS(entities[0]->body->GetPosition().y) -map_draw_y));*/
+
+    g_pro_angle = atan2( (global::mouse_state.y) / (global::yscale) - (-METERS_TO_PIXELS(entities[0]->body->GetPosition().y) - map_draw_y),
+                    (global::mouse_state.x) / (global::xscale) - (METERS_TO_PIXELS(entities[0]->body->GetPosition().x) - map_draw_x) );
+
+
+    projectiles.push_back(new Projectile);
+    projectiles[projectiles.size()-1]->bitmap = *bmp;
+
+    gbody_def.type = b2_dynamicBody;
+    gbody_def.position.Set(entities[0]->body->GetPosition().x, entities[0]->body->GetPosition().y);
+    gbody_def.allowSleep = false;
+    gbody_def.awake = true;
+    gbody_def.bullet = true;
+    gbody_def.angle = g_pro_angle;
+    //gbody_def.linearVelocity = b2Vec2( PIXELS_TO_METERS(g_pro_vel_x), (-PIXELS_TO_METERS(g_pro_vel_y)) );
+    gbody_def.linearVelocity = b2Vec2(speed_inmeters*cos(g_pro_angle) ,-(speed_inmeters*sin(g_pro_angle)) );
+    projectiles[projectiles.size()-1]->body = world->CreateBody(&gbody_def);
+    projectiles[projectiles.size()-1]->damage = damage;
+    projectiles[projectiles.size()-1]->width_pixel = width_pixel;
+    projectiles[projectiles.size()-1]->height_pixel = height_pixel;
+
+    gshape.SetAsBox(PIXELS_TO_METERS(width_pixel),PIXELS_TO_METERS(height_pixel));
+
+    gfixture.shape = &gshape;
+
+    gfixture.filter.categoryBits = c_PLYER_PROJECTILE;
+    gfixture.filter.maskBits = c_WALL | c_ENEMY;
+    projectiles[projectiles.size()-1]->body->CreateFixture(&gfixture);
+    projectiles[projectiles.size()-1]->data.vectro_poz = projectiles.size()-1;
+    projectiles[projectiles.size()-1]->data.which_vector = PROJECTILES_VECTOR;
+    projectiles[projectiles.size()-1]->body->SetUserData( &projectiles[projectiles.size()-1]->data );
+
+    return;
 }

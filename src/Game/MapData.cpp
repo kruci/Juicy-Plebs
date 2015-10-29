@@ -66,7 +66,7 @@ MapData::MapData(std::string map_conf_file)
 
                 if(al_get_config_value(cfg, dum.c_str(), "shield") == nullptr)
                 {
-                    objects[objects.size()-1]->shield = 3.0f;
+                    objects[objects.size()-1]->shield = 0.0f;
                 }
                 else
                 {

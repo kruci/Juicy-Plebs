@@ -104,7 +104,31 @@ private:
         float cool_down = 0;
         float remaining_cd = 0;
         float cast_time = 0;
+        float remaining_time_to_cast = 0;
     };
+
+
+    #define NUMBER_OF_PROJECTILE_TYPES 1
+    std::string projectiles_image_files[NUMBER_OF_PROJECTILE_TYPES] = {"resources/graphics/projectile_0.png"};
+    std::vector<ALLEGRO_BITMAP*> projectiles_bitmaps;
+    struct Projectile{
+        ALLEGRO_BITMAP *bitmap = nullptr;
+        b2Body *body = nullptr;
+        universal_data data;
+        bool to_delete = false;
+        float damage = 0;
+        float width_pixel = 0;
+        float height_pixel = 0;
+    };
+
+    void unclick_other_ab_but(int just_clicked);
+
+    /**so it doesnt have to create these every time*/
+        float g_pro_vel_x, g_pro_vel_y, g_pro_angle;
+        b2BodyDef gbody_def;
+        b2PolygonShape gshape;
+        b2FixtureDef gfixture;
+    void add_projectile(float damage, ALLEGRO_BITMAP **bmp, float width_pixel, float height_pixel, float speed_inmeters = 3.0f);
 
     //mess
     int dead_fade_counter = 0;
@@ -113,7 +137,7 @@ public:
 
     CollisionHandler *colider = nullptr;
     enum enttype{C4KACK = 0, MELEKACK, DICK_BUTT, PLAYER = 99};
-    enum vectors{ENTITY_VECTOR, WALLS_VECTOR, ITEMS_VECTOR};
+    enum vectors{ENTITY_VECTOR, WALLS_VECTOR, ITEMS_VECTOR, PROJECTILES_VECTOR};
     std::vector<entity*> entities;
     std::vector<Wall*> walls;
     std::vector<map_Item*> mItems;
@@ -126,6 +150,7 @@ public:
     #define NUMBER_OF_AB 5
     enum{ab_TELEPORT, ab_ATTACK_PLUVANCE, ab_BRICK, ab_AUTO_SUPACKA, ab_TEST_JUP};
     std::vector<Ability *> abilities;
+    std::vector<Projectile*> projectiles;
 
     bool dead = false;
     bool tp_fail = false;
