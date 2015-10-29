@@ -17,6 +17,26 @@ void CollisionHandler::BeginContact(b2Contact* contact)
             global::audio_player->Play_sample_instance(&refscreen->sounds[ScreenGame::sound_DEAD]->instance, ALLEGRO_PLAYMODE_ONCE);
         }
     }
+    else if( (dat1->which_vector == ScreenGame::ENTITY_VECTOR &&
+              dat2->which_vector == ScreenGame::ITEMS_VECTOR) )
+    {
+        if(refscreen->entities[dat1->vectro_poz]->type == ScreenGame::PLAYER)
+        {
+            refscreen->mItems[dat2->vectro_poz]->to_delete = true;
+            refscreen->abilities[refscreen->mItems[dat2->vectro_poz]->type]->unlocked = true;
+            global::save->Set_item(refscreen->mItems[dat2->vectro_poz]->type);
+        }
+    }
+    else if( (dat2->which_vector == ScreenGame::ENTITY_VECTOR &&
+             dat1->which_vector == ScreenGame::ITEMS_VECTOR)  )
+    {
+        if(refscreen->entities[dat2->vectro_poz]->type == ScreenGame::PLAYER)
+        {
+            refscreen->mItems[dat1->vectro_poz]->to_delete = true;
+            refscreen->abilities[refscreen->mItems[dat1->vectro_poz]->type]->unlocked = true;
+            global::save->Set_item(refscreen->mItems[dat1->vectro_poz]->type);
+        }
+    }
     /*else if( (dat1->which_vector == ScreenGame::ENTITY_VECTOR  &&
               dat2->which_vector == ScreenGame::WALLS_VECTOR) && refscreen->just_tp == true)
     {

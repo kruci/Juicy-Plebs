@@ -153,6 +153,7 @@ ScreenGame::~ScreenGame()
     {
         world->DestroyBody(entities[a]->body);
         al_destroy_bitmap(entities[a]->bitmap);
+        delete entities[a];
     }
     entities.clear();
 
@@ -173,12 +174,14 @@ ScreenGame::~ScreenGame()
         global::audio_player->Stop_sample_instance(&sounds[a]->instance);
         al_destroy_sample(sounds[a]->sample);
         al_destroy_sample_instance(sounds[a]->instance);
+        delete sounds[a];
     }
     sounds.clear();
 
     for(int a = 0;a < (int)walls.size();a++)
     {
         world->DestroyBody(walls[a]->body);
+        delete walls[a];
     }
     walls.clear();
 
@@ -186,6 +189,7 @@ ScreenGame::~ScreenGame()
     {
         world->DestroyBody(mItems[a]->body);
         al_destroy_bitmap(mItems[a]->bitmap);
+        delete mItems[a];
     }
     mItems.clear();
 
@@ -363,6 +367,15 @@ void ScreenGame::Print()
     //items
     for(int a = 0;a < (int)mItems.size();a++)
     {
+        if(mItems[a]->to_delete == true)
+        {
+            world->DestroyBody(mItems[a]->body);
+            al_destroy_bitmap(mItems[a]->bitmap);
+            delete mItems[a];
+            mItems.erase(mItems.begin()+a);
+            continue;
+        }
+
         if(METERS_TO_PIXELS(mItems[a]->body->GetPosition().x) +40 >= map_draw_x &&
            METERS_TO_PIXELS(mItems[a]->body->GetPosition().x) - 40 <= map_draw_x + global::dWidth &&
            METERS_TO_PIXELS(-mItems[a]->body->GetPosition().y) +40 >= map_draw_y &&
@@ -510,12 +523,14 @@ bool ScreenGame::Set_mission(int mission)
     {
         world->DestroyBody(entities[a]->body);
         al_destroy_bitmap(entities[a]->bitmap);
+        delete entities[a];
     }
     entities.clear();
 
     for(int a = 0;a < (int)walls.size();a++)
     {
         world->DestroyBody(walls[a]->body);
+        delete walls[a];
     }
     walls.clear();
 
@@ -523,6 +538,7 @@ bool ScreenGame::Set_mission(int mission)
     {
         world->DestroyBody(mItems[a]->body);
         al_destroy_bitmap(mItems[a]->bitmap);
+        delete mItems[a];
     }
     mItems.clear();
 

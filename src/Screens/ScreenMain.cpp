@@ -85,6 +85,7 @@ void ScreenMain::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
         {
             if(SCGame != nullptr)
             {
+                global::save->Save();
                 delete SCGame;
                 delete colider;
                 SCGame = nullptr;

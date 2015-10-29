@@ -77,6 +77,7 @@ private:
         float hp;
         float shield;
         float speed;
+        bool to_delete = false;
         universal_data data;
     };
 
@@ -85,6 +86,7 @@ private:
         ALLEGRO_BITMAP *bitmap = nullptr;
         int type;
         universal_data data;
+        bool to_delete = false;
     };
 
     struct Wall{
