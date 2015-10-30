@@ -20,8 +20,9 @@ class RayCastCallBack;
 #define AB_IMAGE_SIZE 50
 #define MAX_MISSIONS 1
 
-#define _MAP_WALLS
-#define _MAP_PF_ZONES
+//#define _MAP_WALLS
+#define _PURE_MAP_WALLS
+//#define _MAP_PF_ZONES
 
 class ScreenGame
 {

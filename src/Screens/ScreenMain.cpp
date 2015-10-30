@@ -4,6 +4,14 @@
 ScreenMain::ScreenMain()
 {
     //background = al_load_bitmap("resources/graphics/zemiak.png");
+    zemak_bitmap = al_load_bitmap("resources/graphics/logo.png");
+    if(zemak_bitmap == nullptr)
+    {
+        error_message("Could not load image : resources/graphics/logo.png");
+    }
+    zemak_button = new Button(100, (global::dHeight - al_get_bitmap_height(zemak_bitmap))/2,
+                              100 + al_get_bitmap_width(zemak_bitmap),
+                              (global::dHeight - al_get_bitmap_height(zemak_bitmap))/2 + al_get_bitmap_height(zemak_bitmap));
 
     std::string bnames[3] = {"Exit", "Play", "About"};
 
@@ -125,6 +133,7 @@ void ScreenMain::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
         {
             buttons[a]->Input(event, xscale, yscale);
         }
+        zemak_button->Input(event, xscale, yscale);
     }
 
     if(buttons[EXIT]->is_button_clicked() == true)
@@ -192,7 +201,11 @@ void ScreenMain::Print()
     }
     else
     {
-        //al_draw_bitmap(background,0,0,0);
+        al_draw_bitmap(zemak_bitmap, zemak_button->origin_x1,zemak_button->origin_y1,0);
+        if(zemak_button->is_button_clicked() == true)
+        {
+            zemak_button->unclick();
+        }
 
         for(int a = 0;a < (int)buttons.size();a++)
         {

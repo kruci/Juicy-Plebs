@@ -252,6 +252,7 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
         {
             Set_mission(global::save->Get_mission_number());
             cutscene_playing = false;
+            global::audio_player->Play_sample_instance(&game_music_instance, 0.8f,ALLEGRO_PLAYMODE_LOOP);
             respawn_button->unclick();
             return;
         }
@@ -289,6 +290,9 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
         if(next_lvl->Input(event, xscale, yscale) == 2)
         {
             global::save->Set_mission_number(global::save->Get_mission_number()+1);
+            if(global::save->Get_mission_number() > MAX_MISSIONS)
+                global::save->Set_mission_number(MAX_MISSIONS);
+
             Set_mission(global::save->Get_mission_number());
         }
     }
@@ -510,10 +514,14 @@ void ScreenGame::Print()
             continue;
         }*/
 
-        if(METERS_TO_PIXELS(projectiles[a]->body->GetPosition().x) + projectiles[a]->width_pixel >= map_draw_x + global::dWidth/2 -range &&
-           METERS_TO_PIXELS(projectiles[a]->body->GetPosition().x) - projectiles[a]->width_pixel <= map_draw_x + global::dWidth/2 + range &&
-           METERS_TO_PIXELS(-projectiles[a]->body->GetPosition().y) + projectiles[a]->height_pixel >= map_draw_y + global::dHeight/2 -range &&
-           METERS_TO_PIXELS(-projectiles[a]->body->GetPosition().y) - projectiles[a]->height_pixel <= map_draw_y + global::dHeight/2 + range&&
+        if(METERS_TO_PIXELS(projectiles[a]->body->GetPosition().x) + projectiles[a]->width_pixel
+           >= METERS_TO_PIXELS(entities[0]->body->GetPosition().x) -range &&
+           METERS_TO_PIXELS(projectiles[a]->body->GetPosition().x) - projectiles[a]->width_pixel
+           <= METERS_TO_PIXELS(entities[0]->body->GetPosition().x) + range &&
+           METERS_TO_PIXELS(-projectiles[a]->body->GetPosition().y) + projectiles[a]->height_pixel
+           >= METERS_TO_PIXELS(-entities[0]->body->GetPosition().y) -range &&
+           METERS_TO_PIXELS(-projectiles[a]->body->GetPosition().y) - projectiles[a]->height_pixel
+           <= METERS_TO_PIXELS(-entities[0]->body->GetPosition().y) + range&&
            projectiles[a]->to_delete == false )
         {
 
@@ -538,7 +546,7 @@ void ScreenGame::Print()
                            -METERS_TO_PIXELS(entities[0]->body->GetPosition().y) - map_draw_y, entities[0]->body->GetAngle(), 0);
     //-----
 
-    #ifdef _MAP_WALLS
+    #ifdef _PURE_MAP_WALLS
     for(int a = 0;a < (int)mapdat->objects.size();a++)
     {
         if(mapdat->objects[a]->type == MapData::WALL)
@@ -547,13 +555,16 @@ void ScreenGame::Print()
                               mapdat->objects[a]->x2- map_draw_x, mapdat->objects[a]->y2- map_draw_y,al_map_rgb(0,0,0),2);
         }
     }
+    #endif // _PURE_MAP_WALLS
+
+    #ifdef _MAP_WALLS
     al_draw_filled_rectangle(METERS_TO_PIXELS(walltester->GetPosition().x) - map_draw_x -20,
                             -METERS_TO_PIXELS(walltester->GetPosition().y) - map_draw_y -20,
                              METERS_TO_PIXELS(walltester->GetPosition().x) - map_draw_x +20,
                             -METERS_TO_PIXELS(walltester->GetPosition().y) - map_draw_y +20,
                              al_map_rgb(0,0,0));
-
     #endif // _MAP_WALLS
+
 
     //print GUI
     al_draw_filled_rectangle(0, global::dHeight - gui_height, global::dWidth, global::dHeight, al_map_rgb(88,88,88));

@@ -12,7 +12,9 @@
 class ScreenMain
 {
 private:
+    ALLEGRO_BITMAP *zemak_bitmap = nullptr;
     ALLEGRO_BITMAP *background = nullptr;
+    Button *zemak_button = nullptr;
 
     enum SMbutton_names{EXIT = 0, PLAY, ABOUT, SETTINGS};
 
