@@ -68,6 +68,10 @@ ScreenMain::~ScreenMain()
         delete raycallback;
     if(colider != nullptr)
         delete colider;
+    if(zemak_bitmap != nullptr)
+        al_destroy_bitmap(zemak_bitmap);
+    if(zemak_button != nullptr)
+        delete zemak_button;
 
     al_stop_sample_instance(intro_music_instance);
     al_detach_sample_instance(intro_music_instance);

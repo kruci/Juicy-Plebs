@@ -24,7 +24,34 @@ ScreenPlay::ScreenPlay(Button *ext_b) : but(ext_b)
     buttons[OK]->Print_active(false);
 
     scba = new ScrollableArea(((float)global::dWidth - 500.0f)/2.0f ,100, 500 ,global::dHeight-200);
-    scba->background_col = al_map_rgba(0,0,0,128);
+    scba->background_col = al_map_rgba(50,50,50,120);
+
+    //graphic background trash
+    zemak_bitmpa = al_load_bitmap("resources/graphics/logo.png");
+    if(zemak_bitmpa == nullptr)
+    {
+        error_message("Could not load image : resources/graphics/logo.png");
+    }
+
+    std::mt19937 generator(std::chrono::system_clock::now().time_since_epoch().count());
+    std::uniform_int_distribution<int> distribution(1,5);
+    std::uniform_real_distribution<float> change(-10, 10);
+
+    std::uniform_int_distribution<int> width(0,global::dWidth - ZEMIAK_SIZE);
+    std::uniform_int_distribution<int> height(0,global::dHeight-ZEMIAK_SIZE);
+
+    number_of_zemaky = distribution(generator);
+    zemaky = new float[number_of_zemaky*4];
+
+    for(int a = 0;a < number_of_zemaky*4;a+=4)
+    {
+        zemaky[a] = width(generator);
+        zemaky[a+1] = height(generator);
+        zemaky[a+2] = round(change(generator));
+        zemaky[a+3] = round(change(generator));
+    }
+    //------------------------------------------
+
 
     //Saves loading
     gms = new GameSave();
@@ -87,6 +114,11 @@ ScreenPlay::~ScreenPlay()
 
      if(gms != nullptr)
         delete gms;
+
+    if(zemak_bitmpa != nullptr)
+        al_destroy_bitmap(zemak_bitmpa);
+    if(zemaky != nullptr)
+        delete [] zemaky;
 }
 
 void ScreenPlay::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
@@ -166,7 +198,37 @@ void ScreenPlay::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
 
 void ScreenPlay::Print()
 {
-    al_clear_to_color(al_map_rgb(0,125,0));
+    al_clear_to_color(al_map_rgb(0,0,0));
+
+    for(int a = 0;a < number_of_zemaky*4;a+=4)
+    {
+
+        zemaky[a] += zemaky[a+2];
+        zemaky[a+1] += zemaky[a+3];
+
+        if(zemaky[a] <= 0)
+        {
+            zemaky[a+2] = - zemaky[a+2];
+        }
+        else if(zemaky[a] + ZEMIAK_SIZE >= global::dWidth)
+        {
+            zemaky[a+2] = - zemaky[a+2];
+        }
+
+        if(zemaky[a+1] <= 0)
+        {
+            zemaky[a+3] = - zemaky[a+3];
+        }
+        else if(zemaky[a+1] + ZEMIAK_SIZE >= global::dHeight)
+        {
+            zemaky[a+3] = - zemaky[a+3];
+        }
+
+        al_draw_scaled_bitmap(zemak_bitmpa, 0, 0, al_get_bitmap_height(zemak_bitmpa), al_get_bitmap_width(zemak_bitmpa),
+                                zemaky[a], zemaky[a+1], ZEMIAK_SIZE, ZEMIAK_SIZE, 0);
+
+    }
+
     scba->Print();
 
     for(int a = 0;a < (int)buttons.size();a++)
