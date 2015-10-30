@@ -22,6 +22,9 @@ ScreenGame::ScreenGame()
     respawn_button = new Button("resources/fonts/Calibri.ttf", (global::dWidth - 120)/2, global::dHeight -70,
                                 (global::dWidth - 120)/2 + 120, global::dHeight -70 + 50, "Reload", al_map_rgb(0,0,128));
 
+    next_lvl = new Button("resources/fonts/Calibri.ttf", (global::dWidth - 150)/2, 20,
+                                (global::dWidth - 120)/2 + 150, 20 + 62, "Next level", al_map_rgb(0,0,128));
+
     pause_f = al_load_ttf_font("resources/fonts/Calibri.ttf", 50, 0);
     if(pause_f == nullptr)
     {
@@ -158,6 +161,9 @@ ScreenGame::~ScreenGame()
     if(mouse_b_f!= nullptr)
         al_destroy_font(mouse_b_f);
 
+    if(next_lvl != nullptr)
+        delete next_lvl;
+
     for(int a = 0;a < (int)entities.size();a++)
     {
         world->DestroyBody(entities[a]->body);
@@ -277,6 +283,15 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
 
     walltester->SetLinearVelocity(b2Vec2(PIXELS_TO_METERS(m_vec_x) , -PIXELS_TO_METERS(m_vec_y) ));
     #endif // _MAP_WALLS
+
+    if(entities.size() == 1)
+    {
+        if(next_lvl->Input(event, xscale, yscale) == 2)
+        {
+            global::save->Set_mission_number(global::save->Get_mission_number()+1);
+            Set_mission(global::save->Get_mission_number());
+        }
+    }
 
     for(int a = 0;a < abilities.size();a++)
     {
@@ -486,23 +501,33 @@ void ScreenGame::Print()
     int reduced = 0;
     for(int a = 0;a < (int)projectiles.size();)
     {
-        if(projectiles[a]->to_delete == true)
+        /*if(projectiles[a]->to_delete == true)
         {
+            gt_detele:
             world->DestroyBody(projectiles[a]->body);
             delete projectiles[a];
             projectiles.erase(projectiles.begin()+a);
             continue;
-        }
+        }*/
 
-        if(METERS_TO_PIXELS(projectiles[a]->body->GetPosition().x) + projectiles[a]->width_pixel >= map_draw_x &&
-           METERS_TO_PIXELS(projectiles[a]->body->GetPosition().x) - projectiles[a]->width_pixel <= map_draw_x + global::dWidth &&
-           METERS_TO_PIXELS(-projectiles[a]->body->GetPosition().y) + projectiles[a]->height_pixel >= map_draw_y &&
-           METERS_TO_PIXELS(-projectiles[a]->body->GetPosition().y) - projectiles[a]->height_pixel <= map_draw_y + global::dHeight)
+        if(METERS_TO_PIXELS(projectiles[a]->body->GetPosition().x) + projectiles[a]->width_pixel >= map_draw_x + global::dWidth/2 -range &&
+           METERS_TO_PIXELS(projectiles[a]->body->GetPosition().x) - projectiles[a]->width_pixel <= map_draw_x + global::dWidth/2 + range &&
+           METERS_TO_PIXELS(-projectiles[a]->body->GetPosition().y) + projectiles[a]->height_pixel >= map_draw_y + global::dHeight/2 -range &&
+           METERS_TO_PIXELS(-projectiles[a]->body->GetPosition().y) - projectiles[a]->height_pixel <= map_draw_y + global::dHeight/2 + range&&
+           projectiles[a]->to_delete == false )
         {
 
             al_draw_rotated_bitmap(projectiles[a]->bitmap, projectiles[a]->width_pixel, projectiles[a]->height_pixel,
                                    METERS_TO_PIXELS(projectiles[a]->body->GetPosition().x) - map_draw_x,
                                    -METERS_TO_PIXELS(projectiles[a]->body->GetPosition().y) - map_draw_y, projectiles[a]->body->GetAngle(), 0);
+        }
+        else
+        {
+            gt_detele:
+            world->DestroyBody(projectiles[a]->body);
+            delete projectiles[a];
+            projectiles.erase(projectiles.begin()+a);
+            continue;
         }
         projectiles[a]->data.vectro_poz = a;
         a++;
@@ -559,6 +584,10 @@ void ScreenGame::Print()
         }
     }
 
+    if(entities.size() == 1)
+    {
+        next_lvl->Print();
+    }
 
     if(paused == true)
     {
@@ -601,6 +630,11 @@ bool ScreenGame::Set_mission(int mission)
     dead = false;
     paused = false;
     cutscene_playing = true;
+
+    if(mission > MAX_MISSIONS)
+    {
+        mission = MAX_MISSIONS;
+    }
 
     for(int a = 0;a < (int)sounds.size();a++)
     {

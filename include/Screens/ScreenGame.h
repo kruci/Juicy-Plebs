@@ -18,6 +18,7 @@ class RayCastCallBack;
 #define OTHER_KACBAR "resources/graphics/ot.png"
 
 #define AB_IMAGE_SIZE 50
+#define MAX_MISSIONS 1
 
 #define _MAP_WALLS
 #define _MAP_PF_ZONES
@@ -30,6 +31,7 @@ private:
     Button *pause_button = nullptr;
     Button *main_menu_button = nullptr;
     Button *respawn_button = nullptr;
+    Button *next_lvl = nullptr;
 
     bool paused = false;
 
@@ -145,6 +147,7 @@ private:
 
     //mess
     int dead_fade_counter = 0;
+    float range = global::dHeight/2 - 10;
 public:
     float p_angle = 0;
     int p_pf_poz[2] = {0};
