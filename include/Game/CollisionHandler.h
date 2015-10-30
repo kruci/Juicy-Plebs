@@ -19,4 +19,14 @@ class CollisionHandler : public b2ContactListener
     void EndContact(b2Contact* contact);
 
 };
+
+class RayCastCallBack : public b2RayCastCallback
+{
+    public:
+    b2Vec2 neocconepouzijem1, neocconepouzijem2;
+
+    ScreenGame *refscreen;
+
+    float32 ReportFixture(b2Fixture* fixture, const b2Vec2& point, const b2Vec2& normal, float32 fraction);
+};
 #endif // COLLISIONHANDLER_H

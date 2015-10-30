@@ -22,6 +22,7 @@ private:
     ScreenPlay *SCPlay = nullptr;
     ScreenGame *SCGame = nullptr;
     CollisionHandler *colider = nullptr;
+    RayCastCallBack *raycallback = nullptr;
 
     ALLEGRO_SAMPLE *intro_music = nullptr;
     ALLEGRO_SAMPLE_INSTANCE *intro_music_instance = nullptr;

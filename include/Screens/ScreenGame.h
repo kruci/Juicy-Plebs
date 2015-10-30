@@ -7,6 +7,7 @@
 #include "include/Game/MapData.h"
 #include "include/Saves/GameSave.h"
 class CollisionHandler;
+class RayCastCallBack;
 #include "include/Game/CollisionHandler.h"
 
 #define GAME_SUND_FILE "resources/music/gamesong.wav"
@@ -19,6 +20,7 @@ class CollisionHandler;
 #define AB_IMAGE_SIZE 50
 
 #define _MAP_WALLS
+#define _MAP_PF_ZONES
 
 class ScreenGame
 {
@@ -51,12 +53,13 @@ private:
     };
 
     enum colision_filters{
-        c_WALL = 0x0001,
-        c_PLYER_PROJECTILE = 0x0002,
-        c_ITEM = 0x0004,
-        c_ENEMY = 0x0008,
-        c_PLAYER = 0x0010,
-        c_EVENT_LOCATION = 0x0020
+        c_WALL =  1 ,//0x0001,
+        c_PLYER_PROJECTILE =  2,//0x0002,
+        c_ITEM = 4,//0x0004,
+        c_ENEMY = 8,//0x0008,
+        c_PLAYER = 16,//0x0010,
+        c_EVENT_LOCATION = 32,//0x0020,
+        c_TEST_BOX = 64//0x0040
     };
 
     struct universal_data{
@@ -79,6 +82,7 @@ private:
         float speed;
         bool to_delete = false;
         universal_data data;
+        bool fainding_path = false;
     };
 
     struct map_Item{
@@ -132,14 +136,23 @@ private:
         b2FixtureDef gfixture;
     void add_projectile(float damage, ALLEGRO_BITMAP **bmp, float width_pixel, float height_pixel, float speed_inmeters = 3.0f);
 
+    struct int_coords{
+        int x = 0;
+        int y = 0;
+    };
+
+    int_coords pixel_coors_to_pf_coords(int x, int y);
+
     //mess
     int dead_fade_counter = 0;
 public:
     float p_angle = 0;
+    int p_pf_poz[2] = {0};
 
     CollisionHandler *colider = nullptr;
+    RayCastCallBack *raycallback = nullptr;
     enum enttype{C4KACK = 0, MELEKACK, DICK_BUTT, PLAYER = 99};
-    enum vectors{ENTITY_VECTOR, WALLS_VECTOR, ITEMS_VECTOR, PROJECTILES_VECTOR};
+    enum vectors{ENTITY_VECTOR, WALLS_VECTOR, ITEMS_VECTOR, PROJECTILES_VECTOR, TEST_VECTOR};
     std::vector<entity*> entities;
     std::vector<Wall*> walls;
     std::vector<map_Item*> mItems;
@@ -157,7 +170,8 @@ public:
     bool dead = false;
     bool tp_fail = false;
     bool just_tp = false;
-    b2Vec2 pre_tp;
+    bool dont_move = false;
+    b2Vec2 pre_tp, bonus;
 
     ScreenIntro * SCIntro = nullptr;
     BigBitmap *map_bitmap = nullptr;

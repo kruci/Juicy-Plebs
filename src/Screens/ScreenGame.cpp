@@ -386,10 +386,28 @@ void ScreenGame::Print()
         p_angle = atan2( (global::mouse_state.y) / (global::yscale) - (-METERS_TO_PIXELS(entities[0]->body->GetPosition().y) - map_draw_y),
                             (global::mouse_state.x) / (global::xscale) - (METERS_TO_PIXELS(entities[0]->body->GetPosition().x) - map_draw_x) );
         entities[0]->body->SetTransform(entities[0]->body->GetPosition(),p_angle);
+
     }
 
     //map
     map_bitmap->Draw_bitmap_region(map_draw_x, map_draw_y, global::dWidth, global::dHeight - gui_height, 0, 0, 0);
+
+
+    #ifdef _MAP_PF_ZONES
+    int c1 = map_draw_x / 50;
+    int c2 = map_draw_y /50;
+    int c_of1 = map_draw_x - c1*50;
+    int c_of2 = map_draw_y - c2*50;
+
+    for(int a = 0;a < 30;a++)
+    {
+        for(int b = 0;b < 30;b++)
+        {
+            al_draw_filled_rectangle((a)*50 - c_of1,(b)*50 - c_of2,(a)*50 +50 - c_of1, (b)*50 +50 - c_of2,
+                                     al_map_rgba( (mapdat->pat_finding_grid[a+c1][b+c2]*250),(1-mapdat->pat_finding_grid[a+c1][b+c2]*250),0,180));
+        }
+    }
+    #endif // _MAP_PF_ZONES
 
     //items
     for(int a = 0;a < (int)mItems.size();)
@@ -410,16 +428,19 @@ void ScreenGame::Print()
         {
             al_draw_bitmap(mItems[a]->bitmap, METERS_TO_PIXELS(mItems[a]->body->GetPosition().x) - map_draw_x - al_get_bitmap_width(mItems[a]->bitmap)/2,
                                    -METERS_TO_PIXELS(mItems[a]->body->GetPosition().y) - map_draw_y - al_get_bitmap_height(mItems[a]->bitmap)/2, 0);
+
         }
         mItems[a]->data.vectro_poz = a;
         a++;
     }
     //merge these 2 fors ?
     //npc
-
+    b2RayCastInput input;
+    b2RayCastOutput output;
+    float k_angle;
     for(int a = 1;a < (int)entities.size();)
     {
-        if(entities[a]->hp <= 0)
+        if(entities[a]->hp <= 0 || entities[a]->to_delete == true)
         {
             world->DestroyBody(entities[a]->body);
             al_destroy_bitmap(entities[a]->bitmap);
@@ -434,9 +455,28 @@ void ScreenGame::Print()
            METERS_TO_PIXELS(-entities[a]->body->GetPosition().y) - 40 <= map_draw_y + global::dHeight)
         {
 
+            input.p1 = entities[a]->body->GetPosition();
+            input.p2 = entities[0]->body->GetPosition();
+            input.maxFraction = 1;
+
+            dont_move = false;
+            world->RayCast(raycallback, entities[a]->body->GetPosition(), entities[0]->body->GetPosition());
+
+            if( dont_move == false/*entities[0]->body->GetFixtureList()->RayCast(&output, input, 0) == true*/)
+            {
+                entities[0]->fainding_path = true;
+                k_angle = atan2(-entities[0]->body->GetPosition().y + entities[a]->body->GetPosition().y ,
+                                entities[0]->body->GetPosition().x - entities[a]->body->GetPosition().x );
+                entities[a]->body->SetTransform(entities[a]->body->GetPosition(), k_angle);
+                entities[a]->body->SetLinearVelocity(b2Vec2(entities[a]->speed * cos(k_angle), -entities[a]->speed* sin(k_angle)));
+            }
             al_draw_rotated_bitmap(entities[a]->bitmap,
             40, 40, METERS_TO_PIXELS(entities[a]->body->GetPosition().x) - map_draw_x,
-                                   -METERS_TO_PIXELS(entities[a]->body->GetPosition().y) - map_draw_y, 0, 0);
+                                   -METERS_TO_PIXELS(entities[a]->body->GetPosition().y) - map_draw_y, k_angle, 0);
+        }
+        else
+        {
+            entities[a]->body->SetLinearVelocity(b2Vec2(0, 0));
         }
         entities[a]->data.vectro_poz = a;
         a++;
@@ -615,6 +655,12 @@ bool ScreenGame::Set_mission(int mission)
     }
     projectiles.clear();
 
+    for(int a = 0;a < (int)abilities.size();a++)
+    {
+        abilities[a]->remaining_cd = 0;
+        abilities[a]->remaining_time_to_cast = 0;
+    }
+
     #ifdef _MAP_WALLS
     if(walltester != nullptr)
     {
@@ -636,10 +682,11 @@ bool ScreenGame::Set_mission(int mission)
     }
 
     map_bitmap = new BigBitmap("resources/maps/map" + std::to_string(mission) + ".jpg", 512, 512);
-    mapdat = new MapData("resources/maps/map" + std::to_string(mission) + ".map");
+    mapdat = new MapData("resources/maps/map" + std::to_string(mission) + ".map", map_bitmap->width, map_bitmap->height);
     map_draw_x = mapdat->player_spawm_x - global::dWidth/2;
     map_draw_y = mapdat->player_spawm_y - (global::dHeight - gui_height)/2;
     world = new b2World(b2Vec2(0,0));
+
 
     world->SetContactListener(colider);
 
@@ -652,16 +699,17 @@ bool ScreenGame::Set_mission(int mission)
     wdef.allowSleep = false;
     wdef.awake = true;
     walltester = world->CreateBody(&wdef);
+    //walltester->SetTransform()
 
     b2PolygonShape wshape;
     wshape.SetAsBox(0.2f, 0.2f);
     b2FixtureDef wfixt;
     wfixt.shape = &wshape;
-    wfixt.filter.categoryBits = c_PLYER_PROJECTILE; //what this is
+    wfixt.filter.categoryBits = c_TEST_BOX; //what this is
     wfixt.filter.maskBits = c_WALL;
     walltester->CreateFixture(&wfixt);
     walltesterdat.vectro_poz = 0;
-    walltesterdat.which_vector = ENTITY_VECTOR;
+    walltesterdat.which_vector = TEST_VECTOR;
     walltester->SetUserData( &walltesterdat );
     #endif // _MAP_WALLS
 
@@ -691,7 +739,7 @@ bool ScreenGame::Set_mission(int mission)
     b2FixtureDef Player_fixture_def;
     Player_fixture_def.shape = &Player_shape;
     Player_fixture_def.filter.categoryBits = c_PLAYER; //what this is
-    Player_fixture_def.filter.maskBits = c_WALL | c_ENEMY | c_ITEM | c_EVENT_LOCATION;//what i collide with
+    Player_fixture_def.filter.maskBits = c_WALL | c_ITEM | c_ENEMY | c_EVENT_LOCATION;//what i collide with
     entities[entities.size()-1]->body->CreateFixture(&Player_fixture_def);
     entities[entities.size()-1]->type = 99;
     entities[entities.size()-1]->data.vectro_poz = entities.size()-1;
@@ -731,8 +779,9 @@ bool ScreenGame::Set_mission(int mission)
             walls[walls.size()-1]->body = world->CreateBody(&body_def);
             shape.SetAsBox(PIXELS_TO_METERS((width/2.0f)), PIXELS_TO_METERS((height/2.0f)));
             fixture.shape = &shape;
+            fixture.isSensor = false;
             fixture.filter.categoryBits = c_WALL;
-            fixture.filter.maskBits = c_PLAYER | c_PLYER_PROJECTILE | c_ENEMY;
+            fixture.filter.maskBits = c_PLAYER | c_PLYER_PROJECTILE | c_ENEMY | c_TEST_BOX;
             walls[walls.size()-1]->body->CreateFixture(&fixture);
             walls[walls.size()-1]->data.vectro_poz = walls.size()-1;
             walls[walls.size()-1]->data.which_vector = WALLS_VECTOR;
@@ -747,10 +796,13 @@ bool ScreenGame::Set_mission(int mission)
             body_def.awake = true;
             //body_def.bullet = true;
             entities[entities.size()-1]->body = world->CreateBody(&body_def);
-            shape.SetAsBox(PIXELS_TO_METERS(30), PIXELS_TO_METERS(30));
-            fixture.filter.categoryBits = c_ENEMY;
-            fixture.filter.maskBits = c_WALL | c_PLYER_PROJECTILE | c_PLAYER;
+
+            shape.SetAsBox(PIXELS_TO_METERS(20), PIXELS_TO_METERS(20));
             fixture.shape = &shape;
+            fixture.isSensor = false;
+            fixture.filter.categoryBits = c_ENEMY;
+            fixture.filter.maskBits = c_WALL | c_PLYER_PROJECTILE | c_PLAYER | c_TEST_BOX;
+
             entities[entities.size()-1]->body->CreateFixture(&fixture);
             entities[entities.size()-1]->type = mapdat->objects[a]->enemy;
             entities[entities.size()-1]->data.vectro_poz = entities.size()-1;
@@ -859,4 +911,17 @@ void ScreenGame::add_projectile(float damage, ALLEGRO_BITMAP **bmp, float width_
     projectiles[projectiles.size()-1]->body->SetUserData( &projectiles[projectiles.size()-1]->data );
 
     return;
+}
+
+ScreenGame::int_coords ScreenGame::pixel_coors_to_pf_coords(int x, int y)
+{
+    int_coords c;
+
+    int a = x / 50;
+    int b = y / 50;
+
+    c.x = a;
+    c.y = b;
+
+    return c;
 }

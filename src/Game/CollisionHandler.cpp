@@ -7,6 +7,8 @@ void CollisionHandler::BeginContact(b2Contact* contact)
     dat1 = (universal_data*)contact->GetFixtureA()->GetBody()->GetUserData();
     dat2 = (universal_data*)contact->GetFixtureB()->GetBody()->GetUserData();
 
+    //std::cout << dat1->which_vector << " " << dat2->which_vector << std::endl;
+
     if( (dat1->which_vector == ScreenGame::ENTITY_VECTOR  &&
          dat2->which_vector == ScreenGame::ENTITY_VECTOR) )
     {
@@ -66,19 +68,19 @@ void CollisionHandler::BeginContact(b2Contact* contact)
             refscreen->projectiles[dat1->vectro_poz]->to_delete = true;
     }
     /*else if( (dat1->which_vector == ScreenGame::ENTITY_VECTOR  &&
-              dat2->which_vector == ScreenGame::WALLS_VECTOR) && refscreen->just_tp == true)
+              dat2->which_vector == ScreenGame::WALLS_VECTOR))
     {
-        if(refscreen->entities[dat1->vectro_poz]->type == ScreenGame::PLAYER)
+        if(refscreen->entities[dat1->vectro_poz]->type != ScreenGame::PLAYER)
         {
-            refscreen->tp_fail = true;
+            refscreen->entities[dat1->vectro_poz]->body->SetLinearVelocity(b2Vec2(0, 0));
         }
     }
     else if( (dat2->which_vector == ScreenGame::ENTITY_VECTOR  &&
-             dat1->which_vector == ScreenGame::WALLS_VECTOR) && refscreen->just_tp == true)
+             dat1->which_vector == ScreenGame::WALLS_VECTOR))
     {
-        if(refscreen->entities[dat2->vectro_poz]->type == ScreenGame::PLAYER)
+        if(refscreen->entities[dat2->vectro_poz]->type != ScreenGame::PLAYER)
         {
-            refscreen->tp_fail = true;
+            refscreen->entities[dat2->vectro_poz]->body->SetLinearVelocity(b2Vec2(0, 0));
         }
     }*/
 
@@ -87,4 +89,17 @@ void CollisionHandler::BeginContact(b2Contact* contact)
 void CollisionHandler::EndContact(b2Contact* contact)
 {
     universal_data *dat1, *dat2;
+}
+
+
+float32 RayCastCallBack::ReportFixture(b2Fixture* fixture, const b2Vec2& point, const b2Vec2& normal, float32 fraction)
+{
+    universal_data *dat1;
+    dat1 = (universal_data*)fixture->GetBody()->GetUserData();
+
+    if(dat1->which_vector == ScreenGame::WALLS_VECTOR && fraction <= 1 )
+    {
+        refscreen->dont_move = true;
+    }
+    return 1;
 }
