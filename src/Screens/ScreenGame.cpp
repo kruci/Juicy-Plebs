@@ -133,6 +133,15 @@ ScreenGame::ScreenGame()
             error_message("Could not load iamge: " + projectiles_image_files[a]);
         }
     }
+
+    for(int a = 0;a < NUMBER_OF_DETECTOR_TYPES;a++)
+    {
+        detector_bitmaps.push_back(al_load_bitmap(detector_image_files[a].c_str()));
+        if(detector_bitmaps[a] == nullptr)
+        {
+            error_message("Could not load iamge: " + detector_image_files[a]);
+        }
+    }
 }
 
 ScreenGame::~ScreenGame()
@@ -227,12 +236,34 @@ ScreenGame::~ScreenGame()
     }
     mItems.clear();
 
+    for(int a = 0;a < (int)detectors.size();a++)
+    {
+        world->DestroyBody(detectors[a]->body);
+        world->DestroyBody(detectors[a]->antiwallbody);
+        delete detectors[a];
+    }
+    detectors.clear();
+
+    for(int a = 0;a < (int)projectiles.size();a++)
+    {
+        world->DestroyBody(projectiles[a]->body);
+        delete projectiles[a];
+    }
+    projectiles.clear();
+
     for(int a = 0;a < (int)projectiles_bitmaps.size();a++)
     {
         if(projectiles_bitmaps[a] != nullptr)
             al_destroy_bitmap(projectiles_bitmaps[a]);
     }
     projectiles_bitmaps.clear();
+
+    for(int a = 0;a < (int)detector_bitmaps.size();a++)
+    {
+        if(detector_bitmaps[a] != nullptr)
+            al_destroy_bitmap(detector_bitmaps[a]);
+    }
+    detector_bitmaps.clear();
 
     #ifdef _MAP_WALLS
     if(walltester != nullptr)
@@ -365,12 +396,14 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
             selected_ab_for_midle_b++;
             if(selected_ab_for_midle_b > scrollable_ab_index.size()-1)
                 selected_ab_for_midle_b = 0;
+            //middle_b_ab->unclick();
         }
         else if(event.mouse.dz > 0)
         {
             selected_ab_for_midle_b--;
-             if(selected_ab_for_midle_b < 0)
+            if(selected_ab_for_midle_b < 0)
                 selected_ab_for_midle_b = scrollable_ab_index.size()-1;
+            //middle_b_ab->unclick();
         }
     }
 
@@ -387,19 +420,32 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
                                                 -PIXELS_TO_METERS( (  (float)global::mouse_state.y/yscale +  (float)map_draw_y) )), 0);
         }
         else if(abilities[ab_BRICK]->remaining_cd <= 0 && abilities[ab_BRICK]->unlocked == true &&
-               (global::mouse_state.buttons == 4 ||
+               ((global::mouse_state.buttons == 4 && ab_BRICK == scrollable_ab_index[selected_ab_for_midle_b]) ||
                 (abilities[ab_BRICK]->ab_but->is_button_clicked() == true &&
-                 event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP && event.mouse.button == 1) ) )
+                 event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP && event.mouse.button == 1)) )
         {//BRICK
             abilities[ab_BRICK]->remaining_cd = abilities[ab_BRICK]->cool_down;
             abilities[ab_BRICK]->ab_but->unclick();
-            if(ab_BRICK == scrollable_ab_index[selected_ab_for_midle_b])
-            {
-                what_clicked = -1;
-                middle_b_ab->unclick();
-            }
 
-            add_projectile(1.0f, &projectiles_bitmaps[1], 7, 7, 3,pr_BRICK, 1);
+            what_clicked = -1;
+            middle_b_ab->unclick();
+
+
+            add_projectile(1.0f, &projectiles_bitmaps[1], 25, 12, 3,pr_BRICK, 1);
+        }
+        else if(abilities[ab_KLINCE]->remaining_cd <= 0 && abilities[ab_KLINCE]->unlocked == true &&
+               ((global::mouse_state.buttons == 4 && ab_KLINCE == scrollable_ab_index[selected_ab_for_midle_b]) ||
+                (abilities[ab_KLINCE]->ab_but->is_button_clicked() == true &&
+                 event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP && event.mouse.button == 1)) )
+        {//KLINCE
+            abilities[ab_KLINCE]->remaining_cd = abilities[ab_KLINCE]->cool_down;
+            abilities[ab_KLINCE]->ab_but->unclick();
+
+            what_clicked = -1;
+            middle_b_ab->unclick();
+
+            //do
+            add_detector(2, &detector_bitmaps[0], 100, 100, 0.5f,d_KLINCE, 5);
         }
         else if(abilities[ab_ATTACK_PLUVANCE]->remaining_cd <= 0 && global::mouse_state.buttons == 1 && abilities[ab_ATTACK_PLUVANCE]->unlocked == true &&
                 (what_clicked == ab_ATTACK_PLUVANCE ||what_clicked == -1) )
@@ -510,6 +556,34 @@ void ScreenGame::Print()
     }
     #endif // _MAP_PF_ZONES
 
+    //detectors
+    for(int a = 0;a < (int)detectors.size();)
+    {
+        if(detectors[a]->to_delete == true || detectors[a]->time_left <= 0)
+        {
+            world->DestroyBody(detectors[a]->body);
+            world->DestroyBody(detectors[a]->antiwallbody);
+            delete detectors[a];
+            detectors.erase(detectors.begin()+a);
+            continue;
+        }
+
+        detectors[a]->time_left -= 1.0f/global::FPS;
+        detectors[a]->body->SetTransform(  detectors[a]->antiwallbody->GetPosition(), 0);
+        if(METERS_TO_PIXELS(detectors[a]->body->GetPosition().x) +40 >= map_draw_x &&
+           METERS_TO_PIXELS(detectors[a]->body->GetPosition().x) - 40 <= map_draw_x + global::dWidth &&
+           METERS_TO_PIXELS(-detectors[a]->body->GetPosition().y) +40 >= map_draw_y &&
+           METERS_TO_PIXELS(-detectors[a]->body->GetPosition().y) - 40 <= map_draw_y + global::dHeight)
+        {
+            al_draw_tinted_bitmap(detectors[a]->bitmap, al_map_rgba_f(1, 1, 1, (detectors[a]->time_left/detectors[a]->duration)*1),
+                                METERS_TO_PIXELS(detectors[a]->body->GetPosition().x) - map_draw_x - al_get_bitmap_width(detectors[a]->bitmap)/2,
+                                -METERS_TO_PIXELS(detectors[a]->body->GetPosition().y) - map_draw_y - al_get_bitmap_height(detectors[a]->bitmap)/2, 0);
+
+        }
+        detectors[a]->data.vectro_poz = a;
+        a++;
+    }
+
     //items
     for(int a = 0;a < (int)mItems.size();)
     {
@@ -535,6 +609,7 @@ void ScreenGame::Print()
         a++;
     }
     //merge these 2 fors ?
+
     //npc
     b2RayCastInput input;
     b2RayCastOutput output;
@@ -578,7 +653,8 @@ void ScreenGame::Print()
                 k_angle = atan2(-entities[0]->body->GetPosition().y + entities[a]->body->GetPosition().y ,
                                 entities[0]->body->GetPosition().x - entities[a]->body->GetPosition().x );
                 entities[a]->body->SetTransform(entities[a]->body->GetPosition(), k_angle);
-                entities[a]->body->SetLinearVelocity(b2Vec2(entities[a]->speed * cos(k_angle), -entities[a]->speed* sin(k_angle)));
+                entities[a]->body->SetLinearVelocity(b2Vec2(entities[a]->speed * cos(k_angle) * entities[a]->speed_change,
+                                                            -entities[a]->speed* sin(k_angle) * entities[a]->speed_change));
             }
             if(entities[a]->stunted_for > 0)
             {
@@ -839,6 +915,14 @@ bool ScreenGame::Set_mission(int mission)
     }
     mItems.clear();
 
+        for(int a = 0;a < (int)detectors.size();a++)
+    {
+        world->DestroyBody(detectors[a]->body);
+        world->DestroyBody(detectors[a]->antiwallbody);
+        delete detectors[a];
+    }
+    detectors.clear();
+
     for(int a = 0;a < (int)projectiles.size();a++)
     {
         world->DestroyBody(projectiles[a]->body);
@@ -978,7 +1062,7 @@ bool ScreenGame::Set_mission(int mission)
             fixture.shape = &shape;
             fixture.isSensor = false;
             fixture.filter.categoryBits = c_WALL;
-            fixture.filter.maskBits = c_PLAYER | c_PLYER_PROJECTILE | c_ENEMY | c_TEST_BOX;
+            fixture.filter.maskBits = c_PLAYER | c_PLYER_PROJECTILE | c_ENEMY | c_TEST_BOX | c_MAP_WALL_DETECTOR;
             walls[walls.size()-1]->body->CreateFixture(&fixture);
             walls[walls.size()-1]->data.vectro_poz = walls.size()-1;
             walls[walls.size()-1]->data.which_vector = WALLS_VECTOR;
@@ -998,7 +1082,7 @@ bool ScreenGame::Set_mission(int mission)
             fixture.shape = &shape;
             fixture.isSensor = false;
             fixture.filter.categoryBits = c_ENEMY;
-            fixture.filter.maskBits = c_WALL | c_PLYER_PROJECTILE | c_PLAYER | c_TEST_BOX;
+            fixture.filter.maskBits = c_WALL | c_PLYER_PROJECTILE | c_PLAYER | c_TEST_BOX | c_MAP_DETECTOR;
 
             entities[entities.size()-1]->body->CreateFixture(&fixture);
             entities[entities.size()-1]->type = mapdat->objects[a]->enemy;
@@ -1098,7 +1182,7 @@ void ScreenGame::add_projectile(float damage, ALLEGRO_BITMAP **bmp, float width_
     projectiles[projectiles.size()-1]->width_pixel = width_pixel;
     projectiles[projectiles.size()-1]->height_pixel = height_pixel;
 
-    gshape.SetAsBox(PIXELS_TO_METERS(width_pixel),PIXELS_TO_METERS(height_pixel));
+    gshape.SetAsBox(PIXELS_TO_METERS(width_pixel/2),PIXELS_TO_METERS(height_pixel/2));
 
     gfixture.shape = &gshape;
 
@@ -1111,6 +1195,52 @@ void ScreenGame::add_projectile(float damage, ALLEGRO_BITMAP **bmp, float width_
 
     return;
 }
+
+void ScreenGame::add_detector(float damage, ALLEGRO_BITMAP **bmp, float width_pixel,
+                              float height_pixel, float speed_reduction, int type, float duration)
+{
+    detectors.push_back(new Detector);
+    detectors[detectors.size()-1]->bitmap = *bmp;
+
+    dbody_def.type = b2_dynamicBody;
+    dbody_def.position.Set( PIXELS_TO_METERS( ( global::mouse_state.x/global::xscale+ map_draw_x ) ),
+                            -PIXELS_TO_METERS( ( global::mouse_state.y/global::yscale+ map_draw_y) ));
+    dbody_def.allowSleep = false;
+    dbody_def.awake = true;
+    dbody_def.bullet = true;
+    //gbody_def.linearVelocity = b2Vec2( PIXELS_TO_METERS(g_pro_vel_x), (-PIXELS_TO_METERS(g_pro_vel_y)) );
+    detectors[detectors.size()-1]->body = world->CreateBody(&dbody_def);
+    detectors[detectors.size()-1]->hp_change = damage;
+    detectors[detectors.size()-1]->type = type;
+    detectors[detectors.size()-1]->time_left = duration;
+    detectors[detectors.size()-1]->duration = duration;
+    detectors[detectors.size()-1]->speed_change = speed_reduction;
+    detectors[detectors.size()-1]->width_pixel = width_pixel;
+    detectors[detectors.size()-1]->height_pixel = height_pixel;
+
+    dshape.SetAsBox(PIXELS_TO_METERS(width_pixel/2),PIXELS_TO_METERS(height_pixel/2));
+
+    dfixture.shape = &dshape;
+
+    dfixture.filter.categoryBits = c_MAP_DETECTOR;
+    dfixture.filter.maskBits = c_ENEMY;
+    dfixture.isSensor = true;
+    detectors[detectors.size()-1]->body->CreateFixture(&dfixture);
+    detectors[detectors.size()-1]->data.vectro_poz = detectors.size()-1;
+    detectors[detectors.size()-1]->data.which_vector = DETECTOR_VECTOR;
+    detectors[detectors.size()-1]->body->SetUserData( &detectors[detectors.size()-1]->data );
+
+
+    detectors[detectors.size()-1]->antiwallbody = world->CreateBody(&dbody_def);
+    dfixture.filter.categoryBits = c_MAP_WALL_DETECTOR;
+    dfixture.filter.maskBits = c_WALL;
+    dfixture.isSensor = false;
+    detectors[detectors.size()-1]->antiwallbody->CreateFixture(&dfixture);
+    detectors[detectors.size()-1]->antiwallbody->SetUserData( &detectors[detectors.size()-1]->data );
+
+    return;
+}
+
 
 ScreenGame::int_coords ScreenGame::pixel_coors_to_pf_coords(int x, int y)
 {

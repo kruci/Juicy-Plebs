@@ -65,7 +65,9 @@ private:
         c_PLAYER = 16,//0x0010,
         c_EVENT_LOCATION = 32,//0x0020,
         c_TEST_BOX = 64,//0x0040
-        c_MAP_DETECTOR = 128
+        c_MAP_DETECTOR = 128,
+        c_GRAPHIC_EFECT = 256,
+        c_MAP_WALL_DETECTOR = 512
     };
 
     struct universal_data{
@@ -87,6 +89,7 @@ private:
         float maxhp= 0;
         float shield= 0;
         float speed= 0;
+        float speed_change = 1;
         float stunted_for = 0;
         bool to_delete = false;
         universal_data data;
@@ -152,15 +155,31 @@ private:
         int y = 0;
     };
 
+
+    #define NUMBER_OF_DETECTOR_TYPES 1
+    std::string detector_image_files[NUMBER_OF_DETECTOR_TYPES] = {"resources/graphics/md_0.png"};
+    std::vector<ALLEGRO_BITMAP*> detector_bitmaps;
     struct Detector{
         b2Body *body = nullptr;
+        b2Body *antiwallbody = nullptr;
         ALLEGRO_BITMAP *bitmap = nullptr;
+        universal_data data;
         int type;
-        float sx,sy, w,h;
+        float width_pixel = 0;
+        float height_pixel = 0;
         bool to_delete = false;
-        float speed_change = 0;
-        float hp_change = 0;
+        float speed_change = 0; // it decrese speed by prectentage (for example 0.5 wile result in 2 times slover speed)
+        float hp_change = 0;    // damage
+        float time_left = 0;
+        float duration = 0;
     };
+
+        b2BodyDef dbody_def;
+        b2PolygonShape dshape;
+        b2FixtureDef dfixture;
+
+    void add_detector(float damage, ALLEGRO_BITMAP **bmp, float width_pixel, float height_pixel,
+                 float speed_reduction, int type, float duration);
 
     int_coords pixel_coors_to_pf_coords(int x, int y);
 
@@ -203,6 +222,7 @@ public:
 
     enum{pr_PLUVANEC, pr_BRICK};
     std::vector<Projectile*> projectiles;
+    enum{d_KLINCE};
     std::vector<Detector*> detectors;
 
     bool dead = false;
