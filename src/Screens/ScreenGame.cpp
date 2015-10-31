@@ -209,6 +209,12 @@ ScreenGame::~ScreenGame()
     }
     walls.clear();
 
+    for(int a = 0;a < explosions.size();a++)
+    {
+        delete explosions[a];
+    }
+    explosions.clear();
+
     for(int a = 0;a < (int)mItems.size();a++)
     {
         world->DestroyBody(mItems[a]->body);
