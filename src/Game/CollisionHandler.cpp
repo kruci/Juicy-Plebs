@@ -12,11 +12,23 @@ void CollisionHandler::BeginContact(b2Contact* contact)
     if( (dat1->which_vector == ScreenGame::ENTITY_VECTOR  &&
          dat2->which_vector == ScreenGame::ENTITY_VECTOR) )
     {
-        if( (refscreen->entities[dat1->vectro_poz]->type == ScreenGame::PLAYER ||
-             refscreen->entities[dat2->vectro_poz]->type == ScreenGame::PLAYER) )
+        if(refscreen->entities[dat2->vectro_poz]->type == ScreenGame::PLAYER)
         {
             refscreen->dead = true;
             global::audio_player->Play_sample_instance(&refscreen->sounds[ScreenGame::sound_DEAD]->instance, ALLEGRO_PLAYMODE_ONCE);
+            if(refscreen->entities[dat1->vectro_poz]->type == ScreenGame::C4KACK)
+            {
+                refscreen->entities[dat1->vectro_poz]->to_delete = true;
+            }
+        }
+        else if(refscreen->entities[dat1->vectro_poz]->type == ScreenGame::PLAYER)
+        {
+            refscreen->dead = true;
+            global::audio_player->Play_sample_instance(&refscreen->sounds[ScreenGame::sound_DEAD]->instance, ALLEGRO_PLAYMODE_ONCE);
+            if(refscreen->entities[dat2->vectro_poz]->type == ScreenGame::C4KACK)
+            {
+                refscreen->entities[dat2->vectro_poz]->to_delete = true;
+            }
         }
     }
     else if( (dat1->which_vector == ScreenGame::ENTITY_VECTOR &&

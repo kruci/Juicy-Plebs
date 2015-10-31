@@ -31,6 +31,12 @@ ScreenGame::ScreenGame()
         error_message("Could not load font: resources/fonts/Calibri.ttf");
     }
 
+    explosion_bmp = al_load_bitmap("resources/graphics/exp.png");
+    if(explosion_bmp == nullptr)
+    {
+        error_message("Could not load image: resources/graphics/exp.png");
+    }
+
     mouse_b_f = al_load_ttf_font("resources/fonts/Calibri.ttf", 15, 0);
     if(mouse_b_f == nullptr)
     {
@@ -154,6 +160,9 @@ ScreenGame::~ScreenGame()
 
     if(player_bmp != nullptr)
         al_destroy_bitmap(player_bmp);
+
+    if(explosion_bmp != nullptr)
+        al_destroy_bitmap(explosion_bmp);
 
     if(pause_f != nullptr)
         al_destroy_font(pause_f);
@@ -457,10 +466,16 @@ void ScreenGame::Print()
     b2RayCastInput input;
     b2RayCastOutput output;
     float k_angle;
+    float bar;
     for(int a = 1;a < (int)entities.size();)
     {
         if(entities[a]->hp <= 0 || entities[a]->to_delete == true)
         {
+            if(entities[a]->type == C4KACK)
+            {
+                explosions.push_back(new Explosion(METERS_TO_PIXELS(entities[a]->body->GetPosition().x) - map_draw_x, -METERS_TO_PIXELS(entities[a]->body->GetPosition().y)-map_draw_y ));
+            }
+
             world->DestroyBody(entities[a]->body);
             al_destroy_bitmap(entities[a]->bitmap);
             delete entities[a];
@@ -473,7 +488,6 @@ void ScreenGame::Print()
            METERS_TO_PIXELS(-entities[a]->body->GetPosition().y) +40 >= map_draw_y &&
            METERS_TO_PIXELS(-entities[a]->body->GetPosition().y) - 40 <= map_draw_y + global::dHeight)
         {
-
             input.p1 = entities[a]->body->GetPosition();
             input.p2 = entities[0]->body->GetPosition();
             input.maxFraction = 1;
@@ -492,12 +506,36 @@ void ScreenGame::Print()
             al_draw_rotated_bitmap(entities[a]->bitmap,
             40, 40, METERS_TO_PIXELS(entities[a]->body->GetPosition().x) - map_draw_x,
                                    -METERS_TO_PIXELS(entities[a]->body->GetPosition().y) - map_draw_y, k_angle, 0);
+
+            //hp bar background
+            al_draw_filled_rectangle(METERS_TO_PIXELS(entities[a]->body->GetPosition().x)- 25 - map_draw_x,
+                                     -METERS_TO_PIXELS(entities[a]->body->GetPosition().y)- 35 - map_draw_y,
+                                     METERS_TO_PIXELS(entities[a]->body->GetPosition().x)+ 25 - map_draw_x,
+                                     -METERS_TO_PIXELS(entities[a]->body->GetPosition().y)- 30 - map_draw_y, al_map_rgba(255,0,0,120));
+            //hp bar hp
+            bar = (entities[a]->hp/entities[a]->maxhp)*50;
+            al_draw_filled_rectangle(METERS_TO_PIXELS(entities[a]->body->GetPosition().x)- 25 - map_draw_x,
+                                     -METERS_TO_PIXELS(entities[a]->body->GetPosition().y)- 35 - map_draw_y,
+                                     METERS_TO_PIXELS(entities[a]->body->GetPosition().x)- 25 + bar - map_draw_x,
+                                     -METERS_TO_PIXELS(entities[a]->body->GetPosition().y)- 30 - map_draw_y, al_map_rgba(0,200,0,180));
         }
         else
         {
             entities[a]->body->SetLinearVelocity(b2Vec2(0, 0));
         }
         entities[a]->data.vectro_poz = a;
+        a++;
+    }
+
+    //explosions
+    for(int a = 0;a < explosions.size();)
+    {
+        if(explosions[a]->Print() == false)
+        {
+            delete explosions[a];
+            explosions.erase(explosions.begin()+a);
+            continue;
+        }
         a++;
     }
 
@@ -700,6 +738,12 @@ bool ScreenGame::Set_mission(int mission)
     }
     projectiles.clear();
 
+    for(int a = 0;a < explosions.size();a++)
+    {
+        delete explosions[a];
+    }
+    explosions.clear();
+
     for(int a = 0;a < (int)abilities.size();a++)
     {
         abilities[a]->remaining_cd = 0;
@@ -854,7 +898,7 @@ bool ScreenGame::Set_mission(int mission)
             entities[entities.size()-1]->data.which_vector = ENTITY_VECTOR;
             entities[entities.size()-1]->body->SetUserData( &entities[entities.size()-1]->data );
 
-            entities[entities.size()-1]->hp = mapdat->objects[a]->hp;
+            entities[entities.size()-1]->maxhp = entities[entities.size()-1]->hp = mapdat->objects[a]->hp;
             entities[entities.size()-1]->speed = mapdat->objects[a]->speed;
 
             std::string kackar_bitmap;

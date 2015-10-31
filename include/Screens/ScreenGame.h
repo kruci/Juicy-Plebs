@@ -9,12 +9,13 @@
 class CollisionHandler;
 class RayCastCallBack;
 #include "include/Game/CollisionHandler.h"
+#include "include/Game/Explosion.h"
 
 #define GAME_SUND_FILE "resources/music/gamesong.wav"
 #define PLAYER_BITMAP_FILE "resources/graphics/Character.png"
 
-#define KACBAR_C4 "resources/graphics/Kacbar1.png"
-#define MELE_KACBAR "resources/graphics/Kacbar2.png"
+#define KACBAR_C4 "resources/graphics/Kacbar2.png"
+#define MELE_KACBAR "resources/graphics/Kacbar1.png"
 #define OTHER_KACBAR "resources/graphics/ot.png"
 
 #define AB_IMAGE_SIZE 50
@@ -42,6 +43,7 @@ private:
     signed int gui_height;
     float map_draw_x, map_draw_y;
 
+    ALLEGRO_BITMAP *explosion_bmp = nullptr;
     ALLEGRO_BITMAP *player_bmp = nullptr;
     ALLEGRO_FONT *pause_f = nullptr;
     ALLEGRO_FONT *mouse_b_f = nullptr;
@@ -81,6 +83,7 @@ private:
         ALLEGRO_BITMAP *bitmap = nullptr;
         int type;
         float hp;
+        float maxhp;
         float shield;
         float speed;
         bool to_delete = false;
@@ -149,6 +152,7 @@ private:
     //mess
     int dead_fade_counter = 0;
     float range = global::dHeight/2 - 10;
+    std::vector<Explosion*> explosions;
 public:
     float p_angle = 0;
     int p_pf_poz[2] = {0};

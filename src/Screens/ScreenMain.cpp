@@ -4,14 +4,14 @@
 ScreenMain::ScreenMain()
 {
     //background = al_load_bitmap("resources/graphics/zemiak.png");
-    zemak_bitmap = al_load_bitmap("resources/graphics/logo.png");
+    zemak_bitmap = al_load_bitmap("resources/graphics/zemiacik.png");
     if(zemak_bitmap == nullptr)
     {
-        error_message("Could not load image : resources/graphics/logo.png");
+        error_message("Could not load image : resources/graphics/zemiacik.png");
     }
-    zemak_button = new Button(100, (global::dHeight - al_get_bitmap_height(zemak_bitmap))/2,
-                              100 + al_get_bitmap_width(zemak_bitmap),
-                              (global::dHeight - al_get_bitmap_height(zemak_bitmap))/2 + al_get_bitmap_height(zemak_bitmap));
+    zemak_button = new Button(100, (global::dHeight - zemiak_size)/2,
+                              100 + zemiak_size,
+                              (global::dHeight - zemiak_size)/2 + zemiak_size);
 
     std::string bnames[3] = {"Exit", "Play", "About"};
 
@@ -205,7 +205,9 @@ void ScreenMain::Print()
     }
     else
     {
-        al_draw_bitmap(zemak_bitmap, zemak_button->origin_x1,zemak_button->origin_y1,0);
+        //al_draw_bitmap(zemak_bitmap, zemak_button->origin_x1,zemak_button->origin_y1,0);
+        al_draw_scaled_bitmap(zemak_bitmap, 0, 0, al_get_bitmap_width(zemak_bitmap), al_get_bitmap_height(zemak_bitmap),
+                              zemak_button->origin_x1, zemak_button->origin_y1, zemiak_size, zemiak_size, 0);
         if(zemak_button->is_button_clicked() == true)
         {
             zemak_button->unclick();

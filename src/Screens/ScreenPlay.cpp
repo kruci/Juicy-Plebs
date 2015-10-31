@@ -27,10 +27,10 @@ ScreenPlay::ScreenPlay(Button *ext_b) : but(ext_b)
     scba->background_col = al_map_rgba(50,50,50,120);
 
     //graphic background trash
-    zemak_bitmpa = al_load_bitmap("resources/graphics/logo.png");
+    zemak_bitmpa = al_load_bitmap("resources/graphics/zemiacik.png");
     if(zemak_bitmpa == nullptr)
     {
-        error_message("Could not load image : resources/graphics/logo.png");
+        error_message("Could not load image : resources/graphics/zemiacik.png");
     }
 
     std::mt19937 generator(std::chrono::system_clock::now().time_since_epoch().count());
