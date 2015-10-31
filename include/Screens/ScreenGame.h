@@ -83,10 +83,11 @@ private:
         b2Body *body = nullptr;
         ALLEGRO_BITMAP *bitmap = nullptr;
         int type;
-        float hp;
-        float maxhp;
-        float shield;
-        float speed;
+        float hp= 0;
+        float maxhp= 0;
+        float shield= 0;
+        float speed= 0;
+        float stunted_for = 0;
         bool to_delete = false;
         universal_data data;
         bool fainding_path = false;
@@ -168,9 +169,14 @@ private:
     int dead_fade_counter = 0;
     float range = global::dHeight/2 - 10;
     std::vector<Explosion*> explosions;
+    signed int what_clicked = -1;
 public:
     //mess
     float gui_ab_x_mult = 0, ab_button_coord_x = 20, ab_button_coord_y = global::dHeight -(AB_IMAGE_SIZE+20);
+    int selected_ab_for_midle_b = 0;
+    int middle_b_poz = 0;
+    int scrollable_ab = 0;
+    std::vector<int> scrollable_ab_index;
     //----
 
     float p_angle = 0;
@@ -193,6 +199,8 @@ public:
     enum{ab_TELEPORT, ab_ATTACK_PLUVANCE, ab_BRICK, ab_AUTO_SUPACKA, ab_TEST_JUP, ab_KLINCE};
 
     std::vector<Ability *> abilities;
+    Button *middle_b_ab = nullptr;
+
     enum{pr_PLUVANEC, pr_BRICK};
     std::vector<Projectile*> projectiles;
     std::vector<Detector*> detectors;

@@ -80,6 +80,8 @@ ScreenGame::ScreenGame()
     std::string ddum2;
     float dum_x1 = 1150, dum_x2 = 1030;
 
+    middle_b_ab = new Button(dum_x2 +60, ab_button_coord_y, dum_x2 +60 + AB_IMAGE_SIZE, ab_button_coord_y+ AB_IMAGE_SIZE);
+
     for(int a = 0;a < NUMBER_OF_AB;a++)
     {
         abilities.push_back(new Ability);
@@ -105,9 +107,10 @@ ScreenGame::ScreenGame()
 
             if(a > 1 && abilities[a]->unlocked == true)
             {
-                abilities[a]->ab_but = new Button(ab_button_coord_x + gui_ab_x_mult*(AB_IMAGE_SIZE) , ab_button_coord_y,
-                                                  ab_button_coord_x + gui_ab_x_mult*(AB_IMAGE_SIZE) + AB_IMAGE_SIZE, ab_button_coord_y + AB_IMAGE_SIZE);
+                abilities[a]->ab_but = new Button(ab_button_coord_x + gui_ab_x_mult*(AB_IMAGE_SIZE+10) , ab_button_coord_y,
+                                                  ab_button_coord_x + gui_ab_x_mult*(AB_IMAGE_SIZE+10) + AB_IMAGE_SIZE, ab_button_coord_y + AB_IMAGE_SIZE);
                 gui_ab_x_mult++;
+                scrollable_ab_index.push_back(a);
             }
             else if(a == 0)
             {
@@ -325,6 +328,7 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
         }
     }
 
+    //ab buttons
     for(int a = 0;a < abilities.size();a++)
     {
         if(abilities[a]->usable == true && abilities[a]->unlocked == true)
@@ -332,25 +336,75 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
             abilities[a]->ab_but->Input(event, xscale, yscale);
             if(abilities[a]->ab_but->jst_clicked == true)
             {
+                middle_b_ab->click();
+                what_clicked = a;
                 unclick_other_ab_but(a);
+                if(a != scrollable_ab_index[selected_ab_for_midle_b])
+                {
+                    middle_b_ab->unclick();
+                    what_clicked = -1;
+                }
+
+
             }
         }
     }
+    middle_b_ab->Input(event, xscale, yscale);
+    if(middle_b_ab->jst_clicked == true)
+    {
+        what_clicked = scrollable_ab_index[selected_ab_for_midle_b];
+        unclick_other_ab_but(scrollable_ab_index[selected_ab_for_midle_b]);
+        abilities[scrollable_ab_index[selected_ab_for_midle_b]]->ab_but->click();
+    }
 
+    //ab scroll
+    if(event.type == ALLEGRO_EVENT_MOUSE_AXES)
+    {
+        if(event.mouse.dz < 0)
+        {
+            selected_ab_for_midle_b++;
+            if(selected_ab_for_midle_b > scrollable_ab_index.size()-1)
+                selected_ab_for_midle_b = 0;
+        }
+        else if(event.mouse.dz > 0)
+        {
+            selected_ab_for_midle_b--;
+             if(selected_ab_for_midle_b < 0)
+                selected_ab_for_midle_b = scrollable_ab_index.size()-1;
+        }
+    }
+
+    //ABILITIES
     if(global::mouse_state.y/yscale < global::dHeight - gui_height)
     {
         if(abilities[ab_TELEPORT]->remaining_cd <= 0 && event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP && (event.mouse.button == 2 ||
            (abilities[ab_TELEPORT]->ab_but->is_button_clicked() == true && event.mouse.button == 1)))
-        {
+        {//TELEPORT
 
             abilities[ab_TELEPORT]->remaining_cd = abilities[ab_TELEPORT]->cool_down;
             abilities[ab_TELEPORT]->ab_but->unclick();
             entities[0]->body->SetTransform(b2Vec2( PIXELS_TO_METERS( ( (float)global::mouse_state.x/xscale +  (float)map_draw_x) ) ,
                                                 -PIXELS_TO_METERS( (  (float)global::mouse_state.y/yscale +  (float)map_draw_y) )), 0);
         }
+        else if(abilities[ab_BRICK]->remaining_cd <= 0 && abilities[ab_BRICK]->unlocked == true &&
+               (global::mouse_state.buttons == 4 ||
+                (abilities[ab_BRICK]->ab_but->is_button_clicked() == true &&
+                 event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP && event.mouse.button == 1) ) )
+        {//BRICK
+            abilities[ab_BRICK]->remaining_cd = abilities[ab_BRICK]->cool_down;
+            abilities[ab_BRICK]->ab_but->unclick();
+            if(ab_BRICK == scrollable_ab_index[selected_ab_for_midle_b])
+            {
+                what_clicked = -1;
+                middle_b_ab->unclick();
+            }
+
+            add_projectile(1.0f, &projectiles_bitmaps[1], 7, 7, 3,pr_BRICK, 1);
+        }
         else if(abilities[ab_ATTACK_PLUVANCE]->remaining_cd <= 0 && global::mouse_state.buttons == 1 && abilities[ab_ATTACK_PLUVANCE]->unlocked == true &&
-                abilities[ab_TELEPORT]->ab_but->is_button_clicked() == false)
-        {
+                (what_clicked == ab_ATTACK_PLUVANCE ||what_clicked == -1) )
+                //abilities[ab_TELEPORT]->ab_but->is_button_clicked() == false)
+        {//PLUVANEC
             abilities[ab_ATTACK_PLUVANCE]->remaining_cd = abilities[ab_ATTACK_PLUVANCE]->cool_down;
             abilities[ab_ATTACK_PLUVANCE]->ab_but->unclick();
 
@@ -518,7 +572,7 @@ void ScreenGame::Print()
             dont_move = false;
             world->RayCast(raycallback, entities[a]->body->GetPosition(), entities[0]->body->GetPosition());
 
-            if( dont_move == false/*entities[0]->body->GetFixtureList()->RayCast(&output, input, 0) == true*/)
+            if( dont_move == false && entities[a]->stunted_for <=0)
             {
                 entities[0]->fainding_path = true;
                 k_angle = atan2(-entities[0]->body->GetPosition().y + entities[a]->body->GetPosition().y ,
@@ -526,6 +580,12 @@ void ScreenGame::Print()
                 entities[a]->body->SetTransform(entities[a]->body->GetPosition(), k_angle);
                 entities[a]->body->SetLinearVelocity(b2Vec2(entities[a]->speed * cos(k_angle), -entities[a]->speed* sin(k_angle)));
             }
+            if(entities[a]->stunted_for > 0)
+            {
+                entities[a]->body->SetLinearVelocity(b2Vec2(0,0));
+                entities[a]->stunted_for -= 1.0f/global::FPS;
+            }
+
             al_draw_rotated_bitmap(entities[a]->bitmap,
             40, 40, b_x - map_draw_x, b_y - map_draw_y, k_angle, 0);
 
@@ -648,8 +708,27 @@ void ScreenGame::Print()
                                      al_map_rgba(0,0,0,128));
             if(abilities[a]->ab_but->is_button_clicked() == true)
             {
+                //middle_b_ab->click();
                 al_draw_rectangle(abilities[a]->ab_but->origin_x1, abilities[a]->ab_but->origin_y1, abilities[a]->ab_but->origin_x2,
                                   abilities[a]->ab_but->origin_y2 ,al_map_rgb(255,255,255),2);
+            }
+
+            if(a == scrollable_ab_index[selected_ab_for_midle_b])
+            {
+                al_draw_rectangle(abilities[a]->ab_but->origin_x1-3, abilities[a]->ab_but->origin_y1-3, abilities[a]->ab_but->origin_x2+3,
+                                  abilities[a]->ab_but->origin_y2+3 ,al_map_rgb(224,224,224),4);
+
+                al_draw_bitmap(abilities[a]->bitmap , middle_b_ab->origin_x1, middle_b_ab->origin_y1, 0);
+                al_draw_filled_rectangle(middle_b_ab->origin_x1,
+                                     middle_b_ab->origin_y1 + AB_IMAGE_SIZE - ( (abilities[a]->remaining_cd/abilities[a]->cool_down) * AB_IMAGE_SIZE),
+                                     middle_b_ab->origin_x2,
+                                     middle_b_ab->origin_y2,
+                                     al_map_rgba(0,0,0,128));
+            }
+            if(a == scrollable_ab_index[selected_ab_for_midle_b] && middle_b_ab->is_button_clicked() == true)
+            {
+                al_draw_rectangle(middle_b_ab->origin_x1, middle_b_ab->origin_y1, middle_b_ab->origin_x2,
+                    middle_b_ab->origin_y2 ,al_map_rgb(255,255,255),2);
             }
         }
 
@@ -706,6 +785,8 @@ bool ScreenGame::Set_mission(int mission)
     dead = false;
     paused = false;
     cutscene_playing = true;
+    what_clicked = -1;
+    selected_ab_for_midle_b = 0;
 
     if(mission > MAX_MISSIONS)
     {

@@ -334,3 +334,8 @@ bool Button::Print_active(bool true_or_false)
 {
     return print_active = true_or_false;
 }
+
+bool Button::click()
+{
+    return clicked = true;
+}

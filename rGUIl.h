@@ -83,6 +83,7 @@ public:
     bool is_mouse_in_it();
     bool is_button_clicked_again();
     bool unclick();
+    bool click();
     bool has_image();
     int Get_width();
     int Get_height();

@@ -49,6 +49,7 @@ void CollisionHandler::BeginContact(b2Contact* contact)
             refscreen->ab_button_coord_x + refscreen->gui_ab_x_mult*(AB_IMAGE_SIZE+10) + AB_IMAGE_SIZE, refscreen->ab_button_coord_y + AB_IMAGE_SIZE);
 
             refscreen->gui_ab_x_mult++;
+            refscreen->scrollable_ab_index.push_back(dat2->vectro_poz);
             //global::save->Set_item(refscreen->mItems[dat2->vectro_poz]->type);
         }
     }
@@ -69,6 +70,7 @@ void CollisionHandler::BeginContact(b2Contact* contact)
             refscreen->ab_button_coord_x + refscreen->gui_ab_x_mult*(AB_IMAGE_SIZE+10) + AB_IMAGE_SIZE, refscreen->ab_button_coord_y + AB_IMAGE_SIZE);
 
             refscreen->gui_ab_x_mult++;
+            refscreen->scrollable_ab_index.push_back(dat1->vectro_poz);
 
             //global::save->Set_item(refscreen->mItems[dat1->vectro_poz]->type);
         }
@@ -80,6 +82,7 @@ void CollisionHandler::BeginContact(b2Contact* contact)
         {
             refscreen->projectiles[dat2->vectro_poz]->to_delete = true;
             refscreen->entities[dat1->vectro_poz]->hp -= refscreen->projectiles[dat2->vectro_poz]->damage;
+            refscreen->entities[dat1->vectro_poz]->stunted_for = refscreen->projectiles[dat2->vectro_poz]->stun_time;
         }
     }
     else if( (dat2->which_vector == ScreenGame::ENTITY_VECTOR &&
@@ -89,6 +92,7 @@ void CollisionHandler::BeginContact(b2Contact* contact)
         {
             refscreen->projectiles[dat1->vectro_poz]->to_delete = true;
             refscreen->entities[dat2->vectro_poz]->hp -= refscreen->projectiles[dat1->vectro_poz]->damage;
+            refscreen->entities[dat2->vectro_poz]->stunted_for = refscreen->projectiles[dat1->vectro_poz]->stun_time;
         }
     }
     else if( (dat1->which_vector == ScreenGame::WALLS_VECTOR &&
