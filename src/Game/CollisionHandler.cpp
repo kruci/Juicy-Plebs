@@ -37,8 +37,19 @@ void CollisionHandler::BeginContact(b2Contact* contact)
         if(refscreen->entities[dat1->vectro_poz]->type == ScreenGame::PLAYER)
         {
             refscreen->mItems[dat2->vectro_poz]->to_delete = true;
+
+
+            if(refscreen->abilities[refscreen->mItems[dat2->vectro_poz]->type]->unlocked == true)
+                return;
+
             refscreen->abilities[refscreen->mItems[dat2->vectro_poz]->type]->unlocked = true;
-            global::save->Set_item(refscreen->mItems[dat2->vectro_poz]->type);
+
+            refscreen->abilities[refscreen->mItems[dat2->vectro_poz]->type]->ab_but =
+            new Button( refscreen->ab_button_coord_x + refscreen->gui_ab_x_mult*(AB_IMAGE_SIZE+10) , refscreen->ab_button_coord_y,
+            refscreen->ab_button_coord_x + refscreen->gui_ab_x_mult*(AB_IMAGE_SIZE+10) + AB_IMAGE_SIZE, refscreen->ab_button_coord_y + AB_IMAGE_SIZE);
+
+            refscreen->gui_ab_x_mult++;
+            //global::save->Set_item(refscreen->mItems[dat2->vectro_poz]->type);
         }
     }
     else if( (dat2->which_vector == ScreenGame::ENTITY_VECTOR &&
@@ -47,8 +58,19 @@ void CollisionHandler::BeginContact(b2Contact* contact)
         if(refscreen->entities[dat2->vectro_poz]->type == ScreenGame::PLAYER)
         {
             refscreen->mItems[dat1->vectro_poz]->to_delete = true;
+
+            if(refscreen->abilities[refscreen->mItems[dat1->vectro_poz]->type]->unlocked == true)
+                return;
+
             refscreen->abilities[refscreen->mItems[dat1->vectro_poz]->type]->unlocked = true;
-            global::save->Set_item(refscreen->mItems[dat1->vectro_poz]->type);
+
+            refscreen->abilities[refscreen->mItems[dat1->vectro_poz]->type]->ab_but =
+            new Button( refscreen->ab_button_coord_x + refscreen->gui_ab_x_mult*(AB_IMAGE_SIZE+10) , refscreen->ab_button_coord_y,
+            refscreen->ab_button_coord_x + refscreen->gui_ab_x_mult*(AB_IMAGE_SIZE+10) + AB_IMAGE_SIZE, refscreen->ab_button_coord_y + AB_IMAGE_SIZE);
+
+            refscreen->gui_ab_x_mult++;
+
+            //global::save->Set_item(refscreen->mItems[dat1->vectro_poz]->type);
         }
     }
     else if( (dat1->which_vector == ScreenGame::ENTITY_VECTOR &&

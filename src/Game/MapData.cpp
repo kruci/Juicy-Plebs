@@ -87,7 +87,7 @@ MapData::MapData(std::string map_conf_file, int width, int height)
 
                 if(al_get_config_value(cfg, dum.c_str(), "speed") == nullptr)
                 {
-                    objects[objects.size()-1]->speed = 1.0f;
+                    objects[objects.size()-1]->speed = 2.0f;
                 }
                 else
                 {

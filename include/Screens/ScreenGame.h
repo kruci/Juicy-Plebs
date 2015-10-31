@@ -64,7 +64,8 @@ private:
         c_ENEMY = 8,//0x0008,
         c_PLAYER = 16,//0x0010,
         c_EVENT_LOCATION = 32,//0x0020,
-        c_TEST_BOX = 64//0x0040
+        c_TEST_BOX = 64,//0x0040
+        c_MAP_DETECTOR = 128
     };
 
     struct universal_data{
@@ -120,17 +121,19 @@ private:
     };
 
 
-    #define NUMBER_OF_PROJECTILE_TYPES 1
-    std::string projectiles_image_files[NUMBER_OF_PROJECTILE_TYPES] = {"resources/graphics/projectile_0.png"};
+    #define NUMBER_OF_PROJECTILE_TYPES 2
+    std::string projectiles_image_files[NUMBER_OF_PROJECTILE_TYPES] = {"resources/graphics/projectile_0.png", "resources/graphics/projectile_1.png"};
     std::vector<ALLEGRO_BITMAP*> projectiles_bitmaps;
     struct Projectile{
         ALLEGRO_BITMAP *bitmap = nullptr;
         b2Body *body = nullptr;
         universal_data data;
         bool to_delete = false;
+        int type = 99;
         float damage = 0;
         float width_pixel = 0;
         float height_pixel = 0;
+        float stun_time = 0;
     };
 
     void unclick_other_ab_but(int just_clicked);
@@ -140,27 +143,43 @@ private:
         b2BodyDef gbody_def;
         b2PolygonShape gshape;
         b2FixtureDef gfixture;
-    void add_projectile(float damage, ALLEGRO_BITMAP **bmp, float width_pixel, float height_pixel, float speed_inmeters = 3.0f);
+    void add_projectile(float damage, ALLEGRO_BITMAP **bmp, float width_pixel, float height_pixel,
+                        float speed_inmeters = 3.0f, int type = pr_PLUVANEC, float stun_time = 0.0f);
 
     struct int_coords{
         int x = 0;
         int y = 0;
     };
 
+    struct Detector{
+        b2Body *body = nullptr;
+        ALLEGRO_BITMAP *bitmap = nullptr;
+        int type;
+        float sx,sy, w,h;
+        bool to_delete = false;
+        float speed_change = 0;
+        float hp_change = 0;
+    };
+
     int_coords pixel_coors_to_pf_coords(int x, int y);
 
     //mess
+    //float gui_ab_x_mult = 0, ab_button_coord_x = 20, ab_button_coord_y = global::dHeight -(AB_IMAGE_SIZE+20);
     int dead_fade_counter = 0;
     float range = global::dHeight/2 - 10;
     std::vector<Explosion*> explosions;
 public:
+    //mess
+    float gui_ab_x_mult = 0, ab_button_coord_x = 20, ab_button_coord_y = global::dHeight -(AB_IMAGE_SIZE+20);
+    //----
+
     float p_angle = 0;
     int p_pf_poz[2] = {0};
 
     CollisionHandler *colider = nullptr;
     RayCastCallBack *raycallback = nullptr;
     enum enttype{C4KACK = 0, MELEKACK, DICK_BUTT, PLAYER = 99};
-    enum vectors{ENTITY_VECTOR, WALLS_VECTOR, ITEMS_VECTOR, PROJECTILES_VECTOR, TEST_VECTOR};
+    enum vectors{ENTITY_VECTOR, WALLS_VECTOR, ITEMS_VECTOR, PROJECTILES_VECTOR, TEST_VECTOR, DETECTOR_VECTOR};
     std::vector<entity*> entities;
     std::vector<Wall*> walls;
     std::vector<map_Item*> mItems;
@@ -170,10 +189,13 @@ public:
     enum{sound_DEAD = 0};
     std::vector<sound_effect *> sounds;
 
-    #define NUMBER_OF_AB 5
-    enum{ab_TELEPORT, ab_ATTACK_PLUVANCE, ab_BRICK, ab_AUTO_SUPACKA, ab_TEST_JUP};
+    #define NUMBER_OF_AB 6
+    enum{ab_TELEPORT, ab_ATTACK_PLUVANCE, ab_BRICK, ab_AUTO_SUPACKA, ab_TEST_JUP, ab_KLINCE};
+
     std::vector<Ability *> abilities;
+    enum{pr_PLUVANEC, pr_BRICK};
     std::vector<Projectile*> projectiles;
+    std::vector<Detector*> detectors;
 
     bool dead = false;
     bool tp_fail = false;

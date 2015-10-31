@@ -110,12 +110,13 @@ int GameSave::Set_mission_number(int nmb)
 
 bool GameSave::Get_item(int nmb)
 {
-    if(al_get_config_value(gamesave, "Items", std::to_string(nmb).c_str()) != "1")
+    if(al_get_config_value(gamesave, "Items", std::to_string(nmb).c_str()) == nullptr)
     {
         return false;
     }
+    std::string s = al_get_config_value(gamesave, "Items", std::to_string(nmb).c_str());
 
-    return true;
+    return stoi(s);
 }
 
 bool GameSave::Set_item(int nmb)

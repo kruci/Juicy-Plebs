@@ -72,10 +72,9 @@ ScreenGame::ScreenGame()
     }
 
     //std::string ab_images[NUMBER_OF_AB] = {};
-    float ab_button_coord_x = 20, ab_button_coord_y = global::dHeight -(AB_IMAGE_SIZE+20);
-    bool ab_active[NUMBER_OF_AB] = {true, true, true, false, false};
-    float ab_cd[NUMBER_OF_AB] = {1.5, 0.2, 3, 0.8, -1};
-    float ab_ct[NUMBER_OF_AB] = {0.1,   0, 0,   0,  0};
+    bool ab_active[NUMBER_OF_AB] = {true, true, true, false, false, true};
+    float ab_cd[NUMBER_OF_AB] = {1.5, 0.2, 6, 0.8, -1, 6};
+    float ab_ct[NUMBER_OF_AB] = {0.1,   0, 0,   0,  0, 0};
 
     std::string ddum = "resources/graphics/item_";
     std::string ddum2;
@@ -104,9 +103,11 @@ ScreenGame::ScreenGame()
                 error_message("Could not load iamge: " + ddum2);
             }
 
-            if(a > 1)
+            if(a > 1 && abilities[a]->unlocked == true)
             {
-                abilities[a]->ab_but = new Button(ab_button_coord_x, ab_button_coord_y, ab_button_coord_x + AB_IMAGE_SIZE, ab_button_coord_y + AB_IMAGE_SIZE);
+                abilities[a]->ab_but = new Button(ab_button_coord_x + gui_ab_x_mult*(AB_IMAGE_SIZE) , ab_button_coord_y,
+                                                  ab_button_coord_x + gui_ab_x_mult*(AB_IMAGE_SIZE) + AB_IMAGE_SIZE, ab_button_coord_y + AB_IMAGE_SIZE);
+                gui_ab_x_mult++;
             }
             else if(a == 0)
             {
@@ -269,6 +270,12 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
             cutscene_playing = false;
             global::audio_player->Play_sample_instance(&game_music_instance, 0.8f,ALLEGRO_PLAYMODE_LOOP);
             respawn_button->unclick();
+
+            for(int a = 2;a < (int)abilities.size();a++)
+            {
+                abilities[a]->unlocked = global::save->Get_item(a);
+            }
+
             return;
         }
         return;
@@ -308,6 +315,12 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
             if(global::save->Get_mission_number() > MAX_MISSIONS)
                 global::save->Set_mission_number(MAX_MISSIONS);
 
+            for(int a = 0;a < (int)abilities.size();a++)
+            {
+                if(abilities[a]->unlocked == true)
+                    global::save->Set_item(a);
+            }
+            global::save->Save();
             Set_mission(global::save->Get_mission_number());
         }
     }
@@ -473,6 +486,7 @@ void ScreenGame::Print()
     b2RayCastOutput output;
     float k_angle;
     float bar;
+    float b_x, b_y;
     for(int a = 1;a < (int)entities.size();)
     {
         if(entities[a]->hp <= 0 || entities[a]->to_delete == true)
@@ -489,10 +503,13 @@ void ScreenGame::Print()
             continue;
         }
 
-        if(METERS_TO_PIXELS(entities[a]->body->GetPosition().x) +40 >= map_draw_x &&
-           METERS_TO_PIXELS(entities[a]->body->GetPosition().x) - 40 <= map_draw_x + global::dWidth &&
-           METERS_TO_PIXELS(-entities[a]->body->GetPosition().y) +40 >= map_draw_y &&
-           METERS_TO_PIXELS(-entities[a]->body->GetPosition().y) - 40 <= map_draw_y + global::dHeight)
+        b_x = METERS_TO_PIXELS(entities[a]->body->GetPosition().x);
+        b_y = -METERS_TO_PIXELS(entities[a]->body->GetPosition().y);
+
+        if(b_x +40 >= map_draw_x &&
+           b_x - 40 <= map_draw_x + global::dWidth &&
+           b_y +40 >= map_draw_y &&
+           b_y - 40 <= map_draw_y + global::dHeight)
         {
             input.p1 = entities[a]->body->GetPosition();
             input.p2 = entities[0]->body->GetPosition();
@@ -510,20 +527,24 @@ void ScreenGame::Print()
                 entities[a]->body->SetLinearVelocity(b2Vec2(entities[a]->speed * cos(k_angle), -entities[a]->speed* sin(k_angle)));
             }
             al_draw_rotated_bitmap(entities[a]->bitmap,
-            40, 40, METERS_TO_PIXELS(entities[a]->body->GetPosition().x) - map_draw_x,
-                                   -METERS_TO_PIXELS(entities[a]->body->GetPosition().y) - map_draw_y, k_angle, 0);
+            40, 40, b_x - map_draw_x, b_y - map_draw_y, k_angle, 0);
 
             //hp bar background
-            al_draw_filled_rectangle(METERS_TO_PIXELS(entities[a]->body->GetPosition().x)- 25 - map_draw_x,
-                                     -METERS_TO_PIXELS(entities[a]->body->GetPosition().y)- 35 - map_draw_y,
-                                     METERS_TO_PIXELS(entities[a]->body->GetPosition().x)+ 25 - map_draw_x,
-                                     -METERS_TO_PIXELS(entities[a]->body->GetPosition().y)- 30 - map_draw_y, al_map_rgba(255,0,0,120));
+            al_draw_filled_rectangle(b_x - 25 - map_draw_x,
+                                     b_y - 35 - map_draw_y,
+                                     b_x + 25 - map_draw_x,
+                                     b_y - 30 - map_draw_y, al_map_rgba(255,0,0,120));
             //hp bar hp
             bar = (entities[a]->hp/entities[a]->maxhp)*50;
-            al_draw_filled_rectangle(METERS_TO_PIXELS(entities[a]->body->GetPosition().x)- 25 - map_draw_x,
-                                     -METERS_TO_PIXELS(entities[a]->body->GetPosition().y)- 35 - map_draw_y,
-                                     METERS_TO_PIXELS(entities[a]->body->GetPosition().x)- 25 + bar - map_draw_x,
-                                     -METERS_TO_PIXELS(entities[a]->body->GetPosition().y)- 30 - map_draw_y, al_map_rgba(0,200,0,180));
+            al_draw_filled_rectangle(b_x - 25 - map_draw_x,
+                                     b_y - 35 - map_draw_y,
+                                     b_x - 25 + bar - map_draw_x,
+                                     b_y - 30 - map_draw_y, al_map_rgba(0,200,0,180));
+            //hpbar frame
+            al_draw_rectangle(b_x - 25 - map_draw_x,
+                              b_y - 35 - map_draw_y,
+                              b_x + 25 - map_draw_x,
+                              b_y - 30 - map_draw_y, al_map_rgb(0,0,0),1);
         }
         else
         {
@@ -969,7 +990,7 @@ void ScreenGame::unclick_other_ab_but(int just_clicked)
     return;
 }
 
-void ScreenGame::add_projectile(float damage, ALLEGRO_BITMAP **bmp, float width_pixel, float height_pixel, float speed_inmeters)
+void ScreenGame::add_projectile(float damage, ALLEGRO_BITMAP **bmp, float width_pixel, float height_pixel, float speed_inmeters, int type, float stun_time)
 {
     /*g_pro_vel_x = (global::mouse_state.x/global::xscale - (METERS_TO_PIXELS(entities[0]->body->GetPosition().x) -map_draw_x));
     g_pro_vel_y = (global::mouse_state.y/global::yscale - (-METERS_TO_PIXELS(entities[0]->body->GetPosition().y) -map_draw_y));*/
@@ -991,6 +1012,8 @@ void ScreenGame::add_projectile(float damage, ALLEGRO_BITMAP **bmp, float width_
     gbody_def.linearVelocity = b2Vec2(speed_inmeters*cos(g_pro_angle) ,-(speed_inmeters*sin(g_pro_angle)) );
     projectiles[projectiles.size()-1]->body = world->CreateBody(&gbody_def);
     projectiles[projectiles.size()-1]->damage = damage;
+    projectiles[projectiles.size()-1]->type = type;
+    projectiles[projectiles.size()-1]->stun_time = stun_time;
     projectiles[projectiles.size()-1]->width_pixel = width_pixel;
     projectiles[projectiles.size()-1]->height_pixel = height_pixel;
 
