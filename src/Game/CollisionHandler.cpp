@@ -44,12 +44,18 @@ void CollisionHandler::BeginContact(b2Contact* contact)
 
             refscreen->abilities[refscreen->mItems[dat2->vectro_poz]->type]->unlocked = true;
 
-            refscreen->abilities[refscreen->mItems[dat2->vectro_poz]->type]->ab_but =
-            new Button( refscreen->ab_button_coord_x + refscreen->gui_ab_x_mult*(AB_IMAGE_SIZE+10) , refscreen->ab_button_coord_y,
-            refscreen->ab_button_coord_x + refscreen->gui_ab_x_mult*(AB_IMAGE_SIZE+10) + AB_IMAGE_SIZE, refscreen->ab_button_coord_y + AB_IMAGE_SIZE);
+            if(refscreen->abilities[refscreen->mItems[dat2->vectro_poz]->type]->usable == true)
+            {
+                refscreen->abilities[refscreen->mItems[dat2->vectro_poz]->type]->ab_but =
+                new Button( refscreen->ab_button_coord_x + refscreen->gui_ab_x_mult*(AB_IMAGE_SIZE+10) , refscreen->ab_button_coord_y,
+                refscreen->ab_button_coord_x + refscreen->gui_ab_x_mult*(AB_IMAGE_SIZE+10) + AB_IMAGE_SIZE, refscreen->ab_button_coord_y + AB_IMAGE_SIZE);
 
-            refscreen->gui_ab_x_mult++;
-            refscreen->scrollable_ab_index.push_back(dat2->vectro_poz);
+                refscreen->gui_ab_x_mult++;
+
+                refscreen->scrollable_ab_index.push_back(refscreen->mItems[dat2->vectro_poz]->type);
+            }
+
+
             //global::save->Set_item(refscreen->mItems[dat2->vectro_poz]->type);
         }
     }
@@ -65,13 +71,16 @@ void CollisionHandler::BeginContact(b2Contact* contact)
 
             refscreen->abilities[refscreen->mItems[dat1->vectro_poz]->type]->unlocked = true;
 
-            refscreen->abilities[refscreen->mItems[dat1->vectro_poz]->type]->ab_but =
-            new Button( refscreen->ab_button_coord_x + refscreen->gui_ab_x_mult*(AB_IMAGE_SIZE+10) , refscreen->ab_button_coord_y,
-            refscreen->ab_button_coord_x + refscreen->gui_ab_x_mult*(AB_IMAGE_SIZE+10) + AB_IMAGE_SIZE, refscreen->ab_button_coord_y + AB_IMAGE_SIZE);
+            if(refscreen->abilities[refscreen->mItems[dat1->vectro_poz]->type]->usable == true)
+            {
+                refscreen->abilities[refscreen->mItems[dat1->vectro_poz]->type]->ab_but =
+                new Button( refscreen->ab_button_coord_x + refscreen->gui_ab_x_mult*(AB_IMAGE_SIZE+10) , refscreen->ab_button_coord_y,
+                refscreen->ab_button_coord_x + refscreen->gui_ab_x_mult*(AB_IMAGE_SIZE+10) + AB_IMAGE_SIZE, refscreen->ab_button_coord_y + AB_IMAGE_SIZE);
 
-            refscreen->gui_ab_x_mult++;
-            refscreen->scrollable_ab_index.push_back(dat1->vectro_poz);
+                refscreen->gui_ab_x_mult++;
 
+                refscreen->scrollable_ab_index.push_back(refscreen->mItems[dat1->vectro_poz]->type);
+            }
             //global::save->Set_item(refscreen->mItems[dat1->vectro_poz]->type);
         }
     }

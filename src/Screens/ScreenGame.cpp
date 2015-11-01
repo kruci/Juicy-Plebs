@@ -82,6 +82,8 @@ ScreenGame::ScreenGame()
 
     middle_b_ab = new Button(dum_x2 +60, ab_button_coord_y, dum_x2 +60 + AB_IMAGE_SIZE, ab_button_coord_y+ AB_IMAGE_SIZE);
 
+     scrollable_ab_index.push_back(999);
+
     for(int a = 0;a < NUMBER_OF_AB;a++)
     {
         abilities.push_back(new Ability);
@@ -110,7 +112,8 @@ ScreenGame::ScreenGame()
                 abilities[a]->ab_but = new Button(ab_button_coord_x + gui_ab_x_mult*(AB_IMAGE_SIZE+10) , ab_button_coord_y,
                                                   ab_button_coord_x + gui_ab_x_mult*(AB_IMAGE_SIZE+10) + AB_IMAGE_SIZE, ab_button_coord_y + AB_IMAGE_SIZE);
                 gui_ab_x_mult++;
-                scrollable_ab_index.push_back(a);
+                if(abilities[a]->usable == true)
+                    scrollable_ab_index.push_back(a);
             }
             else if(a == 0)
             {
@@ -395,17 +398,18 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
         {
             selected_ab_for_midle_b++;
             if(selected_ab_for_midle_b > scrollable_ab_index.size()-1)
-                selected_ab_for_midle_b = 0;
+                selected_ab_for_midle_b = (scrollable_ab_index.size() <= 1 ? 0 : 1);
             //middle_b_ab->unclick();
         }
         else if(event.mouse.dz > 0)
         {
             selected_ab_for_midle_b--;
-            if(selected_ab_for_midle_b < 0)
+            if(selected_ab_for_midle_b < (scrollable_ab_index.size() <= 1 ? 0 : 1))
                 selected_ab_for_midle_b = scrollable_ab_index.size()-1;
             //middle_b_ab->unclick();
         }
     }
+    std::cout << selected_ab_for_midle_b << std::endl;
 
     //ABILITIES
     if(global::mouse_state.y/yscale < global::dHeight - gui_height)
@@ -878,6 +882,8 @@ bool ScreenGame::Set_mission(int mission)
     cutscene_playing = true;
     what_clicked = -1;
     selected_ab_for_midle_b = 0;
+    gui_ab_x_mult = 0;
+    ab_button_coord_x = 20;
 
     if(mission > MAX_MISSIONS)
     {
