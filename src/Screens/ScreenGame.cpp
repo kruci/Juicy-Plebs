@@ -79,9 +79,9 @@ ScreenGame::ScreenGame()
     }
 
     //ENTITY_VECTOR, WALLS_VECTOR, ITEMS_VECTOR, PROJECTILES_VECTOR, TEST_VECTOR, DETECTOR_VECTOR
-    bool ab_active[NUMBER_OF_AB] = {true, true, true, false, false, true, true};
-    float ab_cd[NUMBER_OF_AB] = {1.5, 0.2, 6, 0.8, -1, 12, 4};
-    float ab_ct[NUMBER_OF_AB] = {0.1,   0, 0,   0,  0,  0, 0};
+    bool ab_active[NUMBER_OF_AB] = {true, true, true, false, false, true, true, false};
+    float ab_cd[NUMBER_OF_AB] = {1.5, 0.2, 6, 0.8, -1, 12, 4, 0};
+    float ab_ct[NUMBER_OF_AB] = {0.1,   0, 0,   0,  0,  0, 0, 0};
 
     std::string ddum = "resources/graphics/item_";
     std::string ddum2;
@@ -1010,6 +1010,9 @@ void ScreenGame::Print()
 
         }
         supacka_cd++;
+
+        al_draw_text(pause_f, al_map_rgb(255,255,255), sup_s_x + ( zemak_side - al_get_text_width( pause_f, "Rýchlo ošúp zemiak"))/2,
+                     (sup_s_y -al_get_font_ascent(pause_f) - 20), 0, "Rýchlo ošúp zemiak");
 
         al_draw_filled_rectangle((global::mouse_state.x) / (global::xscale) - supacka_width/2,
                                  (global::mouse_state.y) / (global::yscale) -2,

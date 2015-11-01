@@ -234,8 +234,8 @@ public:
          sound_BRICKTOHEAD, sound_NAILS};
     std::vector<sound_effect *> sounds;
 
-    #define NUMBER_OF_AB 7
-    enum{ab_TELEPORT, ab_ATTACK_PLUVANCE, ab_BRICK, ab_AUTO_SUPACKA, ab_TEST_JUP, ab_KLINCE, ab_KORENIE};
+    #define NUMBER_OF_AB 8
+    enum{ab_TELEPORT, ab_ATTACK_PLUVANCE, ab_BRICK, ab_AUTO_SUPACKA, ab_TEST_JUP, ab_KLINCE, ab_KORENIE, ab_LIGHT_SHOES};
 
     std::vector<Ability *> abilities;
     Button *middle_b_ab = nullptr;
