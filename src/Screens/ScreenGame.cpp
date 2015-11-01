@@ -721,7 +721,7 @@ void ScreenGame::Print()
 
         b_x = METERS_TO_PIXELS(entities[a]->body->GetPosition().x);
         b_y = -METERS_TO_PIXELS(entities[a]->body->GetPosition().y);
-
+        //std::cout << a << " " << b_x << " " << b_y << std::endl;
         if(b_x +40 >= map_draw_x &&
            b_x - 40 <= map_draw_x + global::dWidth &&
            b_y +(global::dWidth- global::dHeight)/2 >= map_draw_y &&
