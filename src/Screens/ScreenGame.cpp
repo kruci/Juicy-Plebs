@@ -1330,7 +1330,7 @@ void ScreenGame::unclick_other_ab_but(int just_clicked)
 {
     for(int a = 0;a < (int)abilities.size();a++)
     {
-        if(abilities[a]->usable == true && a != just_clicked)
+        if(abilities[a]->usable == true && a != just_clicked && abilities[a]->unlocked == true)
            abilities[a]->ab_but->unclick();
     }
     return;
