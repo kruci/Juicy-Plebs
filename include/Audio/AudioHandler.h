@@ -7,6 +7,11 @@ class AudioHandler
 {
 private:
 public:
+    struct sound_effect{
+        ALLEGRO_SAMPLE *sample = nullptr;
+        ALLEGRO_SAMPLE_INSTANCE *instance = nullptr;
+    };
+
     ALLEGRO_MIXER *mixer = nullptr;
 
     std::vector<ALLEGRO_SAMPLE_INSTANCE*> global_sounds;

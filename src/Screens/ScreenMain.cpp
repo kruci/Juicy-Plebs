@@ -1,6 +1,7 @@
 //R.K.
 #include "ScreenMain.h"
 
+
 ScreenMain::ScreenMain()
 {
     //background = al_load_bitmap("resources/graphics/zemiak.png");
@@ -44,7 +45,30 @@ ScreenMain::ScreenMain()
         std::string dum = INTRO_SUND_FILE;
         error_message("Could not create sample instance: " + dum);
     }
-    global::audio_player->Play_sample_instance(&intro_music_instance,ALLEGRO_PLAYMODE_LOOP);
+    global::audio_player->Play_sample_instance(&intro_music_instance, 0.8,ALLEGRO_PLAYMODE_LOOP);
+
+    std::string dm = "resources/music/mms/";
+    std::string soundfiles = "";
+
+    for(int a = 1;a <= NUMBER_OF_HLASKY;a++)
+    {
+        hlasky.push_back(new AudioHandler::sound_effect);
+
+        soundfiles = dm + std::to_string(a) + ".ogg";
+
+        hlasky[hlasky.size()-1]->sample = al_load_sample(soundfiles.c_str());
+        if(hlasky[hlasky.size()-1]->sample == nullptr)
+        {
+            error_message("Could not load file: " + soundfiles);
+        }
+        hlasky[hlasky.size()-1]->instance = al_create_sample_instance(hlasky[hlasky.size()-1]->sample);
+        if(hlasky[hlasky.size()-1]->instance == nullptr)
+        {
+            error_message("Could not create sample instance: " + soundfiles);
+        }
+    }
+
+    generator.seed(std::chrono::system_clock::now().time_since_epoch().count());
 }
 
 ScreenMain::~ScreenMain()
@@ -79,6 +103,15 @@ ScreenMain::~ScreenMain()
         al_destroy_sample_instance(intro_music_instance);
      if(intro_music != nullptr)
         al_destroy_sample(intro_music);
+
+    for(int a = 0;a < (int)hlasky.size();a++)
+    {
+        global::audio_player->Stop_sample_instance(&hlasky[a]->instance);
+        al_destroy_sample(hlasky[a]->sample);
+        al_destroy_sample_instance(hlasky[a]->instance);
+        delete hlasky[a];
+    }
+    hlasky.clear();
 }
 
 void ScreenMain::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
@@ -137,7 +170,15 @@ void ScreenMain::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
         {
             buttons[a]->Input(event, xscale, yscale);
         }
-        zemak_button->Input(event, xscale, yscale);
+
+        if(zemak_button->Input(event, xscale, yscale) == 2)
+        {
+            zemak_button->unclick();
+            std::uniform_int_distribution<int> hlasky_distribution(0, NUMBER_OF_HLASKY-1);
+
+            global::audio_player->Play_sample_instance(&hlasky[hlasky_distribution(generator)]->instance,ALLEGRO_PLAYMODE_ONCE);
+
+        }
     }
 
     if(buttons[EXIT]->is_button_clicked() == true)

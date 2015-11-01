@@ -209,9 +209,10 @@ public:
     std::vector<Wall*> walls;
     std::vector<map_Item*> mItems;
 
-    #define NUMBER_OF_SOUNDEFECTS 1
-    std::string soundfiles[NUMBER_OF_SOUNDEFECTS] = { "resources/music/dead.wav" };
-    enum{sound_DEAD = 0};
+    #define NUMBER_OF_SOUNDEFECTS 5
+    std::string soundfiles[NUMBER_OF_SOUNDEFECTS] = { "resources/music/dead.wav", "resources/music/boom.ogg",
+                "resources/music/alhukackar.ogg", "resources/music/pluvnutie.ogg", "resources/music/teleport.ogg"};
+    enum{sound_DEAD = 0, sound_BOOM, sound_ALHUKACKAR, sound_FLUS, sound_TELEPORT};
     std::vector<sound_effect *> sounds;
 
     #define NUMBER_OF_AB 6

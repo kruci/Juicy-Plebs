@@ -71,9 +71,9 @@ ScreenGame::ScreenGame()
         }
     }
 
-    //std::string ab_images[NUMBER_OF_AB] = {};
+    //ENTITY_VECTOR, WALLS_VECTOR, ITEMS_VECTOR, PROJECTILES_VECTOR, TEST_VECTOR, DETECTOR_VECTOR
     bool ab_active[NUMBER_OF_AB] = {true, true, true, false, false, true};
-    float ab_cd[NUMBER_OF_AB] = {1.5, 0.2, 6, 0.8, -1, 6};
+    float ab_cd[NUMBER_OF_AB] = {1.5, 0.2, 6, 0.8, -1, 12};
     float ab_ct[NUMBER_OF_AB] = {0.1,   0, 0,   0,  0, 0};
 
     std::string ddum = "resources/graphics/item_";
@@ -418,6 +418,7 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
             abilities[ab_TELEPORT]->ab_but->unclick();
             entities[0]->body->SetTransform(b2Vec2( PIXELS_TO_METERS( ( (float)global::mouse_state.x/xscale +  (float)map_draw_x) ) ,
                                                 -PIXELS_TO_METERS( (  (float)global::mouse_state.y/yscale +  (float)map_draw_y) )), 0);
+            global::audio_player->Play_sample_instance(&sounds[sound_TELEPORT]->instance, ALLEGRO_PLAYMODE_ONCE);
         }
         else if(abilities[ab_BRICK]->remaining_cd <= 0 && abilities[ab_BRICK]->unlocked == true &&
                ((global::mouse_state.buttons == 4 && ab_BRICK == scrollable_ab_index[selected_ab_for_midle_b]) ||
@@ -455,6 +456,7 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
             abilities[ab_ATTACK_PLUVANCE]->ab_but->unclick();
 
             add_projectile(0.6f, &projectiles_bitmaps[0], 6, 6, 3);
+            global::audio_player->Play_sample_instance(&sounds[sound_FLUS]->instance, ALLEGRO_PLAYMODE_ONCE);
         }
     }
 
@@ -467,6 +469,7 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
     return;
 }
 
+/**This function can be optimized :D */
 void ScreenGame::Print()
 {
     if(global::play == false)
@@ -623,6 +626,7 @@ void ScreenGame::Print()
             if(entities[a]->type == C4KACK)
             {
                 explosions.push_back(new Explosion(METERS_TO_PIXELS(entities[a]->body->GetPosition().x) - map_draw_x, -METERS_TO_PIXELS(entities[a]->body->GetPosition().y)-map_draw_y ));
+                global::audio_player->Play_sample_instance(&sounds[sound_BOOM]->instance, ALLEGRO_PLAYMODE_ONCE);
             }
 
             world->DestroyBody(entities[a]->body);
@@ -649,18 +653,29 @@ void ScreenGame::Print()
 
             if( dont_move == false && entities[a]->stunted_for <=0)
             {
-                entities[0]->fainding_path = true;
+                if(entities[a]->fainding_path == false)
+                {
+                    global::audio_player->Play_sample_instance(&sounds[sound_ALHUKACKAR]->instance, ALLEGRO_PLAYMODE_ONCE);
+                }
+
+                entities[a]->fainding_path = true;
                 k_angle = atan2(-entities[0]->body->GetPosition().y + entities[a]->body->GetPosition().y ,
                                 entities[0]->body->GetPosition().x - entities[a]->body->GetPosition().x );
                 entities[a]->body->SetTransform(entities[a]->body->GetPosition(), k_angle);
                 entities[a]->body->SetLinearVelocity(b2Vec2(entities[a]->speed * cos(k_angle) * entities[a]->speed_change,
                                                             -entities[a]->speed* sin(k_angle) * entities[a]->speed_change));
             }
-            if(entities[a]->stunted_for > 0)
+            else if(entities[a]->stunted_for > 0)
             {
                 entities[a]->body->SetLinearVelocity(b2Vec2(0,0));
                 entities[a]->stunted_for -= 1.0f/global::FPS;
             }
+            else
+            {
+                entities[a]->fainding_path = false;
+            }
+
+
 
             al_draw_rotated_bitmap(entities[a]->bitmap,
             40, 40, b_x - map_draw_x, b_y - map_draw_y, k_angle, 0);

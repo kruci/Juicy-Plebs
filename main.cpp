@@ -204,7 +204,7 @@ int main(int argc, char *argv[])
                                  "", al_map_rgba(0,0,0,0),
                                  ( global::audio == true ? MusicON : MusicOFF));
 
-    /**Main loop*/
+    /**Main loop*/ //forced 30 FPS, drawing and computing in same thread
     while(global::loop == true)
     {
         ALLEGRO_EVENT ev;

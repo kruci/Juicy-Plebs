@@ -6,6 +6,10 @@
 #include "include/Screens/ScreenAbout.h"
 #include "include/Screens/ScreenPlay.h"
 #include "include/Screens/ScreenGame.h"
+#include "include/Audio/AudioHandler.h"
+
+#include <chrono>
+#include <random>
 
 #define INTRO_SUND_FILE "resources/music/menu.ogg"
 
@@ -20,6 +24,10 @@ private:
     enum SMbutton_names{EXIT = 0, PLAY, ABOUT, SETTINGS};
 
     std::vector<Button *> buttons;
+
+    #define NUMBER_OF_HLASKY 3
+    std::mt19937 generator;//(std::chrono::system_clock::now().time_since_epoch().count());
+    std::vector<AudioHandler::sound_effect *> hlasky;
 
     ScreenAbout *SCAbout = nullptr;
     ScreenPlay *SCPlay = nullptr;
