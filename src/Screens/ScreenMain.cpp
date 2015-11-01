@@ -33,6 +33,9 @@ ScreenMain::ScreenMain()
         buttons.push_back(new Button("resources/fonts/Calibri.ttf", bpoz[a][0], bpoz[a][1], bpoz[a][0] + bpoz[a][2],bpoz[a][1] + bpoz[a][3], bnames[a], al_map_rgb(0,0,128)));
     }
 
+    hlasky_font = al_load_ttf_font("resources/fonts/Andada-Italic.otf", 30, 0);
+    if(hlasky_font == nullptr) error_message("Could not load font : resources/fonts/Andada-Italic.otf");
+
     intro_music = al_load_sample(INTRO_SUND_FILE);
     if(intro_music == nullptr)
     {
@@ -96,6 +99,9 @@ ScreenMain::~ScreenMain()
         al_destroy_bitmap(zemak_bitmap);
     if(zemak_button != nullptr)
         delete zemak_button;
+
+    if(hlasky_font != nullptr)
+        al_destroy_font(hlasky_font);
 
     al_stop_sample_instance(intro_music_instance);
     al_detach_sample_instance(intro_music_instance);
@@ -171,14 +177,7 @@ void ScreenMain::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
             buttons[a]->Input(event, xscale, yscale);
         }
 
-        if(zemak_button->Input(event, xscale, yscale) == 2)
-        {
-            zemak_button->unclick();
-            std::uniform_int_distribution<int> hlasky_distribution(0, NUMBER_OF_HLASKY-1);
-
-            global::audio_player->Play_sample_instance(&hlasky[hlasky_distribution(generator)]->instance,ALLEGRO_PLAYMODE_ONCE);
-
-        }
+        zemak_button->Input(event, xscale, yscale) == 2;
     }
 
     if(buttons[EXIT]->is_button_clicked() == true)
@@ -249,10 +248,16 @@ void ScreenMain::Print()
         //al_draw_bitmap(zemak_bitmap, zemak_button->origin_x1,zemak_button->origin_y1,0);
         al_draw_scaled_bitmap(zemak_bitmap, 0, 0, al_get_bitmap_width(zemak_bitmap), al_get_bitmap_height(zemak_bitmap),
                               zemak_button->origin_x1, zemak_button->origin_y1, zemiak_size, zemiak_size, 0);
+        al_draw_text(hlasky_font, al_map_rgba(255,255,255, 150), 300, (global::dHeight - zemiak_size)/2 + 200, 0, "*Click*");
+
         if(zemak_button->is_button_clicked() == true)
         {
             zemak_button->unclick();
+            std::uniform_int_distribution<int> hlasky_distribution(0, number_of_written_hlasky-1);
+            playing_hlaska = hlasky_distribution(generator);
         }
+        if(playing_hlaska != -1)
+            al_draw_text(hlasky_font, al_map_rgb(255,255,255), zemak_button->origin_x1, zemak_button->origin_y2 - 20, 0, written_hlasky[playing_hlaska].c_str());
 
         for(int a = 0;a < (int)buttons.size();a++)
         {
