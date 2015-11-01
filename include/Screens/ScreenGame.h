@@ -17,6 +17,7 @@ class RayCastCallBack;
 #define KACBAR_C4 "resources/graphics/Kacbar2.png"
 #define MELE_KACBAR "resources/graphics/Kacbar1.png"
 #define OTHER_KACBAR "resources/graphics/ot.png"
+#define BOSS_KACBAR "resources/graphics/boss.png"
 
 #define AB_IMAGE_SIZE 50
 #define MAX_MISSIONS 4
@@ -218,7 +219,7 @@ public:
 
     CollisionHandler *colider = nullptr;
     RayCastCallBack *raycallback = nullptr;
-    enum enttype{C4KACK = 0, MELEKACK, DICK_BUTT, PLAYER = 99};
+    enum enttype{C4KACK = 0, MELEKACK, DICK_BUTT, PLAYER = 99, BOSS = 4};
     enum vectors{ENTITY_VECTOR, WALLS_VECTOR, ITEMS_VECTOR, PROJECTILES_VECTOR, TEST_VECTOR, DETECTOR_VECTOR};
     std::vector<entity*> entities;
     std::vector<Wall*> walls;

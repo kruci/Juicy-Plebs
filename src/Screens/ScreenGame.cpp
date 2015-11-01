@@ -1260,6 +1260,8 @@ bool ScreenGame::Set_mission(int mission)
             entities[entities.size()-1]->body = world->CreateBody(&body_def);
 
             shape.SetAsBox(PIXELS_TO_METERS(20), PIXELS_TO_METERS(20));
+            if(mapdat->objects[a]->enemy == 4){shape.SetAsBox(PIXELS_TO_METERS(50), PIXELS_TO_METERS(50));}
+
             fixture.shape = &shape;
             fixture.isSensor = false;
             fixture.filter.categoryBits = c_ENEMY;
@@ -1282,6 +1284,10 @@ bool ScreenGame::Set_mission(int mission)
             else if(mapdat->objects[a]->enemy == 1)
             {
                 kackar_bitmap = MELE_KACBAR;
+            }
+            else if(mapdat->objects[a]->enemy == 4)
+            {
+                kackar_bitmap = BOSS_KACBAR;
             }
             else
             {
