@@ -224,10 +224,13 @@ public:
     std::vector<Wall*> walls;
     std::vector<map_Item*> mItems;
 
-    #define NUMBER_OF_SOUNDEFECTS 5
+    #define NUMBER_OF_SOUNDEFECTS 9
     std::string soundfiles[NUMBER_OF_SOUNDEFECTS] = { "resources/music/dead.wav", "resources/music/boom.ogg",
-                "resources/music/alhukackar.ogg", "resources/music/pluvnutie.ogg", "resources/music/teleport.ogg"};
-    enum{sound_DEAD = 0, sound_BOOM, sound_ALHUKACKAR, sound_FLUS, sound_TELEPORT};
+                "resources/music/alhukackar.ogg", "resources/music/pluvnutie.ogg", "resources/music/teleport.ogg",
+                "resources/music/kych.ogg", "resources/music/tehla_thorw.ogg", "resources/music/tehla_to_head.ogg",
+                "resources/music/nails.ogg"};
+    enum{sound_DEAD = 0, sound_BOOM, sound_ALHUKACKAR, sound_FLUS, sound_TELEPORT, sound_KYCH, sound_BRICKTHROW,
+         sound_BRICKTOHEAD, sound_NAILS};
     std::vector<sound_effect *> sounds;
 
     #define NUMBER_OF_AB 7

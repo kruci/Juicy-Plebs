@@ -497,7 +497,7 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
             what_clicked = -1;
             middle_b_ab->unclick();
 
-
+            global::audio_player->Play_sample_instance(&sounds[sound_BRICKTHROW]->instance, ALLEGRO_PLAYMODE_ONCE);
             add_projectile(1.0f, &projectiles_bitmaps[1], 25, 12, 3,pr_BRICK, 1);
         }
         else if(abilities[ab_KLINCE]->remaining_cd <= 0 && abilities[ab_KLINCE]->unlocked == true &&
@@ -513,6 +513,7 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
 
             //do
             add_detector(2, &detector_bitmaps[0], 100, 100, 0.5f,d_KLINCE, 5);
+            global::audio_player->Play_sample_instance(&sounds[sound_NAILS]->instance, ALLEGRO_PLAYMODE_ONCE);
         }
         else if(abilities[ab_KORENIE]->remaining_cd <= 0 && abilities[ab_KORENIE]->unlocked == true &&
                ((global::mouse_state.buttons == 4 && ab_KORENIE == scrollable_ab_index[selected_ab_for_midle_b]) ||
@@ -526,6 +527,7 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
             middle_b_ab->unclick();
 
             add_projectile(0.6f, &projectiles_bitmaps[2], 11, 50, 3, pr_KYCH);
+            global::audio_player->Play_sample_instance(&sounds[sound_KYCH]->instance, ALLEGRO_PLAYMODE_ONCE);
 
             //do
         }
@@ -722,8 +724,8 @@ void ScreenGame::Print()
 
         if(b_x +40 >= map_draw_x &&
            b_x - 40 <= map_draw_x + global::dWidth &&
-           b_y +40 >= map_draw_y &&
-           b_y - 40 <= map_draw_y + global::dHeight)
+           b_y +(global::dWidth- global::dHeight)/2 >= map_draw_y &&
+           b_y - (global::dWidth- global::dHeight)/2 <= map_draw_y + global::dHeight)
         {
             input.p1 = entities[a]->body->GetPosition();
             input.p2 = entities[0]->body->GetPosition();
@@ -731,6 +733,7 @@ void ScreenGame::Print()
 
             dont_move = false;
             world->RayCast(raycallback, entities[a]->body->GetPosition(), entities[0]->body->GetPosition());
+            entities[a]->body->SetLinearVelocity(b2Vec2(0,0));
 
             if( dont_move == false && entities[a]->stunted_for <=0)
             {
