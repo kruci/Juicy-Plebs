@@ -1,5 +1,8 @@
 //R.K.
 #include "ScreenGame.h"
+#include <chrono>
+#include <random>
+
 
 ScreenGame::ScreenGame()
 {
@@ -225,7 +228,7 @@ ScreenGame::~ScreenGame()
     }
     walls.clear();
 
-    for(int a = 0;a < explosions.size();a++)
+    for(int a = 0;a < (int)explosions.size();a++)
     {
         delete explosions[a];
     }
@@ -363,7 +366,7 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
     }
 
     //ab buttons
-    for(int a = 0;a < abilities.size();a++)
+    for(int a = 0;a < (int)abilities.size();a++)
     {
         if(abilities[a]->usable == true && abilities[a]->unlocked == true)
         {
@@ -397,7 +400,7 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
         if(event.mouse.dz < 0)
         {
             selected_ab_for_midle_b++;
-            if(selected_ab_for_midle_b > scrollable_ab_index.size()-1)
+            if(selected_ab_for_midle_b > (int)scrollable_ab_index.size()-1)
                 selected_ab_for_midle_b = (scrollable_ab_index.size() <= 1 ? 0 : 1);
             //middle_b_ab->unclick();
         }
@@ -409,15 +412,13 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
             //middle_b_ab->unclick();
         }
     }
-    std::cout << selected_ab_for_midle_b << std::endl;
-
     //ABILITIES
     if(global::mouse_state.y/yscale < global::dHeight - gui_height)
     {
         if(abilities[ab_TELEPORT]->remaining_cd <= 0 && event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP && (event.mouse.button == 2 ||
            (abilities[ab_TELEPORT]->ab_but->is_button_clicked() == true && event.mouse.button == 1)))
         {//TELEPORT
-
+            pre_tp = entities[0]->body->GetPosition();
             abilities[ab_TELEPORT]->remaining_cd = abilities[ab_TELEPORT]->cool_down;
             abilities[ab_TELEPORT]->ab_but->unclick();
             entities[0]->body->SetTransform(b2Vec2( PIXELS_TO_METERS( ( (float)global::mouse_state.x/xscale +  (float)map_draw_x) ) ,
@@ -502,7 +503,7 @@ void ScreenGame::Print()
             entities[0]->body->SetTransform(pre_tp, 0);
         }*/
 
-        for(int a = 0;a < abilities.size();a++)
+        for(int a = 0;a < (int)abilities.size();a++)
         {
             if(abilities[a]->remaining_cd > 0)
             {
@@ -515,7 +516,7 @@ void ScreenGame::Print()
 
         //cammera
         map_draw_x = METERS_TO_PIXELS(entities[0]->body->GetPosition().x) - global::dWidth/2;
-        map_draw_y = -METERS_TO_PIXELS(entities[0]->body->GetPosition().y) - global::dHeight/2;
+        map_draw_y = -METERS_TO_PIXELS(entities[0]->body->GetPosition().y) - (global::dHeight-gui_height)/2;
 
         //cammera cornsrs fix
         if(map_draw_x < 0)
@@ -620,7 +621,7 @@ void ScreenGame::Print()
     //npc
     b2RayCastInput input;
     b2RayCastOutput output;
-    float k_angle;
+    float k_angle = 0;
     float bar;
     float b_x, b_y;
     for(int a = 1;a < (int)entities.size();)
@@ -710,7 +711,7 @@ void ScreenGame::Print()
     }
 
     //explosions
-    for(int a = 0;a < explosions.size();)
+    for(int a = 0;a < (int)explosions.size();)
     {
         if(explosions[a]->Print() == false)
         {
@@ -751,7 +752,6 @@ void ScreenGame::Print()
         }
         else
         {
-            gt_detele:
             world->DestroyBody(projectiles[a]->body);
             delete projectiles[a];
             projectiles.erase(projectiles.begin()+a);
@@ -762,6 +762,12 @@ void ScreenGame::Print()
     }
 
     //player
+    if(METERS_TO_PIXELS(entities[0]->body->GetPosition().x) < -20 || METERS_TO_PIXELS(entities[0]->body->GetPosition().x) > map_bitmap->width +20 ||
+       -METERS_TO_PIXELS(entities[0]->body->GetPosition().y) < -20 || -METERS_TO_PIXELS(entities[0]->body->GetPosition().y) > map_bitmap->height +20)
+    {
+            entities[0]->body->SetTransform( pre_tp, entities[0]->body->GetAngle());
+    }
+
     al_draw_rotated_bitmap(entities[0]->bitmap, 50.0f, 50.0f, METERS_TO_PIXELS(entities[0]->body->GetPosition().x) - map_draw_x,
                            -METERS_TO_PIXELS(entities[0]->body->GetPosition().y) - map_draw_y, entities[0]->body->GetAngle(), 0);
     //-----
@@ -772,7 +778,7 @@ void ScreenGame::Print()
         if(mapdat->objects[a]->type == MapData::WALL)
         {
             al_draw_rectangle(mapdat->objects[a]->x1 - map_draw_x, mapdat->objects[a]->y1 - map_draw_y,
-                              mapdat->objects[a]->x2- map_draw_x, mapdat->objects[a]->y2- map_draw_y,al_map_rgb(0,0,0),2);
+                              mapdat->objects[a]->x2- map_draw_x, mapdat->objects[a]->y2- map_draw_y,al_map_rgb(255,0,0),2);
         }
     }
     #endif // _PURE_MAP_WALLS
@@ -791,7 +797,7 @@ void ScreenGame::Print()
     al_draw_filled_rectangle(0, global::dHeight - gui_height, global::dWidth, global::dHeight - gui_height +3, al_map_rgb(230,228,216));
     pause_button->Print();
 
-    for(int a = 0;a < abilities.size();a++)
+    for(int a = 0;a < (int)abilities.size();a++)
     {
         if(abilities[a]->usable == true && abilities[a]->unlocked == true)
         {
@@ -834,6 +840,11 @@ void ScreenGame::Print()
         }
     }
 
+    /*std::mt19937 generator(std::chrono::system_clock::now().time_since_epoch().count());
+    std::uniform_real_distribution<float> distribution(0,1);
+
+    al_draw_filled_rectangle(0, 0, global::dWidth, global::dHeight, al_map_rgba_f(distribution(generator),distribution(generator),distribution(generator),0.5f));
+*/
     if(entities.size() == 1)
     {
         next_lvl->Print();
@@ -951,7 +962,7 @@ bool ScreenGame::Set_mission(int mission)
     }
     projectiles.clear();
 
-    for(int a = 0;a < explosions.size();a++)
+    for(int a = 0;a < (int)explosions.size();a++)
     {
         delete explosions[a];
     }

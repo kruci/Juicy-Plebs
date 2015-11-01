@@ -19,7 +19,7 @@ class RayCastCallBack;
 #define OTHER_KACBAR "resources/graphics/ot.png"
 
 #define AB_IMAGE_SIZE 50
-#define MAX_MISSIONS 1
+#define MAX_MISSIONS 3
 
 //#define _MAP_WALLS
 #define _PURE_MAP_WALLS
