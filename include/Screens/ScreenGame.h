@@ -22,7 +22,7 @@ class RayCastCallBack;
 #define MAX_MISSIONS 4
 
 //#define _MAP_WALLS
-#define _PURE_MAP_WALLS
+//#define _PURE_MAP_WALLS
 //#define _MAP_PF_ZONES
 
 class ScreenGame
