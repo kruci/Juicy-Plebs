@@ -20,6 +20,10 @@ ScreenGame::ScreenGame()
     if(player_bmp == nullptr)
         error_message("Could not load image: resources/graphics/Character.png");
 
+    supanie_bmp = al_load_bitmap("resources/graphics/logo.png");
+    if(supanie_bmp == nullptr)
+        error_message("Could not load image: resources/graphics/logo.png");
+
     pause_button = new Button("resources/fonts/Calibri.ttf", 1300, global::dHeight -70, 1300 + 120, global::dHeight -70 + 50, "Pause", al_map_rgb(0,0,128));
     main_menu_button = new Button("resources/fonts/Calibri.ttf", 1300, global::dHeight -70, 1300 + 120, global::dHeight -70 + 50, "Main menu", al_map_rgb(0,0,128));
     respawn_button = new Button("resources/fonts/Calibri.ttf", (global::dWidth - 120)/2, global::dHeight -70,
@@ -75,9 +79,9 @@ ScreenGame::ScreenGame()
     }
 
     //ENTITY_VECTOR, WALLS_VECTOR, ITEMS_VECTOR, PROJECTILES_VECTOR, TEST_VECTOR, DETECTOR_VECTOR
-    bool ab_active[NUMBER_OF_AB] = {true, true, true, false, false, true};
-    float ab_cd[NUMBER_OF_AB] = {1.5, 0.2, 6, 0.8, -1, 12};
-    float ab_ct[NUMBER_OF_AB] = {0.1,   0, 0,   0,  0, 0};
+    bool ab_active[NUMBER_OF_AB] = {true, true, true, false, false, true, true};
+    float ab_cd[NUMBER_OF_AB] = {1.5, 0.2, 6, 0.8, -1, 12, 4};
+    float ab_ct[NUMBER_OF_AB] = {0.1,   0, 0,   0,  0,  0, 0};
 
     std::string ddum = "resources/graphics/item_";
     std::string ddum2;
@@ -179,6 +183,9 @@ ScreenGame::~ScreenGame()
 
     if(player_bmp != nullptr)
         al_destroy_bitmap(player_bmp);
+
+    if(supanie_bmp != nullptr)
+        al_destroy_bitmap(supanie_bmp);
 
     if(explosion_bmp != nullptr)
         al_destroy_bitmap(explosion_bmp);
@@ -334,6 +341,52 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
             pause_button->unclick();
         }
     }
+    else if(bool_supanie == true)
+    {
+        if(main_menu_button->Input(event, xscale, yscale) == 2)
+        {
+            global::play = false;
+            return;
+        }
+
+        if( (global::mouse_state.x) / (global::xscale) + supacka_width/2 > sup_s_x &&
+            (global::mouse_state.x) / (global::xscale) - supacka_width/2 < sup_s_x + zemak_side &&
+            (global::mouse_state.y) / (global::yscale) -2 < sup_s_y + zemak_side &&
+            (global::mouse_state.y) / (global::yscale) + 2 > sup_s_y)
+        {
+            int sy1 = ((global::mouse_state.y) / (global::yscale) -(global::dHeight - zemak_side)/2)/supanie_box_size;
+            int sx1 = ((global::mouse_state.x -21) / (global::xscale) -(global::dWidth - zemak_side)/2)/supanie_box_size;
+            int sx2 = ((global::mouse_state.x) / (global::xscale) -(global::dWidth - zemak_side)/2)/supanie_box_size;
+            int sx3 = ((global::mouse_state.x +21) / (global::xscale) -(global::dWidth - zemak_side)/2)/supanie_box_size;
+            int sx4 = ((global::mouse_state.x +41) / (global::xscale) -(global::dWidth - zemak_side)/2)/supanie_box_size;
+            int sx5 = ((global::mouse_state.x -41) / (global::xscale) -(global::dWidth - zemak_side)/2)/supanie_box_size;
+
+            if(sy1 >=0 && sy1 < 20)
+            {
+                if(sx1 >=0 && sx1 < 20)
+                {
+                    supanie[sx1][sy1] = true;
+                }
+                if(sx2 >=0 && sx2 < 20)
+                {
+                    supanie[sx2][sy1] = true;
+                }
+                if(sx3 >=0 && sx3 < 20)
+                {
+                    supanie[sx3][sy1] = true;
+                }
+                if(sx4 >=0 && sx4 < 20)
+                {
+                    supanie[sx4][sy1] = true;
+                }
+                if(sx5 >=0 && sx5 < 20)
+                {
+                    supanie[sx5][sy1] = true;
+                }
+            }
+
+        }
+    }
     else if(pause_button->Input(event, xscale, yscale) == 2)
     {
         paused = true;
@@ -418,6 +471,14 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
         if(abilities[ab_TELEPORT]->remaining_cd <= 0 && event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP && (event.mouse.button == 2 ||
            (abilities[ab_TELEPORT]->ab_but->is_button_clicked() == true && event.mouse.button == 1)))
         {//TELEPORT
+            if(abilities[ab_AUTO_SUPACKA]->unlocked == false)
+            {
+                bool_supanie = true;
+                tp_to.x = PIXELS_TO_METERS( ( (float)global::mouse_state.x/xscale +  (float)map_draw_x) );
+                tp_to.y = -PIXELS_TO_METERS( (  (float)global::mouse_state.y/yscale +  (float)map_draw_y) );
+                return;
+            }
+
             pre_tp = entities[0]->body->GetPosition();
             abilities[ab_TELEPORT]->remaining_cd = abilities[ab_TELEPORT]->cool_down;
             abilities[ab_TELEPORT]->ab_but->unclick();
@@ -452,6 +513,21 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
 
             //do
             add_detector(2, &detector_bitmaps[0], 100, 100, 0.5f,d_KLINCE, 5);
+        }
+        else if(abilities[ab_KORENIE]->remaining_cd <= 0 && abilities[ab_KORENIE]->unlocked == true &&
+               ((global::mouse_state.buttons == 4 && ab_KORENIE == scrollable_ab_index[selected_ab_for_midle_b]) ||
+                (abilities[ab_KORENIE]->ab_but->is_button_clicked() == true &&
+                 event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP && event.mouse.button == 1)) )
+        {//KORENIE
+            abilities[ab_KORENIE]->remaining_cd = abilities[ab_KORENIE]->cool_down;
+            abilities[ab_KORENIE]->ab_but->unclick();
+
+            what_clicked = -1;
+            middle_b_ab->unclick();
+
+            add_projectile(0.6f, &projectiles_bitmaps[2], 11, 50, 3, pr_KYCH);
+
+            //do
         }
         else if(abilities[ab_ATTACK_PLUVANCE]->remaining_cd <= 0 && global::mouse_state.buttons == 1 && abilities[ab_ATTACK_PLUVANCE]->unlocked == true &&
                 (what_clicked == ab_ATTACK_PLUVANCE ||what_clicked == -1) )
@@ -492,7 +568,7 @@ void ScreenGame::Print()
 
         return;
     }
-    else if(paused == false && dead == false)
+    else if(paused == false && dead == false && bool_supanie == false)
     {
         world->Step(1.0f/global::FPS, 8, 5); // collisison
 
@@ -802,11 +878,26 @@ void ScreenGame::Print()
         if(abilities[a]->usable == true && abilities[a]->unlocked == true)
         {
             al_draw_bitmap(abilities[a]->bitmap ,abilities[a]->ab_but->origin_x1, abilities[a]->ab_but->origin_y1, 0);
-            al_draw_filled_rectangle(abilities[a]->ab_but->origin_x1,
+
+            if(a == ab_TELEPORT && abilities[ab_AUTO_SUPACKA]->unlocked == false)
+            {
+                al_draw_filled_rectangle(abilities[a]->ab_but->origin_x1,
+                                     abilities[a]->ab_but->origin_y1 + AB_IMAGE_SIZE - ( (abilities[a]->remaining_cd/dum_supacka_cd) * AB_IMAGE_SIZE),
+                                     abilities[a]->ab_but->origin_x2,
+                                     abilities[a]->ab_but->origin_y2,
+                                     al_map_rgba(0,0,0,128));
+
+            }
+            else
+            {
+                al_draw_filled_rectangle(abilities[a]->ab_but->origin_x1,
                                      abilities[a]->ab_but->origin_y1 + AB_IMAGE_SIZE - ( (abilities[a]->remaining_cd/abilities[a]->cool_down) * AB_IMAGE_SIZE),
                                      abilities[a]->ab_but->origin_x2,
                                      abilities[a]->ab_but->origin_y2,
                                      al_map_rgba(0,0,0,128));
+            }
+
+
             if(abilities[a]->ab_but->is_button_clicked() == true)
             {
                 //middle_b_ab->click();
@@ -820,11 +911,12 @@ void ScreenGame::Print()
                                   abilities[a]->ab_but->origin_y2+3 ,al_map_rgb(224,224,224),4);
 
                 al_draw_bitmap(abilities[a]->bitmap , middle_b_ab->origin_x1, middle_b_ab->origin_y1, 0);
+
                 al_draw_filled_rectangle(middle_b_ab->origin_x1,
-                                     middle_b_ab->origin_y1 + AB_IMAGE_SIZE - ( (abilities[a]->remaining_cd/abilities[a]->cool_down) * AB_IMAGE_SIZE),
-                                     middle_b_ab->origin_x2,
-                                     middle_b_ab->origin_y2,
-                                     al_map_rgba(0,0,0,128));
+                                    middle_b_ab->origin_y1 + AB_IMAGE_SIZE - ( (abilities[a]->remaining_cd/abilities[a]->cool_down) * AB_IMAGE_SIZE),
+                                    middle_b_ab->origin_x2,
+                                    middle_b_ab->origin_y2,
+                                    al_map_rgba(0,0,0,128));
             }
             if(a == scrollable_ab_index[selected_ab_for_midle_b] && middle_b_ab->is_button_clicked() == true)
             {
@@ -868,6 +960,60 @@ void ScreenGame::Print()
                      (global::dHeight - al_get_font_ascent(pause_f))/2, 0, "Si mŕrtvy (nooob)");
         main_menu_button->Print();
         respawn_button->Print();
+    }
+    else if(bool_supanie == true)
+    {//SUpanie
+        al_draw_filled_rectangle(0,0, global::dWidth, global::dHeight, al_map_rgba(0,0,0,185));
+        al_draw_bitmap(supanie_bmp, (global::dWidth - zemak_side)/2,  (global::dHeight - zemak_side)/2, 0);
+
+
+        int c = 0;
+        for(int a = 0; a< _SUPANIE_ARRAY_SIZE;a++)
+        {
+            for(int b = 0; b < _SUPANIE_ARRAY_SIZE;b++)
+            {
+                if(supanie[a][b] == false)
+                {
+                    al_draw_filled_rectangle(sup_s_x + a*supanie_box_size, sup_s_y + b*supanie_box_size,
+                                             sup_s_x+ a*supanie_box_size + supanie_box_size
+                                             , sup_s_y+ b*supanie_box_size + supanie_box_size, al_map_rgba(100,100,100,222));
+
+                    /*al_draw_rectangle(sup_s_x + a*supanie_box_size, sup_s_y + b*supanie_box_size,
+                                             sup_s_x+ a*supanie_box_size + supanie_box_size
+                                             , sup_s_y+ b*supanie_box_size + supanie_box_size, al_map_rgba(0,0,0,255),2);*/
+                    c++;
+                }
+            }
+        }
+        al_draw_rectangle(sup_s_x , sup_s_y , sup_s_x + zemak_side, sup_s_y + zemak_side, al_map_rgb(220,197,159),2);
+        if(c <= 0)
+        {
+            bool_supanie = false;
+            for(int a = 0; a< _SUPANIE_ARRAY_SIZE;a++)
+            {
+                for(int b = 0; b < _SUPANIE_ARRAY_SIZE;b++)
+                {
+                    supanie[a][b] = false;
+                }
+            }
+
+            pre_tp = entities[0]->body->GetPosition();
+            abilities[ab_TELEPORT]->remaining_cd = supacka_cd/global::FPS;//abilities[ab_TELEPORT]->cool_down;
+            abilities[ab_TELEPORT]->ab_but->unclick();
+            entities[0]->body->SetTransform(tp_to, 0);
+            global::audio_player->Play_sample_instance(&sounds[sound_TELEPORT]->instance, ALLEGRO_PLAYMODE_ONCE);
+            dum_supacka_cd = supacka_cd/global::FPS;
+            supacka_cd = 0;
+
+        }
+        supacka_cd++;
+
+        al_draw_filled_rectangle((global::mouse_state.x) / (global::xscale) - supacka_width/2,
+                                 (global::mouse_state.y) / (global::yscale) -2,
+                                 (global::mouse_state.x) / (global::xscale) + supacka_width/2,
+                                 (global::mouse_state.y) / (global::yscale) + 2, al_map_rgb(192,192,192));
+
+        main_menu_button->Print();
     }
 
     return;
@@ -1200,6 +1346,7 @@ void ScreenGame::add_projectile(float damage, ALLEGRO_BITMAP **bmp, float width_
     projectiles[projectiles.size()-1]->bitmap = *bmp;
 
     gbody_def.type = b2_dynamicBody;
+    if(type == pr_KYCH){gbody_def.type = b2_kinematicBody;}
     gbody_def.position.Set(entities[0]->body->GetPosition().x, entities[0]->body->GetPosition().y);
     gbody_def.allowSleep = false;
     gbody_def.awake = true;
@@ -1214,7 +1361,7 @@ void ScreenGame::add_projectile(float damage, ALLEGRO_BITMAP **bmp, float width_
     projectiles[projectiles.size()-1]->width_pixel = width_pixel;
     projectiles[projectiles.size()-1]->height_pixel = height_pixel;
 
-    gshape.SetAsBox(PIXELS_TO_METERS(width_pixel/2),PIXELS_TO_METERS(height_pixel/2));
+    gshape.SetAsBox(PIXELS_TO_METERS(width_pixel),PIXELS_TO_METERS(height_pixel));
 
     gfixture.shape = &gshape;
 

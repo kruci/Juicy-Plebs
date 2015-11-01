@@ -89,6 +89,11 @@ void CollisionHandler::BeginContact(b2Contact* contact)
     {
         if(refscreen->entities[dat1->vectro_poz]->type != ScreenGame::PLAYER)
         {
+            if(refscreen->projectiles[dat2->vectro_poz]->type == ScreenGame::pr_KYCH)
+            {
+                refscreen->entities[dat1->vectro_poz]->hp -= refscreen->projectiles[dat2->vectro_poz]->damage;
+                return;
+            }
             refscreen->projectiles[dat2->vectro_poz]->to_delete = true;
             refscreen->entities[dat1->vectro_poz]->hp -= refscreen->projectiles[dat2->vectro_poz]->damage;
             refscreen->entities[dat1->vectro_poz]->stunted_for = refscreen->projectiles[dat2->vectro_poz]->stun_time;
@@ -99,6 +104,12 @@ void CollisionHandler::BeginContact(b2Contact* contact)
     {
         if(refscreen->entities[dat2->vectro_poz]->type != ScreenGame::PLAYER)
         {
+            if(refscreen->projectiles[dat1->vectro_poz]->type == ScreenGame::pr_KYCH)
+            {
+                refscreen->entities[dat2->vectro_poz]->hp -= refscreen->projectiles[dat1->vectro_poz]->damage;
+                return;
+            }
+
             refscreen->projectiles[dat1->vectro_poz]->to_delete = true;
             refscreen->entities[dat2->vectro_poz]->hp -= refscreen->projectiles[dat1->vectro_poz]->damage;
             refscreen->entities[dat2->vectro_poz]->stunted_for = refscreen->projectiles[dat1->vectro_poz]->stun_time;

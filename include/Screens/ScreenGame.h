@@ -49,6 +49,19 @@ private:
     ALLEGRO_FONT *mouse_b_f = nullptr;
     std::string mouse_but_text[3] = {"LB" , "MB", "RB"};
 
+    /**supanie*/
+    ALLEGRO_BITMAP *supanie_bmp = nullptr;
+    #define _SUPANIE_ARRAY_SIZE 20
+    bool supanie[_SUPANIE_ARRAY_SIZE][_SUPANIE_ARRAY_SIZE] = {{false}};
+    int supacka_width = 70;
+    int supanie_box_size = 20;
+    bool bool_supanie = false;
+    int zemak_side = 400;
+    int sup_s_x = (global::dWidth - zemak_side)/2, sup_s_y =  (global::dHeight - zemak_side)/2;
+    b2Vec2 tp_to;
+    float supacka_cd = 0;
+    float dum_supacka_cd = 0;
+
     ALLEGRO_SAMPLE *game_music = nullptr;
     ALLEGRO_SAMPLE_INSTANCE *game_music_instance = nullptr;
 
@@ -67,7 +80,8 @@ private:
         c_TEST_BOX = 64,//0x0040
         c_MAP_DETECTOR = 128,
         c_GRAPHIC_EFECT = 256,
-        c_MAP_WALL_DETECTOR = 512
+        c_MAP_WALL_DETECTOR = 512,
+        c_KYCH = 1024
     };
 
     struct universal_data{
@@ -125,8 +139,9 @@ private:
     };
 
 
-    #define NUMBER_OF_PROJECTILE_TYPES 2
-    std::string projectiles_image_files[NUMBER_OF_PROJECTILE_TYPES] = {"resources/graphics/projectile_0.png", "resources/graphics/projectile_1.png"};
+    #define NUMBER_OF_PROJECTILE_TYPES 3
+    std::string projectiles_image_files[NUMBER_OF_PROJECTILE_TYPES] = {"resources/graphics/projectile_0.png",
+    "resources/graphics/projectile_1.png" , "resources/graphics/projectile_2.png"};
     std::vector<ALLEGRO_BITMAP*> projectiles_bitmaps;
     struct Projectile{
         ALLEGRO_BITMAP *bitmap = nullptr;
@@ -215,13 +230,13 @@ public:
     enum{sound_DEAD = 0, sound_BOOM, sound_ALHUKACKAR, sound_FLUS, sound_TELEPORT};
     std::vector<sound_effect *> sounds;
 
-    #define NUMBER_OF_AB 6
-    enum{ab_TELEPORT, ab_ATTACK_PLUVANCE, ab_BRICK, ab_AUTO_SUPACKA, ab_TEST_JUP, ab_KLINCE};
+    #define NUMBER_OF_AB 7
+    enum{ab_TELEPORT, ab_ATTACK_PLUVANCE, ab_BRICK, ab_AUTO_SUPACKA, ab_TEST_JUP, ab_KLINCE, ab_KORENIE};
 
     std::vector<Ability *> abilities;
     Button *middle_b_ab = nullptr;
 
-    enum{pr_PLUVANEC, pr_BRICK};
+    enum{pr_PLUVANEC, pr_BRICK, pr_KYCH};
     std::vector<Projectile*> projectiles;
     enum{d_KLINCE};
     std::vector<Detector*> detectors;
