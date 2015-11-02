@@ -53,6 +53,7 @@ void CollisionHandler::BeginContact(b2Contact* contact)
                 refscreen->gui_ab_x_mult++;
 
                 refscreen->scrollable_ab_index.push_back(refscreen->mItems[dat2->vectro_poz]->type);
+                if(refscreen->scrollable_ab_index.size()==2){refscreen->selected_ab_for_midle_b = 1;}
             }
 
 
@@ -80,6 +81,7 @@ void CollisionHandler::BeginContact(b2Contact* contact)
                 refscreen->gui_ab_x_mult++;
 
                 refscreen->scrollable_ab_index.push_back(refscreen->mItems[dat1->vectro_poz]->type);
+                if(refscreen->scrollable_ab_index.size()==2){refscreen->selected_ab_for_midle_b = 1;}
             }
             //global::save->Set_item(refscreen->mItems[dat1->vectro_poz]->type);
         }

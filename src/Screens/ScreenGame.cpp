@@ -114,12 +114,12 @@ ScreenGame::ScreenGame()
                 error_message("Could not load iamge: " + ddum2);
             }
 
-            if(a > 1 && abilities[a]->unlocked == true)
+            if(a > 1 && abilities[a]->unlocked == true && abilities[a]->usable == true)
             {
                 abilities[a]->ab_but = new Button(ab_button_coord_x + gui_ab_x_mult*(AB_IMAGE_SIZE+10) , ab_button_coord_y,
                                                   ab_button_coord_x + gui_ab_x_mult*(AB_IMAGE_SIZE+10) + AB_IMAGE_SIZE, ab_button_coord_y + AB_IMAGE_SIZE);
                 gui_ab_x_mult++;
-                if(abilities[a]->usable == true)
+                //if(abilities[a]->usable == true)
                     scrollable_ab_index.push_back(a);
             }
             else if(a == 0)
@@ -1121,11 +1121,14 @@ bool ScreenGame::Set_mission(int mission)
         abilities[a]->remaining_cd = 0;
         abilities[a]->remaining_time_to_cast = 0;
 
-        if(a > 1 && abilities[a]->unlocked == true)
+        if(a > 1 && abilities[a]->unlocked == true && abilities[a]->usable == true)
         {
             gui_ab_x_mult++;
+            //std::cout << "ab" << std::endl;
         }
     }
+    if(scrollable_ab_index.size()>=2){selected_ab_for_midle_b = 1;}
+
 
     #ifdef _MAP_WALLS
     if(walltester != nullptr)
