@@ -1,0 +1,23 @@
+V hre sa dajú nájst 4 itemy.
+
+V prvej misii chodťe smerom na Juh, kde nájdete čarovnú šúpačku,
+ktorá bude zemiak šúpať za vás a tým vám zaručí konštantý ze cooldown bude 1.5s.
+Ak nemáťe čarovnú šúpačku, tak pri každom teleporte musíte šúpať zemiak manuálne.
+(Bez autošúpačky) to ako rýchlo ošúpete zemiak determinuje jeho nasledujúci cooldown čas.
+
+V druhej misii môžte nájsť klince a tehlu. Tehla omračuje, klince zpomaľujú 
+a udeľujú poškodenie, klince sa pohádžu po zemi tam kde kliknete, tehla je projektil.
+Klince nájdete ak pôjdete po rovnobežnom chodníku k tomu, na ktorom sa spawnete.
+Tehlu nájdete ak pôjdete smerom na Východ od spawnu, dokial vo výseku medzi dvoma budovamy.
+
+V tretej misii môžte nájsť korenie, ktoré spôsobuje kýchnutie, ktoré odhadzuje nepriateľov.
+Nájdete ho ak pôjdete od spawnu smerom na Juh.
+
+V štvrtej misii sú 4 silné kačky a finálny boss.
+Bossa nájdete ak pôjdete smerom na Severe, na poli osídlenom kačkami samovrahmi.
+
+Sú 4 typy nepriateľov:
+- C4 kačbar: kačka s C4 ktorá vybuchne
+- Mele kačbar: kačka s nožom ktorá podrezáva
+- Mini Boss: kačka ktorá ma 3.333x viac životov (10) ako ostatné (3)
+- Boss: finálny boss, je to 2x väčší C4 kačbar a má 100 životov
