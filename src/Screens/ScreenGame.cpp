@@ -893,6 +893,8 @@ void ScreenGame::Print()
             }
             else
             {
+                if(abilities[a]->remaining_cd > abilities[a]->cool_down){abilities[a]->remaining_cd = abilities[a]->cool_down;}
+
                 al_draw_filled_rectangle(abilities[a]->ab_but->origin_x1,
                                      abilities[a]->ab_but->origin_y1 + AB_IMAGE_SIZE - ( (abilities[a]->remaining_cd/abilities[a]->cool_down) * AB_IMAGE_SIZE),
                                      abilities[a]->ab_but->origin_x2,
@@ -1063,18 +1065,12 @@ bool ScreenGame::Set_mission(int mission)
         SCIntro->Reset();
 
         SCIntro->Add_image("resources/cutscenes/test/zemiak.jpeg",  0.0f,  3.2f, 100, 100);
-        SCIntro->Add_sound("resources/cutscenes/test/naobrazkumozmevidietzemiak.wav",  0.0f,  3.2f);
+        SCIntro->Add_sound("resources/cutscenes/test/naobrazkumozmevidietzemiak.ogg",  0.0f,  3.2f);
 
         SCIntro->Add_image("resources/cutscenes/test/badass_zemiak.jpg",  3.4f,  3.2f, 100, 100);
-        SCIntro->Add_sound("resources/cutscenes/test/naobrazkumozmevidietzemiak_hlboke.wav",  3.4f,  3.2f);
+        SCIntro->Add_sound("resources/cutscenes/test/naobrazkumozmevidietzemiak_hlboke.ogg",  3.4f,  3.2f);
     }
     //add more mission intro code or do universal cfg loader
-
-    if(map_bitmap != nullptr)
-    {
-        delete map_bitmap;
-        map_bitmap = nullptr;
-    }
 
     for(int a = 0;a < (int)entities.size();a++)
     {
@@ -1124,6 +1120,11 @@ bool ScreenGame::Set_mission(int mission)
     {
         abilities[a]->remaining_cd = 0;
         abilities[a]->remaining_time_to_cast = 0;
+
+        if(a > 1 && abilities[a]->unlocked == true)
+        {
+            gui_ab_x_mult++;
+        }
     }
 
     #ifdef _MAP_WALLS
@@ -1140,18 +1141,29 @@ bool ScreenGame::Set_mission(int mission)
         world = nullptr;
     }
 
-    if(mapdat != nullptr)
-    {
-        delete mapdat;
-        mapdat = nullptr;
-    }
 
-    map_bitmap = new BigBitmap("resources/maps/map" + std::to_string(mission) + ".jpg", 512, 512);
-    mapdat = new MapData("resources/maps/map" + std::to_string(mission) + ".map", map_bitmap->width, map_bitmap->height);
+
+    if(mission != actual_mission)
+    {
+        if(map_bitmap != nullptr)
+        {
+            delete map_bitmap;
+            map_bitmap = nullptr;
+        }
+
+        if(mapdat != nullptr)
+        {
+            delete mapdat;
+            mapdat = nullptr;
+        }
+
+        map_bitmap = new BigBitmap("resources/maps/map" + std::to_string(mission) + ".jpg", 512, 512);
+        mapdat = new MapData("resources/maps/map" + std::to_string(mission) + ".map", map_bitmap->width, map_bitmap->height);
+    }
     map_draw_x = mapdat->player_spawm_x - global::dWidth/2;
     map_draw_y = mapdat->player_spawm_y - (global::dHeight - gui_height)/2;
     world = new b2World(b2Vec2(0,0));
-
+    actual_mission = mission;
 
     world->SetContactListener(colider);
 

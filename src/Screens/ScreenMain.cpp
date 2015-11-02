@@ -50,7 +50,7 @@ ScreenMain::ScreenMain()
     }
     global::audio_player->Play_sample_instance(&intro_music_instance, 0.8,ALLEGRO_PLAYMODE_LOOP);
 
-    std::string dm = "resources/music/mms/";
+    /*std::string dm = "resources/music/mms/";
     std::string soundfiles = "";
 
     for(int a = 1;a <= NUMBER_OF_HLASKY;a++)
@@ -69,7 +69,7 @@ ScreenMain::ScreenMain()
         {
             error_message("Could not create sample instance: " + soundfiles);
         }
-    }
+    }*/
 
     generator.seed(std::chrono::system_clock::now().time_since_epoch().count());
 }
@@ -110,14 +110,14 @@ ScreenMain::~ScreenMain()
      if(intro_music != nullptr)
         al_destroy_sample(intro_music);
 
-    for(int a = 0;a < (int)hlasky.size();a++)
+    /*for(int a = 0;a < (int)hlasky.size();a++)
     {
         global::audio_player->Stop_sample_instance(&hlasky[a]->instance);
         al_destroy_sample(hlasky[a]->sample);
         al_destroy_sample_instance(hlasky[a]->instance);
         delete hlasky[a];
     }
-    hlasky.clear();
+    hlasky.clear();*/
 }
 
 void ScreenMain::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)

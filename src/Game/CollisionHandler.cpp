@@ -96,7 +96,7 @@ void CollisionHandler::BeginContact(b2Contact* contact)
             }
             refscreen->projectiles[dat2->vectro_poz]->to_delete = true;
             refscreen->entities[dat1->vectro_poz]->hp -= refscreen->projectiles[dat2->vectro_poz]->damage;
-            refscreen->entities[dat1->vectro_poz]->stunted_for = refscreen->projectiles[dat2->vectro_poz]->stun_time;
+            refscreen->entities[dat1->vectro_poz]->stunted_for += refscreen->projectiles[dat2->vectro_poz]->stun_time;
         }
     }
     else if( (dat2->which_vector == ScreenGame::ENTITY_VECTOR &&
@@ -112,7 +112,7 @@ void CollisionHandler::BeginContact(b2Contact* contact)
 
             refscreen->projectiles[dat1->vectro_poz]->to_delete = true;
             refscreen->entities[dat2->vectro_poz]->hp -= refscreen->projectiles[dat1->vectro_poz]->damage;
-            refscreen->entities[dat2->vectro_poz]->stunted_for = refscreen->projectiles[dat1->vectro_poz]->stun_time;
+            refscreen->entities[dat2->vectro_poz]->stunted_for += refscreen->projectiles[dat1->vectro_poz]->stun_time;
         }
     }
     else if( (dat1->which_vector == ScreenGame::WALLS_VECTOR &&

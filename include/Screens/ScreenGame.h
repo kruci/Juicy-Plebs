@@ -11,7 +11,7 @@ class RayCastCallBack;
 #include "include/Game/CollisionHandler.h"
 #include "include/Game/Explosion.h"
 
-#define GAME_SUND_FILE "resources/music/gamesong.wav"
+#define GAME_SUND_FILE "resources/music/gamesong.ogg"
 #define PLAYER_BITMAP_FILE "resources/graphics/Character.png"
 
 #define KACBAR_C4 "resources/graphics/Kacbar2.png"
@@ -206,6 +206,8 @@ private:
     std::vector<Explosion*> explosions;
     signed int what_clicked = -1;
 public:
+    int actual_mission = 0;
+
     //mess
     float gui_ab_x_mult = 0, ab_button_coord_x = 20, ab_button_coord_y = global::dHeight -(AB_IMAGE_SIZE+20);
     int selected_ab_for_midle_b = 0;
@@ -226,7 +228,7 @@ public:
     std::vector<map_Item*> mItems;
 
     #define NUMBER_OF_SOUNDEFECTS 9
-    std::string soundfiles[NUMBER_OF_SOUNDEFECTS] = { "resources/music/dead.wav", "resources/music/boom.ogg",
+    std::string soundfiles[NUMBER_OF_SOUNDEFECTS] = { "resources/music/dead.ogg", "resources/music/boom.ogg",
                 "resources/music/alhukackar.ogg", "resources/music/pluvnutie.ogg", "resources/music/teleport.ogg",
                 "resources/music/kych.ogg", "resources/music/tehla_thorw.ogg", "resources/music/tehla_to_head.ogg",
                 "resources/music/nails.ogg"};

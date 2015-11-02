@@ -25,9 +25,9 @@ private:
 
     std::vector<Button *> buttons;
 
-    #define NUMBER_OF_HLASKY 3
+    //#define NUMBER_OF_HLASKY 3
     std::mt19937 generator;//(std::chrono::system_clock::now().time_since_epoch().count());
-    std::vector<AudioHandler::sound_effect *> hlasky;
+    //std::vector<AudioHandler::sound_effect *> hlasky;
 
     int number_of_written_hlasky = 19;
     signed int playing_hlaska = -1;
