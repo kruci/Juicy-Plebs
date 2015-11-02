@@ -152,6 +152,49 @@ ScreenGame::ScreenGame()
             error_message("Could not load iamge: " + detector_image_files[a]);
         }
     }
+
+    std::string dm = "resources/music/randomhlasky/random";
+    std::string soundfiles = "";
+
+    for(int a = 0;a < RANDOM_HLSKA_POCET;a++)
+    {
+        random_hlasky.push_back(new sound_effect);
+
+        soundfiles = dm + std::to_string(a) + ".ogg";
+
+        random_hlasky[random_hlasky.size()-1]->sample = al_load_sample(soundfiles.c_str());
+        if(random_hlasky[random_hlasky.size()-1]->sample == nullptr)
+        {
+            error_message("Could not load file: " + soundfiles);
+        }
+        random_hlasky[random_hlasky.size()-1]->instance = al_create_sample_instance(random_hlasky[random_hlasky.size()-1]->sample);
+        if(random_hlasky[random_hlasky.size()-1]->instance == nullptr)
+        {
+            error_message("Could not create sample instance: " + soundfiles);
+        }
+    }
+
+
+    dm = "resources/music/suapciehlasky/supanie0";
+    for(int a = 0;a < SUPACIE_HLASKY_POCET;a++)
+    {
+        supacie_hlasky.push_back(new sound_effect);
+
+        soundfiles = dm + std::to_string(a) + ".ogg";
+
+        supacie_hlasky[supacie_hlasky.size()-1]->sample = al_load_sample(soundfiles.c_str());
+        if(supacie_hlasky[supacie_hlasky.size()-1]->sample == nullptr)
+        {
+            error_message("Could not load file: " + soundfiles);
+        }
+        supacie_hlasky[supacie_hlasky.size()-1]->instance = al_create_sample_instance(supacie_hlasky[supacie_hlasky.size()-1]->sample);
+        if(supacie_hlasky[supacie_hlasky.size()-1]->instance == nullptr)
+        {
+            error_message("Could not create sample instance: " + soundfiles);
+        }
+    }
+
+    generator.seed(std::chrono::system_clock::now().time_since_epoch().count());
 }
 
 ScreenGame::~ScreenGame()
@@ -198,6 +241,24 @@ ScreenGame::~ScreenGame()
 
     if(next_lvl != nullptr)
         delete next_lvl;
+
+    for(int a = 0;a < (int)random_hlasky.size();a++)
+    {
+        global::audio_player->Stop_sample_instance(&random_hlasky[a]->instance);
+        al_destroy_sample(random_hlasky[a]->sample);
+        al_destroy_sample_instance(random_hlasky[a]->instance);
+        delete random_hlasky[a];
+    }
+    random_hlasky.clear();
+
+    for(int a = 0;a < (int)supacie_hlasky.size();a++)
+    {
+        global::audio_player->Stop_sample_instance(&supacie_hlasky[a]->instance);
+        al_destroy_sample(supacie_hlasky[a]->sample);
+        al_destroy_sample_instance(supacie_hlasky[a]->instance);
+        delete supacie_hlasky[a];
+    }
+    supacie_hlasky.clear();
 
     for(int a = 0;a < (int)entities.size();a++)
     {
@@ -476,6 +537,10 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
                 bool_supanie = true;
                 tp_to.x = PIXELS_TO_METERS( ( (float)global::mouse_state.x/xscale +  (float)map_draw_x) );
                 tp_to.y = -PIXELS_TO_METERS( (  (float)global::mouse_state.y/yscale +  (float)map_draw_y) );
+                std::uniform_int_distribution<int> s_hlasky_distribution(0, SUPACIE_HLASKY_POCET-1);
+                int a_safsuhfsafggdg = s_hlasky_distribution(generator);
+                al_set_sample_instance_gain(random_hlasky[a_safsuhfsafggdg]->instance, 1.2);
+                global::audio_player->Play_sample_instance(&supacie_hlasky[a_safsuhfsafggdg]->instance, ALLEGRO_PLAYMODE_ONCE);
                 return;
             }
 
@@ -485,6 +550,15 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
             entities[0]->body->SetTransform(b2Vec2( PIXELS_TO_METERS( ( (float)global::mouse_state.x/xscale +  (float)map_draw_x) ) ,
                                                 -PIXELS_TO_METERS( (  (float)global::mouse_state.y/yscale +  (float)map_draw_y) )), 0);
             global::audio_player->Play_sample_instance(&sounds[sound_TELEPORT]->instance, ALLEGRO_PLAYMODE_ONCE);
+
+             std::uniform_int_distribution<int> hlasky_distribution(0, RANDOM_HLSKA_POCET-1);
+
+            if(al_get_sample_instance_playing(random_hlasky[actual_hlaska]->instance) == false)
+            {
+                actual_hlaska = hlasky_distribution(generator);
+                al_set_sample_instance_gain(random_hlasky[actual_hlaska]->instance, 1.2);
+                global::audio_player->Play_sample_instance(&random_hlasky[actual_hlaska]->instance, ALLEGRO_PLAYMODE_ONCE);
+            }
         }
         else if(abilities[ab_BRICK]->remaining_cd <= 0 && abilities[ab_BRICK]->unlocked == true &&
                ((global::mouse_state.buttons == 4 && ab_BRICK == scrollable_ab_index[selected_ab_for_midle_b]) ||
@@ -1010,6 +1084,15 @@ void ScreenGame::Print()
             dum_supacka_cd = supacka_cd/global::FPS;
             supacka_cd = 0;
 
+            std::uniform_int_distribution<int> hlasky_distribution(0, RANDOM_HLSKA_POCET-1);
+
+            if(al_get_sample_instance_playing(random_hlasky[actual_hlaska]->instance) == false)
+            {
+                actual_hlaska = hlasky_distribution(generator);
+                al_set_sample_instance_gain(random_hlasky[actual_hlaska]->instance, 1.2);
+                global::audio_player->Play_sample_instance(&random_hlasky[actual_hlaska]->instance, ALLEGRO_PLAYMODE_ONCE);
+            }
+
         }
         supacka_cd++;
 
@@ -1040,7 +1123,7 @@ bool ScreenGame::Set_mission(int mission)
         al_destroy_font(loading_f);
     }
 
-    global::audio_player->Stop_sample_instance(&game_music_instance);
+    //global::audio_player->Stop_sample_instance(&game_music_instance);
     dead_fade_counter = 0;
     dead = false;
     paused = false;
@@ -1049,6 +1132,9 @@ bool ScreenGame::Set_mission(int mission)
     selected_ab_for_midle_b = 0;
     gui_ab_x_mult = 0;
     ab_button_coord_x = 20;
+    supacka_cd = 0;
+    dum_supacka_cd = 0;
+    SCIntro->Reset();
 
     if(mission > MAX_MISSIONS)
     {
@@ -1062,13 +1148,30 @@ bool ScreenGame::Set_mission(int mission)
 
     if(mission == 1)
     {
-        SCIntro->Reset();
 
-        SCIntro->Add_image("resources/cutscenes/test/zemiak.jpeg",  0.0f,  3.2f, 100, 100);
+        /*SCIntro->Add_image("resources/cutscenes/test/zemiak.jpeg",  0.0f,  3.2f, 100, 100);
         SCIntro->Add_sound("resources/cutscenes/test/naobrazkumozmevidietzemiak.ogg",  0.0f,  3.2f);
 
         SCIntro->Add_image("resources/cutscenes/test/badass_zemiak.jpg",  3.4f,  3.2f, 100, 100);
-        SCIntro->Add_sound("resources/cutscenes/test/naobrazkumozmevidietzemiak_hlboke.ogg",  3.4f,  3.2f);
+        SCIntro->Add_sound("resources/cutscenes/test/naobrazkumozmevidietzemiak_hlboke.ogg",  3.4f,  3.2f);*/
+
+        std::string dumdum = "resources/cutscenes/cut1/";
+        std::string dumdum1 = "Intro";
+        std::string dumdum2 = "intro0";
+        int obrasteky_times[][2] = {{0, 7},{7 ,5},{12, 8},{20, 2},{22, 11},{33, 41}};
+        int ohudbicka_times[][2] = {{0, 25},{25, 28},{53, 11},{64, 11}};
+        int obw = 800, obh = 450;
+        for(int a = 0;a < 6;a++)
+        {
+                SCIntro->Add_image(dumdum + dumdum1 + std::to_string(a) + ".JPG",  obrasteky_times[a][0],  obrasteky_times[a][1],
+                                   (global::dWidth-obw)/2 , (global::dHeight-obh)/2);
+        }
+
+        for(int a = 1;a <= 4;a++)
+        {
+                SCIntro->Add_sound(dumdum + dumdum2 + std::to_string(a) + ".ogg",  ohudbicka_times[a-1][0],  ohudbicka_times[a-1][1]);
+        }
+
     }
     //add more mission intro code or do universal cfg loader
 

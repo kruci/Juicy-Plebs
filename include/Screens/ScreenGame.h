@@ -199,6 +199,14 @@ private:
 
     int_coords pixel_coors_to_pf_coords(int x, int y);
 
+    std::mt19937 generator;
+    #define RANDOM_HLSKA_POCET 21
+    std::vector<sound_effect *> random_hlasky;
+    int actual_hlaska = 0;
+
+    #define SUPACIE_HLASKY_POCET 4
+    std::vector<sound_effect *> supacie_hlasky;
+
     //mess
     //float gui_ab_x_mult = 0, ab_button_coord_x = 20, ab_button_coord_y = global::dHeight -(AB_IMAGE_SIZE+20);
     int dead_fade_counter = 0;
