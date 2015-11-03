@@ -3,11 +3,8 @@ Názov hry: JuicyPlebs-SomethingWithPotato
 Vývojové prostredie a prostriedky: Code::Blocks, Allegro5, box2D 2.3.0
 
 Obrázky:
-resources/graphics/ot.png – internet
 resources/graphics/item_4.png – internet (ale v hre sa nikde nezobrazuje)
 resources/graphics/exp.png – internet
-resources/cutscenes/test/badass_zemiak.jpg - internet
-resources/cutscenes/test/zemiak.jpeg - internet
 
 ostatné obrázky su naše vlastné
 

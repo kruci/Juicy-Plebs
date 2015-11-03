@@ -34,6 +34,9 @@ class GameSave
 
         float Get_ab_cast_t(int ab_numeber);
         bool Set_ab_cast_t(int ab_numeber, float ct);
+
+        float Set_final_boss_HP_scale(float scale);
+        float Get_final_boss_HP_scale();
 };
 
 #endif // GAMESAVE_H

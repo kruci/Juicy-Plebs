@@ -79,9 +79,10 @@ ScreenGame::ScreenGame()
     }
 
     //ENTITY_VECTOR, WALLS_VECTOR, ITEMS_VECTOR, PROJECTILES_VECTOR, TEST_VECTOR, DETECTOR_VECTOR
-    bool ab_active[NUMBER_OF_AB] = {true, true, true, false, false, true, true, false};
-    float ab_cd[NUMBER_OF_AB] = {1.5, 0.2, 6, 0.8, -1, 12, 4, 0};
-    float ab_ct[NUMBER_OF_AB] = {0.1,   0, 0,   0,  0,  0, 0, 0};
+    //ab_TELEPORT, ab_ATTACK_PLUVANCE, ab_BRICK, ab_AUTO_SUPACKA, ab_TEST_JUP, ab_KLINCE, ab_KORENIE, ab_LIGHT_SHOES, ab_DIE_MOTHAFUCKA_DIE
+    bool ab_active[NUMBER_OF_AB] = {true, true, true, false, false, true, true, false, true};
+    float ab_cd[NUMBER_OF_AB] = {1.5, 0.2, 6, 0.8, -1, 12, 4, 0, 300};
+    float ab_ct[NUMBER_OF_AB] = {0.1,   0, 0,   0,  0,  0, 0, 0, 0};
 
     std::string ddum = "resources/graphics/item_";
     std::string ddum2;
@@ -361,7 +362,7 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
             cutscene_playing = false;
             cutscene_button->unclick();
             SCIntro->Stop();
-            global::audio_player->Play_sample_instance(&game_music_instance, 0.8f,ALLEGRO_PLAYMODE_LOOP);
+            //global::audio_player->Play_sample_instance(&game_music_instance, 0.8f,ALLEGRO_PLAYMODE_LOOP);
         }
         return;
     }
@@ -376,7 +377,7 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
         {
             Set_mission(global::save->Get_mission_number());
             cutscene_playing = false;
-            global::audio_player->Play_sample_instance(&game_music_instance, 0.8f,ALLEGRO_PLAYMODE_LOOP);
+            //global::audio_player->Play_sample_instance(&game_music_instance, 0.8f,ALLEGRO_PLAYMODE_LOOP);
             respawn_button->unclick();
 
             for(int a = 2;a < (int)abilities.size();a++)
@@ -467,7 +468,11 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
         {
             global::save->Set_mission_number(global::save->Get_mission_number()+1);
             if(global::save->Get_mission_number() > MAX_MISSIONS)
+            {
                 global::save->Set_mission_number(MAX_MISSIONS);
+                global::save->Set_final_boss_HP_scale(global::save->Get_final_boss_HP_scale()+1.0f);
+            }
+
 
             for(int a = 0;a < (int)abilities.size();a++)
             {
@@ -605,6 +610,21 @@ void ScreenGame::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
 
             //do
         }
+        else if(abilities[ab_DIE_MOTHAFUCKA_DIE]->remaining_cd <= 0 && abilities[ab_DIE_MOTHAFUCKA_DIE]->unlocked == true &&
+               ((global::mouse_state.buttons == 4 && ab_DIE_MOTHAFUCKA_DIE == scrollable_ab_index[selected_ab_for_midle_b]) ||
+                (abilities[ab_DIE_MOTHAFUCKA_DIE]->ab_but->is_button_clicked() == true &&
+                 event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP && event.mouse.button == 1)) )
+        {//DIE_MOTHAFUKERS
+            abilities[ab_DIE_MOTHAFUCKA_DIE]->remaining_cd = abilities[ab_DIE_MOTHAFUCKA_DIE]->cool_down;
+            abilities[ab_DIE_MOTHAFUCKA_DIE]->ab_but->unclick();
+
+            what_clicked = -1;
+            middle_b_ab->unclick();
+
+            global::audio_player->Play_sample_instance(&sounds[sound_CLICK]->instance, ALLEGRO_PLAYMODE_ONCE);
+            die_you_all_mothafuckers = true;
+            //do
+        }
         else if(abilities[ab_ATTACK_PLUVANCE]->remaining_cd <= 0 && global::mouse_state.buttons == 1 && abilities[ab_ATTACK_PLUVANCE]->unlocked == true &&
                 (what_clicked == ab_ATTACK_PLUVANCE ||what_clicked == -1) )
                 //abilities[ab_TELEPORT]->ab_but->is_button_clicked() == false)
@@ -639,8 +659,8 @@ void ScreenGame::Print()
     {
         SCIntro->Print();
         cutscene_button->Print();
-        if(cutscene_playing == false)
-            global::audio_player->Play_sample_instance(&game_music_instance, 0.8f,ALLEGRO_PLAYMODE_LOOP);
+        //if(cutscene_playing == false)
+            //global::audio_player->Play_sample_instance(&game_music_instance, 0.8f,ALLEGRO_PLAYMODE_LOOP);
 
         return;
     }
@@ -834,6 +854,13 @@ void ScreenGame::Print()
             }
 
 
+            if(die_you_all_mothafuckers == true)
+            {
+                entities[a]->hp -= die_you_all_mothafuckers_damage;
+                global::audio_player->Play_sample_instance(&sounds[sound_BOOM]->instance, 2,ALLEGRO_PLAYMODE_ONCE);
+                explosions.push_back(new Explosion(METERS_TO_PIXELS(entities[a]->body->GetPosition().x) - map_draw_x, -METERS_TO_PIXELS(entities[a]->body->GetPosition().y)-map_draw_y ));
+            }
+
 
             al_draw_rotated_bitmap(entities[a]->bitmap,
             40, 40, b_x - map_draw_x, b_y - map_draw_y, k_angle, 0);
@@ -862,6 +889,7 @@ void ScreenGame::Print()
         entities[a]->data.vectro_poz = a;
         a++;
     }
+    die_you_all_mothafuckers = false;
 
     //explosions
     for(int a = 0;a < (int)explosions.size();)
@@ -1409,6 +1437,7 @@ bool ScreenGame::Set_mission(int mission)
             else if(mapdat->objects[a]->enemy == 4)
             {
                 kackar_bitmap = BOSS_KACBAR;
+                entities[entities.size()-1]->maxhp = entities[entities.size()-1]->hp = mapdat->objects[a]->hp * global::save->Get_final_boss_HP_scale();
             }
             else
             {

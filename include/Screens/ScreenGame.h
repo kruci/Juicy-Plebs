@@ -235,17 +235,17 @@ public:
     std::vector<Wall*> walls;
     std::vector<map_Item*> mItems;
 
-    #define NUMBER_OF_SOUNDEFECTS 9
+    #define NUMBER_OF_SOUNDEFECTS 10
     std::string soundfiles[NUMBER_OF_SOUNDEFECTS] = { "resources/music/dead.ogg", "resources/music/boom.ogg",
                 "resources/music/alhukackar.ogg", "resources/music/pluvnutie.ogg", "resources/music/teleport.ogg",
                 "resources/music/kych.ogg", "resources/music/tehla_thorw.ogg", "resources/music/tehla_to_head.ogg",
-                "resources/music/nails.ogg"};
+                "resources/music/nails.ogg", "resources/music/click.ogg"};
     enum{sound_DEAD = 0, sound_BOOM, sound_ALHUKACKAR, sound_FLUS, sound_TELEPORT, sound_KYCH, sound_BRICKTHROW,
-         sound_BRICKTOHEAD, sound_NAILS};
+         sound_BRICKTOHEAD, sound_NAILS, sound_CLICK};
     std::vector<sound_effect *> sounds;
 
-    #define NUMBER_OF_AB 8
-    enum{ab_TELEPORT, ab_ATTACK_PLUVANCE, ab_BRICK, ab_AUTO_SUPACKA, ab_TEST_JUP, ab_KLINCE, ab_KORENIE, ab_LIGHT_SHOES};
+    #define NUMBER_OF_AB 9
+    enum{ab_TELEPORT, ab_ATTACK_PLUVANCE, ab_BRICK, ab_AUTO_SUPACKA, ab_TEST_JUP, ab_KLINCE, ab_KORENIE, ab_LIGHT_SHOES, ab_DIE_MOTHAFUCKA_DIE};
 
     std::vector<Ability *> abilities;
     Button *middle_b_ab = nullptr;
@@ -260,6 +260,8 @@ public:
     bool just_tp = false;
     bool dont_move = false;
     b2Vec2 pre_tp, bonus;
+    bool die_you_all_mothafuckers = false;
+    float die_you_all_mothafuckers_damage = 20;
 
     ScreenIntro * SCIntro = nullptr;
     BigBitmap *map_bitmap = nullptr;

@@ -8,7 +8,7 @@
 
 [Map]
 map=1
-map_objects=36
+map_objects=37
 
 [Object_1]
 type=p_spawn
@@ -284,3 +284,11 @@ x2=0
 y2=0
 enemy=3
 hp=10
+
+[Object_37]
+type=i_spawn
+x1=100
+y1=100
+x2=0
+y2=0
+item=8

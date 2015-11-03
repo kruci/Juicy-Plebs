@@ -160,3 +160,21 @@ bool GameSave::Set_ab_cast_t(int ab_numeber, float ct)
     al_set_config_value(gamesave, "Items",s.c_str(), std::to_string(ct).c_str());
     return true;
 }
+
+float GameSave::Set_final_boss_HP_scale(float scale)
+{
+    al_set_config_value(gamesave, "Player", "Mission4s", std::to_string(scale).c_str());
+    return scale;
+}
+
+float GameSave::Get_final_boss_HP_scale()
+{
+    std::string s;
+    if(al_get_config_value(gamesave, "Player", "Mission4s") == nullptr)
+    {
+        return 1;
+    }
+    s = al_get_config_value(gamesave, "Player", "Mission4s");
+    return stof(s);
+}
+
