@@ -873,7 +873,7 @@ void ScreenGame::Print()
                 b_x + 40 - map_draw_x,
                 b_y - 60 - map_draw_y, al_map_rgba(255,0,0,120));
                 //hp bar hp
-                bar = (entities[a]->hp/entities[a]->maxhp)*50;
+                bar = (entities[a]->hp/entities[a]->maxhp)*80;
                 al_draw_filled_rectangle(b_x - 40 - map_draw_x,
                 b_y - 65 - map_draw_y,
                 b_x - 40 + bar - map_draw_x,
