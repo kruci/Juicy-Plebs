@@ -857,30 +857,55 @@ void ScreenGame::Print()
             if(die_you_all_mothafuckers == true)
             {
                 entities[a]->hp -= die_you_all_mothafuckers_damage;
+                if(entities[a]->hp <=0){entities[a]->hp = 0;}
                 global::audio_player->Play_sample_instance(&sounds[sound_BOOM]->instance, 2,ALLEGRO_PLAYMODE_ONCE);
                 explosions.push_back(new Explosion(METERS_TO_PIXELS(entities[a]->body->GetPosition().x) - map_draw_x, -METERS_TO_PIXELS(entities[a]->body->GetPosition().y)-map_draw_y ));
             }
 
+            if(entities[a]->type == BOSS)
+            {
+                al_draw_rotated_bitmap(entities[a]->bitmap,
+                80, 80, b_x - map_draw_x, b_y - map_draw_y, k_angle, 0);
 
-            al_draw_rotated_bitmap(entities[a]->bitmap,
-            40, 40, b_x - map_draw_x, b_y - map_draw_y, k_angle, 0);
+                //hp bar background
+                al_draw_filled_rectangle(b_x - 40 - map_draw_x,
+                b_y - 65 - map_draw_y,
+                b_x + 40 - map_draw_x,
+                b_y - 60 - map_draw_y, al_map_rgba(255,0,0,120));
+                //hp bar hp
+                bar = (entities[a]->hp/entities[a]->maxhp)*50;
+                al_draw_filled_rectangle(b_x - 40 - map_draw_x,
+                b_y - 65 - map_draw_y,
+                b_x - 40 + bar - map_draw_x,
+                b_y - 60 - map_draw_y, al_map_rgba(0,200,0,180));
+                //hpbar frame
+                al_draw_rectangle(b_x - 40 - map_draw_x,
+                b_y - 65 - map_draw_y,
+                b_x + 40 - map_draw_x,
+                b_y - 60 - map_draw_y, al_map_rgb(0,0,0),1);
+            }
+            else
+            {
+                al_draw_rotated_bitmap(entities[a]->bitmap,
+                40, 40, b_x - map_draw_x, b_y - map_draw_y, k_angle, 0);
 
-            //hp bar background
-            al_draw_filled_rectangle(b_x - 25 - map_draw_x,
-                                     b_y - 35 - map_draw_y,
-                                     b_x + 25 - map_draw_x,
-                                     b_y - 30 - map_draw_y, al_map_rgba(255,0,0,120));
-            //hp bar hp
-            bar = (entities[a]->hp/entities[a]->maxhp)*50;
-            al_draw_filled_rectangle(b_x - 25 - map_draw_x,
-                                     b_y - 35 - map_draw_y,
-                                     b_x - 25 + bar - map_draw_x,
-                                     b_y - 30 - map_draw_y, al_map_rgba(0,200,0,180));
-            //hpbar frame
-            al_draw_rectangle(b_x - 25 - map_draw_x,
-                              b_y - 35 - map_draw_y,
-                              b_x + 25 - map_draw_x,
-                              b_y - 30 - map_draw_y, al_map_rgb(0,0,0),1);
+                //hp bar background
+                al_draw_filled_rectangle(b_x - 25 - map_draw_x,
+                b_y - 35 - map_draw_y,
+                b_x + 25 - map_draw_x,
+                b_y - 30 - map_draw_y, al_map_rgba(255,0,0,120));
+                //hp bar hp
+                bar = (entities[a]->hp/entities[a]->maxhp)*50;
+                al_draw_filled_rectangle(b_x - 25 - map_draw_x,
+                b_y - 35 - map_draw_y,
+                b_x - 25 + bar - map_draw_x,
+                b_y - 30 - map_draw_y, al_map_rgba(0,200,0,180));
+                //hpbar frame
+                al_draw_rectangle(b_x - 25 - map_draw_x,
+                b_y - 35 - map_draw_y,
+                b_x + 25 - map_draw_x,
+                b_y - 30 - map_draw_y, al_map_rgb(0,0,0),1);
+            }
         }
         else
         {
