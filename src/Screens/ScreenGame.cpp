@@ -1029,7 +1029,6 @@ void ScreenGame::Print()
                                      al_map_rgba(0,0,0,128));
             }
 
-
             if(abilities[a]->ab_but->is_button_clicked() == true)
             {
                 //middle_b_ab->click();
@@ -1185,8 +1184,8 @@ bool ScreenGame::Set_mission(int mission)
     selected_ab_for_midle_b = 0;
     gui_ab_x_mult = 0;
     ab_button_coord_x = 20;
-    supacka_cd = 0;
-    dum_supacka_cd = 0;
+    supacka_cd = 0.001;
+    dum_supacka_cd = 0.001;
     SCIntro->Reset();
 
     if(mission > MAX_MISSIONS)
@@ -1447,8 +1446,8 @@ bool ScreenGame::Set_mission(int mission)
             entities[entities.size()-1]->data.which_vector = ENTITY_VECTOR;
             entities[entities.size()-1]->body->SetUserData( &entities[entities.size()-1]->data );
 
-            entities[entities.size()-1]->maxhp = entities[entities.size()-1]->hp = mapdat->objects[a]->hp;
-            entities[entities.size()-1]->speed = mapdat->objects[a]->speed;
+            entities[entities.size()-1]->maxhp = entities[entities.size()-1]->hp = mapdat->objects[a]->hp * global::save->Get_global_HP_scale();
+            entities[entities.size()-1]->speed = mapdat->objects[a]->speed * global::save->Get_global_speed_scale();
 
             std::string kackar_bitmap;
             if(mapdat->objects[a]->enemy == 0)
@@ -1462,7 +1461,7 @@ bool ScreenGame::Set_mission(int mission)
             else if(mapdat->objects[a]->enemy == 4)
             {
                 kackar_bitmap = BOSS_KACBAR;
-                entities[entities.size()-1]->maxhp = entities[entities.size()-1]->hp = mapdat->objects[a]->hp * global::save->Get_final_boss_HP_scale();
+                entities[entities.size()-1]->maxhp = entities[entities.size()-1]->hp = mapdat->objects[a]->hp * global::save->Get_final_boss_HP_scale() * global::save->Get_global_HP_scale();
             }
             else
             {

@@ -60,8 +60,8 @@ private:
     int zemak_side = 400;
     int sup_s_x = (global::dWidth - zemak_side)/2, sup_s_y =  (global::dHeight - zemak_side)/2;
     b2Vec2 tp_to;
-    float supacka_cd = 0;
-    float dum_supacka_cd = 0;
+    float supacka_cd = 0.001;
+    float dum_supacka_cd = 0.001;
 
     ALLEGRO_SAMPLE *game_music = nullptr;
     ALLEGRO_SAMPLE_INSTANCE *game_music_instance = nullptr;

@@ -37,6 +37,12 @@ class GameSave
 
         float Set_final_boss_HP_scale(float scale);
         float Get_final_boss_HP_scale();
+
+        float Set_global_HP_scale(float scale);
+        float Get_global_HP_scale();
+
+        float Set_global_speed_scale(float scale);
+        float Get_global_speed_scale();
 };
 
 #endif // GAMESAVE_H

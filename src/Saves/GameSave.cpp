@@ -31,6 +31,9 @@ bool GameSave::Create(std::string filename, std::string player_name)
     al_set_config_value(gamesave, "Player", "Mission", std::to_string(1).c_str());
 
     al_add_config_section(gamesave, "Items");
+    Set_global_HP_scale(1);
+    Set_global_speed_scale(1);
+    Set_final_boss_HP_scale(1);
     al_save_config_file(filename.c_str(), gamesave);
 
     return true;
@@ -178,3 +181,36 @@ float GameSave::Get_final_boss_HP_scale()
     return stof(s);
 }
 
+float GameSave::Set_global_HP_scale(float scale)
+{
+    al_set_config_value(gamesave, "Player", "GlobalHPs", std::to_string(scale).c_str());
+    return scale;
+}
+
+float GameSave::Get_global_HP_scale()
+{
+     std::string s;
+    if(al_get_config_value(gamesave, "Player", "GlobalHPs") == nullptr)
+    {
+        return 1;
+    }
+    s = al_get_config_value(gamesave, "Player", "GlobalHPs");
+    return stof(s);
+}
+
+float GameSave::Set_global_speed_scale(float scale)
+{
+    al_set_config_value(gamesave, "Player", "GlobalSpeeds", std::to_string(scale).c_str());
+    return scale;
+}
+
+float GameSave::Get_global_speed_scale()
+{
+    std::string s;
+    if(al_get_config_value(gamesave, "Player", "GlobalSpeeds") == nullptr)
+    {
+        return 1;
+    }
+    s = al_get_config_value(gamesave, "Player", "GlobalSpeeds");
+    return stof(s);
+}

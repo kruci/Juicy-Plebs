@@ -49,6 +49,7 @@
 					<Add directory="include/Audio" />
 					<Add directory="include" />
 					<Add directory="include/Game" />
+					<Add directory="../Juicy-Plebs-post-mortem" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
