@@ -4,6 +4,8 @@
 
 #include "global.h"
 #include "include/Saves/GameSave.h"
+#include <sstream>
+#include <iomanip>
 
 class ScreenPlay
 {
@@ -20,6 +22,7 @@ private:
     ScrollableArea *scba = nullptr;
     ALLEGRO_FONT * n_font = nullptr;
     ALLEGRO_FONT * m_font = nullptr;
+    ALLEGRO_FONT *s_font = nullptr;
     InputField *inpf = nullptr;
 
     GameSave *gms = nullptr;

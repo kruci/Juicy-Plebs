@@ -79,6 +79,7 @@ int main(int argc, char *argv[])
     if(!al_init_primitives_addon()){error_message("al_init_primitives_addon()");return 33;}
     //if(!al_install_keyboard()){error_message("al_install_keyboard()");return 33;} //no use for keyboard in this game
     if(!al_install_mouse()){error_message("al_install_mouse()");return 33;}
+    if(!al_install_keyboard()){error_message("al_install_keyboard()");return 33;}
     if(!al_init_image_addon()){error_message("al_init_image_addon()");return 33;}
     al_init_font_addon(); // returns void
     if(!al_init_ttf_addon()){error_message("al_init_ttf_addon()");return 33;}
@@ -176,6 +177,7 @@ int main(int argc, char *argv[])
     al_register_event_source(event_queue, al_get_display_event_source(display));
     al_register_event_source(event_queue, al_get_timer_event_source(timer));
     al_register_event_source(event_queue, al_get_mouse_event_source());
+    al_register_event_source(event_queue, al_get_keyboard_event_source());
 
     al_start_timer(timer);
 

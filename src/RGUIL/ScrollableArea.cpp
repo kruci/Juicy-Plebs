@@ -70,7 +70,7 @@ bool ScrollableArea::AddButton(std::string font_to_load, int x, int y, int bwidt
 
 bool ScrollableArea::AddInputField(std::string font_to_load, std::string init_string, int x, int y, int iwidth, int iheight)
 {
-    inpfields.push_back(new InputField(font_to_load, init_string, x, y, iwidth, iheight));
+    inpfields.push_back(new InputField(font_to_load, init_string, x + x1, y + y1, iwidth, iheight));
 
     if( (iheight + y) > print_area_height)
     {
@@ -87,7 +87,7 @@ bool ScrollableArea::AddInputField(std::string font_to_load, std::string init_st
 
 bool ScrollableArea::AddSingleKeyInputField(std::string font_to_load, int al_key_code, int x, int y, int iwidth, int iheight, bool center)
 {
-    inpfields.push_back(new SingleKeyInputField(font_to_load, al_key_code, x, y, iwidth, iheight));
+    inpfields.push_back(new SingleKeyInputField(font_to_load, al_key_code, x + x1, y + y1, iwidth, iheight));
     inpfields[inpfields.size()-1]->Centre(center);
     if( (iheight + y) > print_area_height)
     {
@@ -223,10 +223,13 @@ bool ScrollableArea::Input(ALLEGRO_EVENT &ev, float &scalex, float &scaley)
     for(int a = 0; a < (int)inpfields.size(); a++)
     {
         if((rguil::mouse_state->x >= x1*scalex && rguil::mouse_state->x <= x2*scalex &&
-        rguil::mouse_state->y >= y1*scaley && rguil::mouse_state->y <= y2*scaley) || inpfields[a]->AcceptingInput() == true)
+        rguil::mouse_state->y >= y1*scaley && rguil::mouse_state->y <= y2*scaley) )
         {
-            inpfields[a]->change_coords(inpfields[a]->origin_x1 + x1, inpfields[a]->origin_y1 + y1 - scbar->change, inpfields[a]->origin_x2 +x1,
-            inpfields[a]->origin_y2 + y1 - scbar->change);
+            if(chancor == true)
+            {
+                inpfields[a]->change_coords(inpfields[a]->origin_x1 + x1, inpfields[a]->origin_y1 + y1 - scbar->change, inpfields[a]->origin_x2 +x1,
+                inpfields[a]->origin_y2 + y1 - scbar->change);
+            }
             int t = inpfields[a]->al_key;
             inpfields[a]->Input(ev, scalex, scaley);
             inpfields[a]->Compute();
@@ -282,7 +285,7 @@ bool ScrollableArea::Print()
         {
             inpfields[a]->Bitmap();
             al_set_target_bitmap(print_area);
-            al_draw_bitmap(inpfields[a]->as_bitmap, inpfields[a]->origin_x1, inpfields[a]->origin_y1  - scbar->change, 0);
+            al_draw_bitmap(inpfields[a]->as_bitmap, inpfields[a]->origin_x1 - x1, inpfields[a]->origin_y1 - y1 - scbar->change, 0);
         }
     }
 

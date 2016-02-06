@@ -3,6 +3,9 @@ Name=GOD SAVE
 Mission=4
 Mission4s=100
 
+GlobalHPs=0.500000
+GlobalSpeeds=0.250000
+
 [Items]
 cd0=0
 cd1=0

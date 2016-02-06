@@ -9,6 +9,7 @@ ScreenPlay::ScreenPlay(Button *ext_b) : but(ext_b)
 {
     n_font = al_load_font("resources/fonts/Asimov.otf",40,0);
     m_font = al_load_font("resources/fonts/Calibri.ttf",30,0);
+    s_font = al_load_font("resources/fonts/Calibri.ttf",20,0);
 
     std::string bnames[SCREENPLAY_NMB] = {"Back", "New game", "OK"};
 
@@ -81,6 +82,15 @@ ScreenPlay::ScreenPlay(Button *ext_b) : but(ext_b)
             scba->AddButton("resources/fonts/Calibri.ttf", 400, a * 100 + 60, 75, 30, "Load", al_map_rgb(0,0,139));
             scba->AddRectangle(1,a * 100 , 500, 100, 2, al_map_rgb(10,10,10));
             scba->AddText(10, a * 100 + 60, "Mission: " + std::to_string(gms->Get_mission_number()), al_map_rgb(255,255,250), &m_font);
+
+            std::stringstream sss1, sss2;
+            scba->AddText(150, a*100 +65, "HP x", al_map_rgb(255,255,250), &s_font);
+            sss1 << std::fixed << std::setprecision(3) << gms->Get_global_HP_scale();
+            scba->AddInputField("resources/fonts/Calibri.ttf", sss1.str(),200,a*100 +65, 45,20);
+            scba->AddText(250, a*100 +65, "Speed x", al_map_rgb(255,255,250), &s_font);
+            sss2 << std::fixed << std::setprecision(3) << gms->Get_global_speed_scale();
+            scba->AddInputField("resources/fonts/Calibri.ttf", sss2.str(),330,a*100 +65, 45,20);
+
             a++;
             gms->Save();
         }
@@ -97,6 +107,8 @@ ScreenPlay::~ScreenPlay()
         al_destroy_font(n_font);
     if(m_font != nullptr)
         al_destroy_font(m_font);
+    if(s_font != nullptr)
+        al_destroy_font(s_font);
 
     for(int a = 0;a < (int)buttons.size();a++)
     {
@@ -189,6 +201,8 @@ void ScreenPlay::Input(ALLEGRO_EVENT &event, float &xscale, float &yscale)
             return;
         }
         but->unclick();
+        global::save->Set_global_HP_scale(atof(scba->inpfields[hlp*2]->ActualText().c_str()));
+        global::save->Set_global_speed_scale(atof(scba->inpfields[hlp*2 +1]->ActualText().c_str()));
         global::play = true;
     }
 
@@ -297,6 +311,16 @@ bool ScreenPlay::scan_save_files()
             scba->AddButton("resources/fonts/Calibri.ttf", 400, a * 100 + 60, 75, 30, "Load", al_map_rgb(0,0,139));
             scba->AddRectangle(1,a * 100 , 500, 100, 2, al_map_rgb(10,10,10));
             scba->AddText(10, a * 100 + 60, "Mission: " + std::to_string(gms->Get_mission_number()), al_map_rgb(255,255,250), &m_font);
+
+
+            std::stringstream sss1, sss2;
+            scba->AddText(150, a*100 +65, "HP x", al_map_rgb(255,255,250), &s_font);
+            sss1 << std::fixed << std::setprecision(3) << gms->Get_global_HP_scale();
+            scba->AddInputField("resources/fonts/Calibri.ttf", sss1.str(),200,a*100 +65, 45,20);
+            scba->AddText(250, a*100 +65, "Speed x", al_map_rgb(255,255,250), &s_font);
+            sss2 << std::fixed << std::setprecision(3) << gms->Get_global_speed_scale();
+            scba->AddInputField("resources/fonts/Calibri.ttf", sss2.str(),330,a*100 +65, 45,20);
+
             a++;
             gms->Save();
         }
