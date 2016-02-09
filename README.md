@@ -1,2 +1,2 @@
 # Juicy-Plebs
-This is after-deadline game update for Juicy-Plebs:SomethingWithPotatoe by Juicy Plebs 
+Game Juicy-Plebs:SomethingWithPotatoe by Juicy Plebs 
